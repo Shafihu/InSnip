@@ -1,9 +1,14 @@
 import React from "react";
-import { Slot } from "expo-router";
+import { Slot, Stack } from "expo-router";
 import "../global.css";
 
 const _layout = () => {
-  return <Slot />;
+  return (
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="test" options={{ headerShown: true }} />
+    </Stack>
+  );
 };
 
 export default _layout;

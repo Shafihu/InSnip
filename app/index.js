@@ -1,6 +1,8 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
+import { router } from "expo-router";
 import { useState } from "react";
-import { Button, Text, TouchableOpacity, View, Pressable } from "react-native";
+import { Button, Text, View, Pressable, ScrollView } from "react-native";
+
 import {
   MaterialCommunityIcons,
   Ionicons,
@@ -12,7 +14,7 @@ import {
 } from "react-native-vector-icons";
 
 const index = () => {
-  const [facing, setFacing] = useState("back");
+  const [facing, setFacing] = useState("front");
   const [permission, requestPermission] = useCameraPermissions();
 
   if (!permission) {
@@ -102,7 +104,10 @@ const index = () => {
                     <FontAwesome5 name="plus" size={15} color="white" />
                   </Pressable>
                 </View>
-                <Pressable className="bg-black/20 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
+                <Pressable
+                  onPress={() => router.push("/test")}
+                  className="bg-black/20 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden"
+                >
                   <AntDesign name="scan1" size={21} color="white" />
                 </Pressable>
               </View>
