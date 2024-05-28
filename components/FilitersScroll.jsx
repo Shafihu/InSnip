@@ -1,21 +1,26 @@
 import React, { useState } from "react";
 import { ScrollView, View, StyleSheet, Image, Dimensions } from "react-native";
 
-const FilterScrollView = () => {
+const FilterScrollView = ({selected}) => {
   const itemWidth = 100; // Width of each item in the scroll view
   const [activeIndex, setActiveIndex] = useState(0);
 
   const filters = [
-    { id: 1, image: "https://via.placeholder.com/100" },
-    { id: 2, image: "https://via.placeholder.com/100" },
-    { id: 3, image: "https://via.placeholder.com/100" },
-    { id: 4, image: "https://via.placeholder.com/100" },
-    { id: 5, image: "https://via.placeholder.com/100" },
-    { id: 6, image: "https://via.placeholder.com/100" },
-    { id: 7, image: "https://via.placeholder.com/100" },
-    { id: 8, image: "https://via.placeholder.com/100" },
-    { id: 9, image: "https://via.placeholder.com/100" },
-    { id: 10, image: "https://via.placeholder.com/100" },
+    { id: 1, image: require("../assets/filters/filterOne.png") },
+    { id: 2, image: require("../assets/filters/filterFourteen.png") },
+    { id: 3, image: require("../assets/filters/filterThree.png") },
+    { id: 4, image: require("../assets/filters/filterThirteen.png") },
+    { id: 5, image: require("../assets/filters/filterFive.png") },
+    { id: 6, image: require("../assets/filters/filterSix.png") },
+    { id: 7, image: require("../assets/filters/filterTwelve.png") },
+    { id: 8, image: require("../assets/filters/filterEight.png") },
+    { id: 9, image: require("../assets/filters/filterNine.png") },
+    { id: 10, image: require("../assets/filters/filterEleven.png") },
+    { id: 11, image: require("../assets/filters/filterTen.png") },
+    { id: 15, image: require("../assets/filters/filterFifteen.png") },
+    { id: 12, image: require("../assets/filters/filterSeven.png") },
+    { id: 13, image: require("../assets/filters/filterFour.png") },
+    { id: 14, image: require("../assets/filters/filterTen.png") },
   ];
 
   const handleScroll = (event) => {
@@ -25,6 +30,8 @@ const FilterScrollView = () => {
   };
 
   return (
+    <>
+          {/* <View className={`flex-1 absolute top-0 bottom-0 right-0 left-0 bg-green-500 z-50 ${selected ? 'block' : 'hidden'}`}></View> */}
     <ScrollView
       horizontal={true}
       decelerationRate="fast" // Increase deceleration rate
@@ -53,10 +60,11 @@ const FilterScrollView = () => {
             },
           ]}
         >
-          <Image source={{ uri: filter.image }} style={styles.image} />
+          <Image source={filter.image} style={styles.image} />
         </View>
       ))}
     </ScrollView>
+    </>
   );
 };
 

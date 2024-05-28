@@ -7,19 +7,19 @@ const TabBar = ({ onPressChat, onPressCamera, onPressStories, onPressMaps }) => 
   return (
     <View className="h-28 absolute bottom-0 left-0 right-0 bg-white pt-1 px-5 flex justify-start items-center rounded-t-[1.7rem]">
              <View style={[styles.container, styles.shadow]}>
-      <TouchableOpacity onPress={onPressChat} className="flex-1 items-center justify-center">
+      <TouchableOpacity onPress={onPressMaps} className="flex-1 items-center justify-center">
         <Ionicons name="location-outline" size={27} color="rgb(20,20,20)" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onPressCamera} className="items-center justify-center">
+      <TouchableOpacity onPress={onPressChat} className="items-center justify-center">
           <MaterialIcons name="chat-bubble-outline" size={25} color="rgb(20,20,20)" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onPressStories} className="flex-1 items-center justify-center">
+      <TouchableOpacity onPress={onPressCamera} className="flex-1 items-center justify-center">
         <FontAwesome name="camera" size={25} color="rgb(20,20,20)" />
       </TouchableOpacity>
       <TouchableOpacity onPress={onPressMaps} className="flex-1 items-center justify-center">
         <MaterialCommunityIcons name="account-supervisor-outline" size={30} color="rgb(20,20,20)" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onPressMaps} className="flex-1 items-center justify-center">
+      <TouchableOpacity onPress={onPressStories} className="flex-1 items-center justify-center">
         <Ionicons name="play-outline" size={28} color="rgb(20,20,20)" />
       </TouchableOpacity>
     </View>
