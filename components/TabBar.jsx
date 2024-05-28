@@ -2,7 +2,7 @@ import React from 'react';
 import { View,StyleSheet, Text, TouchableOpacity } from 'react-native';
 import {FontAwesome, Ionicons, MaterialIcons, MaterialCommunityIcons} from 'react-native-vector-icons'; 
 
-const TabBar = ({ onPressChat, onPressCamera, onPressStories, onPressMaps }) => {
+const TabBar = ({ onPressChat, onPressCamera, onPressStories, onPressMaps, onPressSpotlight }) => {
   
   return (
     <View className="h-28 absolute bottom-0 left-0 right-0 bg-white pt-1 px-5 flex justify-start items-center rounded-t-[1.7rem]">
@@ -16,10 +16,10 @@ const TabBar = ({ onPressChat, onPressCamera, onPressStories, onPressMaps }) => 
       <TouchableOpacity onPress={onPressCamera} className="flex-1 items-center justify-center">
         <FontAwesome name="camera" size={25} color="rgb(20,20,20)" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onPressMaps} className="flex-1 items-center justify-center">
+      <TouchableOpacity onPress={onPressStories} className="flex-1 items-center justify-center">
         <MaterialCommunityIcons name="account-supervisor-outline" size={30} color="rgb(20,20,20)" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onPressStories} className="flex-1 items-center justify-center">
+      <TouchableOpacity onPress={onPressSpotlight} className="flex-1 items-center justify-center">
         <Ionicons name="play-outline" size={28} color="rgb(20,20,20)" />
       </TouchableOpacity>
     </View>

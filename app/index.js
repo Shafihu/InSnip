@@ -15,12 +15,14 @@ import TabBar from "../components/TabBar";
 import Chat from "../components/chat";
 import Stories from "../components/stories";
 import Map from "../components/map";
+import Spotlight from "../components/Spotlight";
 
 const index = () => {
   const [camera, setCamera] = useState(true);
   const [maps, setMaps] = useState(false);
   const [chat, setChat] = useState(false);
   const [stories, setStories] = useState(false);
+  const [spotlight, setSpotlight] = useState(false);
   const [facing, setFacing] = useState("front");
   const [permission, requestPermission] = useCameraPermissions();
 
@@ -49,6 +51,7 @@ const index = () => {
     setStories(false);
     setMaps(false);
     setChat(false);
+    setSpotlight(false);
     console.log("Camera Pressed");
   };
 
@@ -57,6 +60,7 @@ const index = () => {
     setStories(false);
     setMaps(false);
     setCamera(false);
+    setSpotlight(false);
     console.log("Chat Pressed");
   };
 
@@ -65,6 +69,7 @@ const index = () => {
     setMaps(false);
     setCamera(false);
     setChat(false);
+    setSpotlight(false);
     console.log("Stories Pressed");
   };
 
@@ -73,7 +78,17 @@ const index = () => {
     setCamera(false);
     setChat(false);
     setStories(false);
+    setSpotlight(false);
     console.log("Maps Pressed");
+  };
+
+  const handleSpotlightPress = () => {
+    setSpotlight(true);
+    setMaps(false);
+    setCamera(false);
+    setChat(false);
+    setStories(false);
+    console.log("Spotlight Pressed");
   };
 
   return (
@@ -165,12 +180,14 @@ const index = () => {
         {maps && <Map />}
         {chat && <Chat />}
         {stories && <Stories />}
+        {spotlight && <Spotlight />}
 
         <TabBar
           onPressCamera={handleCameraPress}
           onPressChat={handleChatPress}
           onPressStories={handleStoriesPress}
           onPressMaps={handleMapsPress}
+          onPressSpotlight={handleSpotlightPress}
         />
       </View>
     </>
