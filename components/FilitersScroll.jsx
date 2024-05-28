@@ -35,6 +35,7 @@ const FilterScrollView = () => {
       onScroll={handleScroll}
       scrollEventThrottle={1} // Increase scroll event throttle for better responsiveness
       contentContainerStyle={styles.scrollViewContent}
+      className={`max-h-[100px] absolute left-0 bottom-5 right-0`}
     >
       {filters.map((filter, index) => (
         <View
@@ -47,8 +48,8 @@ const FilterScrollView = () => {
               borderRadius: itemWidth / 2, // Set border radius to half the width
               transform: [{ scale: activeIndex === index ? 0.8 : 0.6 }],
               opacity: activeIndex === index ? 1 : 0.7,
-              borderWidth: activeIndex === index ? 3 : 0,
-              borderColor: activeIndex === index ? "black" : "transparent", // Set border color for active item
+              borderWidth: activeIndex === index ? 7 : 0,
+              borderColor: activeIndex === index ? "white" : "transparent", // Set border color for active item
             },
           ]}
         >

@@ -2,7 +2,6 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Button, Text, View, Pressable, ScrollView } from "react-native";
-
 import {
   MaterialCommunityIcons,
   Ionicons,
@@ -12,13 +11,14 @@ import {
   FontAwesome,
   AntDesign,
 } from "react-native-vector-icons";
+import FilterScrollView from "../components/FilitersScroll";
+import TabBar from "../components/TabBar";
 
 const index = () => {
   const [facing, setFacing] = useState("front");
   const [permission, requestPermission] = useCameraPermissions();
 
   if (!permission) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
@@ -38,10 +38,26 @@ const index = () => {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
+  const handleCameraPress = () => {
+    console.log("Camera Pressed");
+  };
+
+  const handleChatPress = () => {
+    console.log("Chat Pressed");
+  };
+
+  const handleStoriesPress = () => {
+    console.log("Stories Pressed");
+  };
+
+  const handleMapsPress = () => {
+    console.log("Maps Pressed");
+  };
+
   return (
     <>
       <View className="flex-1 bg-black pt-[50px] relative">
-        <View className="h-fit rounded-t-[20px] overflow-hidden">
+        <View className=" rounded-t-[20px] overflow-hidden">
           <CameraView className="flex-1 rounded-full" facing={facing}>
             <View className="flex-1 bg-transparent my-96 rounded-full bg-green-500"></View>
 
@@ -105,15 +121,24 @@ const index = () => {
                   </Pressable>
                 </View>
                 <Pressable
-                  onPress={() => router.push("/test")}
+                  // onPress={() => router.push("/test")}
                   className="bg-black/20 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden"
                 >
                   <AntDesign name="scan1" size={21} color="white" />
                 </Pressable>
               </View>
             </View>
+
+            {/* FILTERS */}
+            <FilterScrollView />
           </CameraView>
         </View>
+        <TabBar
+          onPressCamera={handleCameraPress}
+          onPressChat={handleChatPress}
+          onPressStories={handleStoriesPress}
+          onPressMaps={handleMapsPress}
+        />
       </View>
     </>
   );
