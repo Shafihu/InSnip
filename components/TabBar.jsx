@@ -16,19 +16,19 @@ const TabBar = ({ onPressChat, onPressCamera, onPressStories, onPressMaps, onPre
     <View className="h-28 absolute bottom-0 left-0 right-0 bg-white pt-1 px-5 flex justify-start items-center rounded-t-[1.7rem]">
       <View style={[styles.container, styles.shadow]}>
         <TouchableOpacity onPress={() => handlePress('maps', onPressMaps)} className="flex-1 items-center justify-center">
-          <Ionicons name={activeTab === 'maps' ? 'location' : 'location-outline'} size={30} color="rgb(20,20,20)" />
+          <Ionicons name={activeTab === 'maps' ? 'location' : 'location-outline'} size={30} color="rgb(50,50,50)" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handlePress('chat', onPressChat)} className="items-center justify-center">
-          <MaterialIcons name={activeTab === 'chat' ? 'chat-bubble' : 'chat-bubble-outline'} size={27} color="rgb(20,20,20)" className="transform scale-x-[-1]" />
+          <MaterialIcons name={activeTab === 'chat' ? 'chat-bubble' : 'chat-bubble-outline'} size={27} color="rgb(50,50,50)" className="transform scale-x-[-1]" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handlePress('camera', onPressCamera)} className="flex-1 items-center justify-center">
-          <MaterialCommunityIcons name={activeTab === 'camera' ? 'camera' : 'camera-outline'} size={30} color="rgb(20,20,20)" />
+          <MaterialCommunityIcons name={activeTab === 'camera' ? 'camera' : 'camera-outline'} size={30} color="rgb(50,50,50)" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handlePress('stories', onPressStories)} className="flex-1 items-center justify-center">
-          <MaterialCommunityIcons name={activeTab === 'stories' ? 'account-supervisor' : 'account-supervisor-outline'} size={32} color="rgb(20,20,20)" />
+          <MaterialCommunityIcons name={activeTab === 'stories' ? 'account-supervisor' : 'account-supervisor-outline'} size={32} color="rgb(50,50,50)" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handlePress('spotlight', onPressSpotlight)} className="flex-1 items-center justify-center relative">
-          <Ionicons name={activeTab === 'spotlight' ? 'play' : 'play-outline'} size={29} color="rgb(20,20,20)" />
+          <Ionicons name={activeTab === 'spotlight' ? 'play' : 'play-outline'} size={29} color="rgb(50,50,50)" />
           <View className="absolute right-1 top-0 bg-red-600 rounded-full w-3 h-3"></View>
         </TouchableOpacity>
       </View>

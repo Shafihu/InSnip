@@ -12,9 +12,9 @@ import {
 } from "react-native-vector-icons";
 import FilterScrollView from "../components/FilitersScroll";
 import TabBar from "../components/TabBar";
-import Chat from "../components/chat";
-import Stories from "../components/stories";
-import Map from "../components/map";
+import Chat from "../components/Chat";
+import Stories from "../components/Stories";
+import Map from "../components/Map";
 import Spotlight from "../components/Spotlight";
 
 const index = () => {
@@ -118,7 +118,7 @@ const index = () => {
                 </Pressable>
               </View>
 
-              {/* RIGHT SIDE ICONS  */}
+              {/* RIGHT CAMERA ICONS  */}
 
               <View className="absolute top-0 right-0 flex flex-row items-start gap-2  mr-[0.75rem] h-auto">
                 <Pressable className="bg-black/20 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
@@ -169,6 +169,13 @@ const index = () => {
                     <AntDesign name="scan1" size={21} color="white" />
                   </Pressable>
                 </View>
+              </View>
+
+              {/* BOTTOM CAMERA ICONS  */}
+
+              <View className="flex flex-row items-center justify-between px-4 max-h-[100px] w-full absolute left-0 bottom-36 right-0 bg-green-500 ">
+                <Text>hello</Text>
+                <Text>hello</Text>
               </View>
 
               {/* FILTERS */}
