@@ -1,5 +1,7 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { useState } from "react";
+import { shareAsync } from 'expo-sharing';
+import * as MediaLibrary from 'expo-media-library';
+import { useEffect, useState, useRef } from "react";
 import { View, Text, Pressable, Button} from 'react-native'
 import {
   MaterialCommunityIcons,
@@ -22,7 +24,6 @@ const Camera = () => {
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View className="flex-1 justify-center">
         <Text className="text-center">
