@@ -21,7 +21,6 @@ const index = () => {
     setMaps(false);
     setChat(false);
     setSpotlight(false);
-    console.log("Camera Pressed");
   };
 
   const handleChatPress = () => {
@@ -30,7 +29,6 @@ const index = () => {
     setMaps(false);
     setCamera(false);
     setSpotlight(false);
-    console.log("Chat Pressed");
   };
 
   const handleStoriesPress = () => {
@@ -39,7 +37,6 @@ const index = () => {
     setCamera(false);
     setChat(false);
     setSpotlight(false);
-    console.log("Stories Pressed");
   };
 
   const handleMapsPress = () => {
@@ -48,7 +45,6 @@ const index = () => {
     setChat(false);
     setStories(false);
     setSpotlight(false);
-    console.log("Maps Pressed");
   };
 
   const handleSpotlightPress = () => {
@@ -57,13 +53,12 @@ const index = () => {
     setCamera(false);
     setChat(false);
     setStories(false);
-    console.log("Spotlight Pressed");
   };
 
   return (
     <>
       <View
-        className={`flex-1 ${stories || chat ? "bg-[#faf9f6]" : "bg-black"} ${
+        className={`flex-1 ${stories || chat ? "bg-white" : "bg-black"} ${
           camera || stories || chat ? "pt-[50px]" : "pt-0"
         } relative`}
       >

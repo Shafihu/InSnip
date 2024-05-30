@@ -17,7 +17,7 @@ const Stories = () => {
   }, []);
 
   return (
-    <View className="flex-1 bg-[#faf9f6]">
+    <View className="flex-1 bg-[#fff]">
       <Header header='Stories' />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="ml-2">

@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome, Ionicons, MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 
-const TabBar = ({ onPressChat, onPressCamera, onPressStories, onPressMaps, onPressSpotlight }) => {
+const TabBar = ({ onPressChat, onPressCamera, onPressStories, onPressMaps, onPressSpotlight, photo }) => {
   const [activeTab, setActiveTab] = useState('camera');
+  const status = photo;
 
   const handlePress = (tab, callback) => {
     setActiveTab(tab);
@@ -11,6 +12,10 @@ const TabBar = ({ onPressChat, onPressCamera, onPressStories, onPressMaps, onPre
       callback();
     }
   };
+
+  if(status){
+    console.log('CHECKED!')
+  }
 
   return (
     <View className="h-28 absolute bottom-0 left-0 right-0 bg-white pt-1 px-5 flex justify-start items-center rounded-t-[1.7rem]">
@@ -50,12 +55,5 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
     paddingLeft: 20,
     paddingRight: 20,
-  },
-  shadow: {
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 5 },
-    // shadowOpacity: 0.34,
-    // shadowRadius: 6.27,
-    // elevation: 10,
   },
 });
