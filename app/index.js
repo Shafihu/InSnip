@@ -63,8 +63,8 @@ const index = () => {
   return (
     <>
       <View
-        className={`flex-1 ${stories ? "bg-white" : "bg-black"} ${
-          camera || stories ? "pt-[50px]" : "pt-0"
+        className={`flex-1 ${stories || chat ? "bg-[#faf9f6]" : "bg-black"} ${
+          camera || stories || chat ? "pt-[50px]" : "pt-0"
         } relative`}
       >
         <View className=" rounded-t-[20px] rounded-b-[5px] overflow-hidden">

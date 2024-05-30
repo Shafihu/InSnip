@@ -8,7 +8,7 @@
     "icon": "./assets/logo.webp",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/snapchat.png",
+      "image": "./assets/splashScreenSnapchat.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
