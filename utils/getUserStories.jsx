@@ -4,19 +4,19 @@ const getUserStories = () => {
         {
           id: 1,
           avatar: '',
-          nickName: 'felix',
+          nickName: 'felix😎',
           userName: 'felix253726',
         },
         {
           id: 2,
           avatar: '',
-          nickName: 'alice',
+          nickName: 'Alice😈💕',
           userName: 'alice93726',
         },
         {
           id: 3,
           avatar: '',
-          nickName: 'bob',
+          nickName: 'Bob💫✨',
           userName: 'bob19273',
         },
         {
@@ -28,7 +28,7 @@ const getUserStories = () => {
         {
           id: 5,
           avatar: '',
-          nickName: 'david',
+          nickName: 'David🤑💵',
           userName: 'david37283',
         },
         {
@@ -40,13 +40,13 @@ const getUserStories = () => {
         {
           id: 7,
           avatar: '',
-          nickName: 'frank',
+          nickName: 'Frank🎮',
           userName: 'frank19382',
         },
         {
           id: 8,
           avatar: '',
-          nickName: 'grace',
+          nickName: 'Grace',
           userName: 'grace83726',
         },
         {
@@ -58,7 +58,7 @@ const getUserStories = () => {
         {
           id: 10,
           avatar: '',
-          nickName: 'isabel',
+          nickName: '🎶Isabel😘😎',
           userName: 'isabel92837',
         },
       ];
