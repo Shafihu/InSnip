@@ -1,14 +1,13 @@
-import { View, FlatList, Dimensions, StyleSheet, Pressable } from 'react-native';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { View, FlatList, Dimensions, StyleSheet, Pressable, Text } from 'react-native';
 import {
   MaterialCommunityIcons,
   Ionicons,
   AntDesign,
   MaterialIcons,
-  Fontisto
+  Fontisto,
 } from 'react-native-vector-icons';
-import Header from './Header'
-
+import Header from './Header';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -23,23 +22,31 @@ const INITIAL_DATA = [
 
 const renderItem = ({ item }) => (
   <View style={[styles.itemContainer, { backgroundColor: item.color }]}>
-           <View className="absolute bottom-48 right-2 h-[300px] w-[50px]  flex flex-col justify-between items-center">
-              <Pressable className=" w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                  <MaterialIcons name="bookmark-add" size={36} color="white" />
-              </Pressable>
-              <Pressable className=" w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                  <AntDesign name="heart" size={32} color="white"  />
-              </Pressable>
-              <Pressable className=" w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                  <MaterialIcons name="mode-comment" size={30} color="white" />
-              </Pressable>
-              <Pressable className=" w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                  <Fontisto name="share-a" size={30} color="white"/>
-              </Pressable>
-              <Pressable className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                  <Fontisto name="more-v-a" size={22} color="white" className="transform rotate-90" />
-              </Pressable>
-           </View>
+    <View className="absolute bottom-16 right-2 mr-1 flex flex-col gap-6 justify-between items-center">
+      <Pressable className="w-[40px] flex justify-center items-center relative overflow-hidden mb-2">
+        <MaterialIcons name="bookmark-add" size={36} color="white" />
+      </Pressable>
+      <Pressable className="w-[40px] flex justify-center items-center relative overflow-hidden mb-2">
+        <AntDesign name="heart" size={32} color="white" />
+      </Pressable>
+      <Pressable className="w-[40px] flex justify-center items-center relative overflow-hidden gap-2">
+        <MaterialIcons name="mode-comment" size={30} color="white" />
+        <Text className="text-white font-semibold text-[12px] tracking-wider">80</Text>
+      </Pressable>
+      <Pressable className="w-[40px] flex justify-center items-center relative overflow-hidden gap-2">
+        <Fontisto name="share-a" size={30} color="white" />
+        <Text className="text-white font-semibold text-[12px] tracking-wider">135</Text>
+      </Pressable>
+      <Pressable className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
+        <Fontisto name="more-v-a" size={22} color="white" className="transform rotate-90" />
+      </Pressable>
+    </View>
+    <View className="absolute left-2 bottom-16 w-1/2 py-2 flex flex-col justify-center">
+      <View className="flex flex-row items-center gap-2">
+        <View className="w-[30px] h-[30px] bg-green-500 rounded-full"></View>
+        <Text className="text-white font-bold text-[18px] tracking-wide">Maron Logan</Text>
+      </View>
+    </View>
   </View>
 );
 
@@ -55,33 +62,29 @@ const Spotlight = () => {
   };
 
   return (
-    <View className="flex-1 bg-transparent rounded-t-2xl rounded-b-xl overflow-hidden relative mb-24">
-          <Header header='Spotlight'/>
-    <FlatList
+    <View className="flex-1  bg-transparent rounded-t-2xl rounded-b-xl overflow-hidden relative mb-24">
+      <Header header='Spotlight' />
+      <FlatList
         data={data}
         renderItem={renderItem}
         keyExtractor={item => item.id}
         snapToAlignment="start"
-        snapToInterval={SCREEN_HEIGHT}
+        snapToInterval={SCREEN_HEIGHT - 112}
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}
         pagingEnabled={true}
         onEndReached={handleEndReached}
         onEndReachedThreshold={0.5}
-    />
-  </View>
-  )
-}
+      />
+    </View>
+  );
+};
 
-export default Spotlight
+export default Spotlight;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-  },
   itemContainer: {
-    height: SCREEN_HEIGHT,
+    height: SCREEN_HEIGHT - 112, // 7rem ≈ 112dp
     justifyContent: 'center',
     alignItems: 'center',
   },
