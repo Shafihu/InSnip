@@ -12,7 +12,7 @@ import {
   Button,
   Image,
   TouchableOpacity,
-  SafeAreaView,
+  Animated,
 } from "react-native";
 import {
   MaterialCommunityIcons,
@@ -31,7 +31,6 @@ import Chat from "../components/Chat";
 import Stories from "../components/Stories";
 import Map from "../components/Map";
 import Spotlight from "../components/Spotlight";
-import Camera from "../components/Camera";
 import TabBarPreview from "../components/TabBarPreview";
 
 const index = () => {
@@ -46,6 +45,27 @@ const index = () => {
   const [chat, setChat] = useState(false);
   const [stories, setStories] = useState(false);
   const [spotlight, setSpotlight] = useState(false);
+  // Animation state
+  const [savedVisible, setSavedVisible] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (savedVisible) {
+      Animated.sequence([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.delay(1000),
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start(() => setSavedVisible(false));
+    }
+  }, [savedVisible, fadeAnim]);
 
   const handleCameraPress = () => {
     setCamera(true);
@@ -120,10 +140,13 @@ const index = () => {
 
   let handleDownload = () => {
     MediaLibrary.saveToLibraryAsync(photo.uri).then(() => {
-      setPhoto(undefined);
+      // setPhoto(undefined);
+      setSavedVisible(true);
     });
   };
+
   let handleStory = () => {};
+
   let handleShare = async () => {
     await shareAsync(photo.uri);
     setPhoto(undefined);
@@ -292,6 +315,17 @@ const index = () => {
             handleShare={handleShare}
             handleStory={handleStory}
           />
+        )}
+
+        {savedVisible && (
+          <Animated.View
+            style={{ opacity: fadeAnim }}
+            className="absolute top-20 left-0 right-0 z-50"
+          >
+            <Text className="text-center text-white text-xl font-bold ">
+              Saved
+            </Text>
+          </Animated.View>
         )}
       </View>
     </>
