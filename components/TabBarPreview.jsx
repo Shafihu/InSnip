@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import { FontAwesome, Ionicons, MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
+import { View, StyleSheet, Text, Pressable } from 'react-native';
+import { FontAwesome, Ionicons, MaterialIcons, MaterialCommunityIcons, Feather} from 'react-native-vector-icons';
 
-const TabBarPreview = ({ onPressChat, onPressCamera, onPressStories, onPressMaps, onPressSpotlight, photo }) => {
+const TabBarPreview = ({handleDownload, handleStory, handleShare}) => {
   const [activeTab, setActiveTab] = useState('camera');
 
   const handlePress = (tab, callback) => {
@@ -13,70 +13,23 @@ const TabBarPreview = ({ onPressChat, onPressCamera, onPressStories, onPressMaps
   };
 
   return (
-      <View style={styles.tabBarContainer}>
-        <View style={styles.photoMessageContainer}>
-          <Text style={styles.photoMessageText}>Photo Captured</Text>
-        </View>
-      </View>
+    <View className="h-28 absolute bottom-0 left-0 right-0 bg-white pt-2 pr-4 pl-4 flex flex-row justify-evenly items-start rounded-t-[1.7rem] gap-3">
+        <Pressable onPress={handleDownload} className="items-center justify-center bg-red-500 rounded-full p-3 w-1/5 min-h-14">
+          <Feather name='download' size={22} color="white" />
+        </Pressable>
+        <Pressable onPress={handleStory} className="flex-row items-center justify-center bg-green-400 rounded-full p-3 w-2/5 min-h-14 gap-2">
+          <MaterialCommunityIcons name='shape-square-rounded-plus' size={25} color="white" className="transform scale-x-[-1]" />
+          <Text className="font-bold text-white">Story</Text>
+        </Pressable>
+        <Pressable onPress={handleShare} className="flex-row items-center justify-center bg-blue-400 rounded-full p-3 w-2/5 min-h-14 gap-2">
+          <Text className="font-bold text-white">Send To</Text>
+          <Ionicons name='send' size={16} color="white" />
+        </Pressable>
+    </View>
   );
-} 
+};
 
 export default TabBarPreview;
 
 const styles = StyleSheet.create({
-  tabBarContainer: {
-    height: 70, 
-    position: 'absolute', 
-    bottom: 0, 
-    left: 0, 
-    right: 0, 
-    backgroundColor: 'white', 
-    justifyContent: 'center', 
-    alignItems: 'center',
-    paddingTop: 10,
-    paddingBottom: 20,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-  },
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: 64,
-    width: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.03)',
-    borderRadius: 9999,
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
-  shadow: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  iconContainer: {
-    flex: 1, 
-    alignItems: 'center', 
-    justifyContent: 'center'
-  },
-  photoMessageContainer: {
-    justifyContent: 'center', 
-    alignItems: 'center'
-  },
-  photoMessageText: {
-    color: 'black', 
-    fontSize: 18, 
-    fontWeight: 'bold'
-  },
-  notificationDot: {
-    position: 'absolute',
-    right: 1,
-    top: 0,
-    backgroundColor: 'red',
-    borderRadius: 9999,
-    width: 8,
-    height: 8,
-  },
 });
