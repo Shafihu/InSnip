@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import { View, Text, Pressable } from 'react-native';
 import {
     MaterialCommunityIcons,
@@ -8,6 +8,7 @@ import {
     FontAwesome,
     FontAwesome5,
     AntDesign,
+    Foundation
 } from 'react-native-vector-icons';
 
 const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
@@ -28,8 +29,8 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                         className="absolute top-0 right-1"
                     />
                 </Pressable>
-                <Pressable className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                    <Ionicons name="search" size={20} color={header === 'Spotlight' || header === '' ? 'white' : '#555c57'} />
+                <Pressable className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden transform scale-x-[-1]">
+                    <Foundation name="magnifying-glass" size={20} color={header === 'Spotlight' || header === '' ? 'white' : '#555c57'} />
                 </Pressable>
             </View>
             <Text className={`text-[1.35rem] font-semibold tracking-wider text-center ${header === 'Spotlight' || header === '' ? 'text-white mr-[40px]' : ''}`}>{header}</Text>

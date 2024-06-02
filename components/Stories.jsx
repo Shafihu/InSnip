@@ -1,4 +1,4 @@
-import { View, ScrollView, Text, StyleSheet } from 'react-native';
+import { View, ScrollView, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useState, useEffect } from 'react';
 import {LinearGradient} from 'expo-linear-gradient'
 import { MaterialCommunityIcons } from 'react-native-vector-icons';
@@ -7,11 +7,14 @@ import getUserStories from '../utils/getUserStories';
 
 const Stories = () => {
   const [userStories, setUserStories] = useState([]);
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchStories = async () => {
+      setLoading(true)
       const res = await getUserStories();
       setUserStories(res);
+      setLoading(false)
     };
     fetchStories();
   }, []);
@@ -19,7 +22,13 @@ const Stories = () => {
   return (
     <View className="flex-1 bg-[#fff]">
       <Header header='Stories' />
-      <ScrollView showsVerticalScrollIndicator={false}>
+      {loading ? (
+        <View className="">
+            <ActivityIndicator color='gray' size='small' />
+        </View>
+      ) : (
+        <>
+        <ScrollView showsVerticalScrollIndicator={false}>
         <View className="ml-2">
           <Text className="text-[16px] font-medium">Friends</Text>
           <ScrollView className='h-fit w-full py-2' horizontal showsHorizontalScrollIndicator={false}>
@@ -65,6 +74,8 @@ const Stories = () => {
           </View>
         </View>
       </ScrollView>
+        </>
+      )}
     </View>
   )
 }
