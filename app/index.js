@@ -32,6 +32,7 @@ import Stories from "../components/Stories";
 import Map from "../components/Map";
 import Spotlight from "../components/Spotlight";
 import TabBarPreview from "../components/TabBarPreview";
+import Header from "../components/Header";
 
 const index = () => {
   const [facing, setFacing] = useState("front");
@@ -197,73 +198,7 @@ const index = () => {
 
               {!photo && (
                 <>
-                  {/*  LEFT CAMERA ICONS  */}
-                  <View className="absolute top-0 flex flex-row gap-2 items-center ml-[0.75rem]">
-                    <Pressable className="bg-black/15 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                      <MaterialCommunityIcons
-                        name="account"
-                        size={50}
-                        color="yellow"
-                        className="absolute top-0 right-1"
-                      />
-                    </Pressable>
-                    <Pressable className="bg-black/15 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                      <Ionicons name="search" size={20} color="white" />
-                    </Pressable>
-                  </View>
-
-                  {/* RIGHT CAMERA ICONS  */}
-                  <View className="absolute top-0 right-0 flex flex-row items-start gap-2 mr-[0.75rem] h-auto">
-                    <Pressable className="bg-black/15 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                      <MaterialCommunityIcons
-                        name="account-plus"
-                        size={20}
-                        color="white"
-                      />
-                    </Pressable>
-
-                    <View className="flex flex-col gap-2">
-                      <View className="mt-2 w-[40px] h-auto bg-black/15 rounded-full flex flex-col py-2 items-center gap-2">
-                        <Pressable
-                          onPress={toggleCameraFacing}
-                          className="w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden"
-                        >
-                          <Feather
-                            name="repeat"
-                            size={20}
-                            color="white"
-                            className="transform rotate-90"
-                          />
-                        </Pressable>
-                        <Pressable className="w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                          <FontAwesome6 name="bolt" size={20} color="white" />
-                        </Pressable>
-                        <Pressable className="w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                          <MaterialCommunityIcons
-                            name="video-plus"
-                            size={25}
-                            color="white"
-                          />
-                        </Pressable>
-                        <Pressable className="w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                          <Ionicons
-                            name="musical-notes"
-                            size={30}
-                            color="white"
-                          />
-                        </Pressable>
-                        <Pressable className="w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                          <FontAwesome name="camera" size={20} color="white" />
-                        </Pressable>
-                        <Pressable className="bg-black/20 rounded-full w-[30px] h-[30px] flex justify-center items-center relative overflow-hidden">
-                          <FontAwesome5 name="plus" size={15} color="white" />
-                        </Pressable>
-                      </View>
-                      <Pressable className="bg-black/20 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                        <AntDesign name="scan1" size={21} color="white" />
-                      </Pressable>
-                    </View>
-                  </View>
+                  <Header header="" />
 
                   {/* BOTTOM CAMERA ICONS  */}
                   <View className="flex flex-row items-center justify-between px-4 w-full absolute left-0 bottom-32 right-0">
@@ -320,11 +255,12 @@ const index = () => {
         {savedVisible && (
           <Animated.View
             style={{ opacity: fadeAnim }}
-            className="absolute top-20 left-0 right-0 z-50"
+            className="absolute top-20 left-0 right-0 z-50 flex flex-row items-center justify-center gap-1"
           >
-            <Text className="text-center text-white text-xl font-bold ">
+            <Text className="text-center text-white text-xl font-bold">
               Saved
             </Text>
+            <Ionicons name="checkmark-circle" size={25} color="white" />
           </Animated.View>
         )}
       </View>
