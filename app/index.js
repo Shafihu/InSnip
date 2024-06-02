@@ -14,16 +14,8 @@ import {
   TouchableOpacity,
   Animated,
 } from "react-native";
-import {
-  MaterialCommunityIcons,
-  Ionicons,
-  Feather,
-  FontAwesome6,
-  FontAwesome5,
-  FontAwesome,
-  AntDesign,
-  Foundation,
-} from "react-native-vector-icons";
+
+import { Ionicons, Foundation } from "react-native-vector-icons";
 import FilterScrollView from "../components/FilitersScroll";
 
 import TabBar from "../components/TabBar";
@@ -36,6 +28,7 @@ import Header from "../components/Header";
 
 const index = () => {
   const [facing, setFacing] = useState("front");
+  const [flash, setFlash] = useState("off");
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] =
     MediaLibrary.usePermissions();
@@ -46,7 +39,6 @@ const index = () => {
   const [chat, setChat] = useState(false);
   const [stories, setStories] = useState(false);
   const [spotlight, setSpotlight] = useState(false);
-  // Animation state
   const [savedVisible, setSavedVisible] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -139,6 +131,10 @@ const index = () => {
     setFacing((current) => (current === "back" ? "front" : "back"));
   };
 
+  const toggleCameraFlash = () => {
+    setFlash((current) => (current === "off" ? "on" : "off"));
+  };
+
   let handleDownload = () => {
     MediaLibrary.saveToLibraryAsync(photo.uri).then(() => {
       // setPhoto(undefined);
@@ -165,6 +161,9 @@ const index = () => {
             <CameraView
               className="flex-1 rounded-full"
               facing={facing}
+              flash={flash}
+              autofocus="on"
+              zoom={0}
               ref={cameraRef}
             >
               <View className="flex-1 bg-transparent my-96 rounded-full bg-green-500"></View>
@@ -198,7 +197,11 @@ const index = () => {
 
               {!photo && (
                 <>
-                  <Header header="" />
+                  <Header
+                    header=""
+                    toggleCameraFacing={toggleCameraFacing}
+                    toggleCameraFlash={toggleCameraFlash}
+                  />
 
                   {/* BOTTOM CAMERA ICONS  */}
                   <View className="flex flex-row items-center justify-between px-4 w-full absolute left-0 bottom-32 right-0">
