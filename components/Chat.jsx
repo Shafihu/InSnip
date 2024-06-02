@@ -47,7 +47,7 @@ const Chat = ({handleChatCam}) => {
           <Entypo name="new-message" size={25} color="white" />
         </View>
         <ScrollView className="flex-1 mb-28" showsVerticalScrollIndicator={false}>
-          <View className="flex flex-row items-center justify-between gap-4 bg-white p-3 m-3 rounded-2xl">
+          <View className="flex flex-row items-center justify-between gap-4 bg-white p-3 m-2 rounded-2xl">
               <View className="w-[60px] h-[60px] bg-yellow-200 rounded-full flex items-center justify-center">
                   <Entypo name='archive' size={30} color='black' />
               </View>
@@ -63,7 +63,7 @@ const Chat = ({handleChatCam}) => {
           {loading ? <ActivityIndicator size='small' /> : (
               <>
                 {userStories.map((item, index) => (
-                  <View key={index} className="flex flex-row items-center justify-between gap-4 bg-white p-3 pr-5 border border-t-1 border-b-0   border-l-0  border-r-0 border-gray-200">
+                  <View key={index} className="flex flex-row items-center justify-between gap-4 bg-white py-2 px-3 pr-5 border border-t-1 border-b-0   border-l-0  border-r-0 border-gray-200">
                       <View className="w-[50px] h-[50px] bg-gray-100 rounded-full overflow-hidden">
                           <Image source={item.avatar !== '' ? item.avatar : require('../assets/avatars/user.png')} className="w-full h-full" />
                       </View>
