@@ -14,7 +14,7 @@ const getUserStories = () => {
   const stories = [
     {
       id: 1,
-      avatar: '',
+      avatar: avatar5,
       nickName: 'felix😎',
       userName: 'felix253726',
     },
@@ -38,8 +38,8 @@ const getUserStories = () => {
     },
     {
       id: 5,
-      avatar: avatar5,
-      nickName: 'David🤑💵',
+      avatar: '',
+      nickName: 'Christabel🤑💵',
       userName: 'david37283',
     },
     {
