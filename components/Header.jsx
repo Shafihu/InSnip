@@ -12,14 +12,15 @@ import {
 } from 'react-native-vector-icons';
 
 const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
-    const [isFlash, setIsFlash] = useState(false)
+    const [isFlash, setIsFlash] = useState(false);
 
     const FlashMode = () => {
         setIsFlash((prev) => !prev);
         toggleCameraFlash();
     }
+
     return (
-        <View className={`flex flex-row justify-between mx-2 mb-4 ${header === 'Spotlight' || header === '' ? 'absolute top-0 left-0 z-50 w-full mx-0 mb-0 pr-4 mt-2' : ''} ${header === '' ? 'items-start' : 'items-center'}`}>
+        <View className={`flex flex-row justify-between px-2 pt-0 mb-4  ${header === 'Chat' && 'bg-white'} ${header === 'Spotlight' || header === '' ? 'absolute top-0 left-0 z-50 w-full mx-0 mb-0 pr-4 mt-2' : ''} ${header === '' ? 'items-start' : 'items-center'}`}>
             <View className="flex flex-row gap-2 items-center">
                 <Pressable className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
                     <MaterialCommunityIcons

@@ -20,7 +20,7 @@ const Stories = () => {
   }, []);
 
   return (
-    <View className="flex-1 bg-[#fff]">
+    <View className="flex-1">
       <Header header='Stories' />
       {loading ? (
         <View className="">

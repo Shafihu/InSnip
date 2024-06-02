@@ -76,6 +76,14 @@ const index = () => {
     setSpotlight(false);
   };
 
+  const handleChatCam = () => {
+    setCamera(true);
+    setStories(false);
+    setMaps(false);
+    setChat(false);
+    setSpotlight(false);
+  };
+
   const handleStoriesPress = () => {
     setStories(true);
     setMaps(false);
@@ -152,7 +160,9 @@ const index = () => {
   return (
     <>
       <View
-        className={`flex-1 ${stories || chat ? "bg-white" : "bg-black"} ${
+        className={`flex-1 ${stories && "bg-white"} ${
+          chat ? "bg-white" : "bg-black"
+        } ${
           camera || stories || chat || spotlight ? "pt-[50px]" : "pt-0"
         } relative`}
       >
@@ -233,7 +243,7 @@ const index = () => {
         </View>
 
         {maps && <Map />}
-        {chat && <Chat />}
+        {chat && <Chat handleChatCam={handleChatCam} />}
         {stories && <Stories />}
         {spotlight && <Spotlight />}
 
