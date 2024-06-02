@@ -1,16 +1,8 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text, Pressable } from 'react-native';
-import { FontAwesome, Ionicons, MaterialIcons, MaterialCommunityIcons, Feather} from 'react-native-vector-icons';
+import React from 'react';
+import { View, Text, Pressable } from 'react-native';
+import { Ionicons, MaterialCommunityIcons, Feather } from 'react-native-vector-icons';
 
 const TabBarPreview = ({handleDownload, handleStory, handleShare}) => {
-  const [activeTab, setActiveTab] = useState('camera');
-
-  const handlePress = (tab, callback) => {
-    setActiveTab(tab);
-    if (callback) {
-      callback();
-    }
-  };
 
   return (
     <View className="h-28 absolute bottom-0 left-0 right-0 bg-white pt-2 pr-4 pl-4 flex flex-row justify-evenly items-start rounded-t-[1.7rem] gap-3">
@@ -31,5 +23,3 @@ const TabBarPreview = ({handleDownload, handleStory, handleShare}) => {
 
 export default TabBarPreview;
 
-const styles = StyleSheet.create({
-});

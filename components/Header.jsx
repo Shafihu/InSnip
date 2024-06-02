@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Image } from 'react-native';
 import {
     MaterialCommunityIcons,
     Ionicons,
@@ -23,12 +23,13 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
         <View className={`flex flex-row justify-between px-2 pt-0 mb-4  ${header === 'Chat' && 'bg-white'} ${header === 'Spotlight' || header === '' ? 'absolute top-0 left-0 z-50 w-full mx-0 mb-0 pr-4 mt-2' : ''} ${header === '' ? 'items-start' : 'items-center'}`}>
             <View className="flex flex-row gap-2 items-center">
                 <Pressable className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                    <MaterialCommunityIcons
+                    {/* <MaterialCommunityIcons
                         name="account"
                         size={50}
                         color="yellow"
                         className="absolute top-0 right-1"
-                    />
+                    /> */}
+                    <Image source={require('../assets/avatars/avatar_1.png')} className="w-full h-full" />
                 </Pressable>
                 <Pressable className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden transform scale-x-[-1]">
                     <Foundation name="magnifying-glass" size={20} color={header === 'Spotlight' || header === '' ? 'white' : '#555c57'} />

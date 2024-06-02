@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, ActivityIndicator, Pressable } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, Pressable, Image } from 'react-native';
 import { useState, useEffect} from 'react';
 import Header from './Header';
 import { Entypo, MaterialIcons, Feather } from 'react-native-vector-icons';
@@ -60,7 +60,9 @@ const Chat = ({handleChatCam}) => {
               <>
                 {userStories.map((item, index) => (
                   <View key={index} className="flex flex-row items-center justify-between gap-4 bg-white p-3 pr-5 border border-t-1 border-b-0   border-l-0  border-r-0 border-gray-200">
-                      <View className="w-[50px] h-[50px] bg-red-500 rounded-full"></View>
+                      <View className="w-[50px] h-[50px] bg-purple-500 rounded-full overflow-hidden">
+                          <Image source={item.avatar !== '' ? item.avatar : require('../assets/avatars/user.png')} className="w-full h-full" />
+                      </View>
                       <View className="flex-1">
                           <Text className="font-medium text-lg tracking-wider capitalize">{item.nickName}</Text>
                           <View className="flex flex-row items-center gap-2">
