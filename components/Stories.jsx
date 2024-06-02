@@ -43,7 +43,7 @@ const Stories = () => {
                             color="white"
                           />
                         </View>
-                        <View className="p-[2px] w-full h-full">
+                        <View className=" w-full h-full bg-gray-100 rounded-full border-2 border-white">
                           <Image source={item.avatar !== '' ? item.avatar : require('../assets/avatars/user.png')} className="w-full h-full rounded-full" />
                         </View>
                       </View>
