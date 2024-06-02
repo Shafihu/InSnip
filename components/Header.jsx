@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { useState } from "react";
 import { View, Text, Pressable, Image } from 'react-native';
 import {
@@ -22,7 +23,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
     return (
         <View className={`flex flex-row justify-between px-2 pt-0 mb-4  ${header === 'Chat' && 'bg-white'} ${header === 'Spotlight' || header === '' ? 'absolute top-0 left-0 z-50 w-full mx-0 mb-0 pr-4 mt-2' : ''} ${header === '' ? 'items-start' : 'items-center'}`}>
             <View className="flex flex-row gap-2 items-center">
-                <Pressable className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
+                <Pressable onPress={()=>router.push('auth')} className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
                     {/* <MaterialCommunityIcons
                         name="account"
                         size={50}

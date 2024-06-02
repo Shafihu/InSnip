@@ -54,6 +54,10 @@ const Chat = ({handleChatCam}) => {
               <View className="flex-1">
                   <Text className="font-medium text-lg">Archived</Text>
               </View>
+              <View className="items-center justify-center">
+                  <Text className="text-xl tracking-widest font-semibold text-[#FFD700]">New</Text>
+                  <Entypo name='new' size={25} color='#FFD700' />
+              </View>
           </View>
 
           {loading ? <ActivityIndicator size='small' /> : (
@@ -66,7 +70,7 @@ const Chat = ({handleChatCam}) => {
                       <View className="flex-1">
                           <Text className="font-medium text-lg tracking-wider capitalize">{item.nickName}</Text>
                           <View className="flex flex-row items-center gap-2">
-                              <MaterialIcons name= 'chat-bubble-outline' size={12} color="rgb(50,50,50)" className="transform scale-x-[-1]" />
+                              <MaterialIcons name= 'chat-bubble-outline' size={12} color="#00BFFF" className="transform scale-x-[-1]" />
                               <Text className="text-[11px] font-medium text-gray-500">Tap to chat</Text>
                           </View>
                       </View>
