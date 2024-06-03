@@ -26,7 +26,7 @@ import Spotlight from "../../components/Spotlight";
 import TabBarPreview from "../../components/TabBarPreview";
 import Header from "../../components/Header";
 
-const home = () => {
+const HomeScreen = () => {
   const [facing, setFacing] = useState("front");
   const [flash, setFlash] = useState("off");
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -281,4 +281,4 @@ const home = () => {
   );
 };
 
-export default home;
+export default HomeScreen;
