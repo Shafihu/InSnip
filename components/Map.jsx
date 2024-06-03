@@ -1,10 +1,14 @@
-import { View, Text } from 'react-native'
+import { View, Text, SafeAreaView } from 'react-native'
 import React from 'react'
+import Header from './Header'
 
 const Map = () => {
   return (
-    <View className="flex-1 bg-white">
-        <Text>Maps</Text>
+    <View style={{ flex: 1, backgroundColor: 'white', position: 'relative' }}>
+      <Header header='Map' />
+          <View className="flex-1 items-center justify-center">
+              <Text>Maps</Text>
+          </View>
     </View>
   )
 }

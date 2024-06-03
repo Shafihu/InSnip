@@ -161,9 +161,9 @@ const HomeScreen = () => {
     <>
       <View
         className={`flex-1 ${stories && "bg-white"} ${
-          chat ? "bg-white" : "bg-black"
+          chat || maps ? "bg-white" : "bg-black"
         } ${
-          camera || stories || chat || spotlight ? "pt-[50px]" : "pt-0"
+          camera || stories || chat || spotlight || maps ? "pt-[50px]" : "pt-0"
         } relative`}
       >
         <View className=" rounded-t-[20px] rounded-b-[5px] overflow-hidden">
@@ -198,7 +198,7 @@ const HomeScreen = () => {
                         className="text-white font-bold text-[20px]"
                         onPress={() => setPhoto(null)}
                       >
-                        <Text className="text-white">Discard</Text>
+                        {/* <Text className="text-white">Discard</Text> */}
                       </TouchableOpacity>
                     </View>
                   </View>

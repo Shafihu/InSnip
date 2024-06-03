@@ -21,9 +21,9 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
     }
 
     return (
-        <View className={`flex flex-row justify-between px-2 pt-0 mb-4  ${header === 'Chat' && 'bg-white'} ${header === 'Spotlight' || header === '' ? 'absolute top-0 left-0 z-50 w-full mx-0 mb-0 pr-4 mt-2' : ''} ${header === '' ? 'items-start' : 'items-center'}`}>
+        <View className={`flex flex-row justify-between px-2 pt-0 mb-4  ${header === 'Chat' || header === 'Stories' && 'bg-white'} ${header === 'Spotlight' || header === '' ? 'absolute top-0 left-0 z-50 w-full mx-0 mb-0 pr-4 mt-2' : ''} ${header === '' ? 'items-start' : 'items-center'}`}>
             <View className="flex flex-row gap-2 items-center">
-                <Pressable onPress={()=>router.push('')} className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
+                <Pressable onPress={()=>{}} className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
                     {/* <MaterialCommunityIcons
                         name="account"
                         size={50}
@@ -33,12 +33,13 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                     <Image source={require('../assets/avatars/avatar_1.png')} className="w-full h-full" />
                 </Pressable>
                 <Pressable className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden transform scale-x-[-1]">
-                    <Foundation name="magnifying-glass" size={20} color={header === 'Spotlight' || header === '' ? 'white' : '#555c57'} />
+                    <Foundation name="magnifying-glass" size={20} color={header === 'Spotlight' || header === '' || header === 'Map' ? 'white' : '#555c57'} />
                 </Pressable>
             </View>
-            <Text className={`text-[1.35rem] font-semibold tracking-wider text-center ${header === 'Spotlight' || header === '' ? 'text-white mr-[40px]' : ''}`}>{header}</Text>
+            <Text className={`text-[1.35rem] font-semibold tracking-wider text-center ${header === 'Spotlight' || header === '' || header === 'Map' ? 'text-white mr-[40px]' : ''}`}>{header}</Text>
+
             <View className="flex flex-row gap-2 items-start">
-                {header !== 'Spotlight' && (
+                {header !== 'Spotlight' && header !== 'Map' && (
                     <Pressable className={`bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative`}>
                         <MaterialCommunityIcons
                             name="account-plus"
@@ -51,7 +52,13 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                     </Pressable>
                 )}
 
-                {header === '' ? (
+                {header === 'Map' ? (
+                    <Pressable className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
+                        <Ionicons name="settings-sharp" size={25} color="white" className="transform rotate-90" />
+                    </Pressable>
+                ) : (
+                    <View>
+                                            {header === '' ? (
                     <View className="flex flex-row items-start gap-2 h-auto">
                         <View className="flex flex-col gap-2">
                             <View className="mt-0 w-[40px] h-auto bg-black/15 rounded-full flex flex-col py-2 items-center gap-2">
@@ -90,6 +97,8 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                                 <Fontisto name="more-v-a" size={20} color={header === '' ? 'white' : '#555c57'} className="transform rotate-90" />
                             </Pressable>
                         )}
+                    </View>
+                )}
                     </View>
                 )}
             </View>

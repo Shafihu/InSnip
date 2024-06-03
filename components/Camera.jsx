@@ -107,7 +107,7 @@ const Camera = () => {
       </View>
 
       {/* RIGHT CAMERA ICONS  */}
-      <View className="absolute top-0 right-0 flex flex-row items-start gap-2 mr-[0.75rem] h-auto">
+      <View className="absolute top-0 right-0 flex flex-row items-start gap-2 h-auto">
         <Pressable className="bg-black/15 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
           <MaterialCommunityIcons name="account-plus" size={20} color="white" />
         </Pressable>
