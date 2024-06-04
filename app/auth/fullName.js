@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   View,
@@ -9,45 +9,12 @@ import {
   KeyboardAvoidingView,
   SafeAreaView,
   Pressable,
-  ActivityIndicator,
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
-import { FIREBASE_AUTH, FIRESTORE_DB } from "../../Firebase/config";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
 
-const RegisterScreen = () => {
-  const { firstName, lastName, birthday, userName } = useLocalSearchParams();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleSignUp = async () => {
-    setLoading(true);
-    try {
-      const response = await createUserWithEmailAndPassword(
-        FIREBASE_AUTH,
-        email,
-        password
-      );
-
-      try {
-        setDoc(doc(FIRESTORE_DB, "users", response.user.uid), {
-          Email: email,
-          Password: password,
-        });
-      } catch (e) {
-        console.log("Error adding document : " + e);
-      }
-    } catch (error) {
-      console.log("Registration Failed : " + error);
-      alert("Check your email!");
-    } finally {
-      setLoading(false);
-      setEmail("");
-      setPassword("");
-    }
-  };
+const FullNameScreen = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -66,34 +33,33 @@ const RegisterScreen = () => {
                 marginBottom: 40,
               }}
             >
-              Create a new account
+              What's your name?
             </Text>
             <TextInput
               style={styles.input}
-              placeholder="EMAIL"
+              placeholder="FIRST NAME"
               placeholderTextColor="#00AFFF"
-              value={email}
-              onChangeText={setEmail}
+              value={firstName}
+              onChangeText={setFirstName}
             />
             <TextInput
               style={styles.input}
-              placeholder="PASSWORD"
+              placeholder="LAST NAME"
               placeholderTextColor="#00AFFF"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
+              value={lastName}
+              onChangeText={setLastName}
             />
-            <Text className="text-[12px] font-medium text-gray-400">
-              By tapping Sign Up & Accept, you acknowledge that you have read
-              the Privacy Policy and agree to the Terms of Service.
-            </Text>
           </View>
-          <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
-            {loading ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <Text style={styles.signUpText}>Sign Up & Accept</Text>
-            )}
+          <TouchableOpacity
+            onPress={() =>
+              router.push({
+                pathname: "/auth/birthday",
+                params: { firstName: firstName, lastName: lastName },
+              })
+            }
+            style={styles.signUpButton}
+          >
+            <Text style={styles.signUpText}>Continue</Text>
           </TouchableOpacity>
         </KeyboardAvoidingView>
       </View>
@@ -101,7 +67,7 @@ const RegisterScreen = () => {
   );
 };
 
-export default RegisterScreen;
+export default FullNameScreen;
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -121,7 +87,7 @@ const styles = StyleSheet.create({
   },
   keyboardView: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "space-between",
     gap: 5,
   },
   input: {

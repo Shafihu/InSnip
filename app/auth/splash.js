@@ -20,7 +20,7 @@ export default function SplashScreen() {
       </View>
       <View style={styles.bottomContainer}>
         <TouchableOpacity
-          onPress={() => router.push("/auth/register")}
+          onPress={() => router.push("/auth/fullName")}
           style={styles.signUpButton}
         >
           <Text style={styles.signUpText}>Sign Up</Text>
