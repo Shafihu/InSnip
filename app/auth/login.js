@@ -28,8 +28,6 @@ const LoginScreen = () => {
         email,
         password
       );
-      // // console.log(response);
-      // router.push("/verified");
     } catch (error) {
       console.log("Sign In Failed : " + error);
       alert("Check your email!");

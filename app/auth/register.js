@@ -34,7 +34,6 @@ const RegisterScreen = () => {
           Email: email,
           Password: password,
         });
-        alert("Created!");
       } catch (e) {
         console.log("Error adding document : " + e);
       }
