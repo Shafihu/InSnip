@@ -14,13 +14,33 @@ import {
 import { FontAwesome6 } from "react-native-vector-icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../Firebase/config";
+import Toast from "react-native-toast-message";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const showErrorToast = (message) => {
+    Toast.show({
+      type: "error",
+      text1: message,
+    });
+  };
+
+  const showSuccessToast = (message) => {
+    Toast.show({
+      type: "success",
+      text1: message,
+    });
+  };
+
   const handleLogin = async () => {
+    if (!email || !password) {
+      showErrorToast("Email and password are required!");
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await signInWithEmailAndPassword(
@@ -28,13 +48,14 @@ const LoginScreen = () => {
         email,
         password
       );
-    } catch (error) {
-      console.log("Sign In Failed : " + error);
-      alert("Check your email!");
-    } finally {
-      setLoading(false);
+      showSuccessToast("Login successful!");
       setEmail("");
       setPassword("");
+    } catch (error) {
+      console.log("Sign In Failed: " + error);
+      showErrorToast("Invalid email or password. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,32 +66,34 @@ const LoginScreen = () => {
       </Pressable>
       <View style={styles.container}>
         <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
-          <Text
-            style={{
-              textAlign: "center",
-              fontWeight: "600",
-              fontSize: "25",
-              color: "#333",
-              marginBottom: 40,
-            }}
-          >
-            Log in to InSnip
-          </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="EMAIL"
-            placeholderTextColor="#00AFFF"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="PASSWORD"
-            placeholderTextColor="#00AFFF"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
+          <View className="flex-1 justify-center">
+            <Text
+              style={{
+                textAlign: "center",
+                fontWeight: "600",
+                fontSize: 22,
+                color: "#333",
+                marginBottom: 40,
+              }}
+            >
+              Log in to InSnip
+            </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="EMAIL"
+              placeholderTextColor="#00AFFF"
+              value={email}
+              onChangeText={setEmail}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="PASSWORD"
+              placeholderTextColor="#00AFFF"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
           <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
             {loading ? (
               <ActivityIndicator size="small" color="white" />

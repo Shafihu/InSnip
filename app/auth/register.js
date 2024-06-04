@@ -15,6 +15,7 @@ import { FontAwesome6 } from "react-native-vector-icons";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../Firebase/config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
+import Toast from "react-native-toast-message";
 
 const RegisterScreen = () => {
   const { firstName, lastName, birthday, userName } = useLocalSearchParams();
@@ -22,7 +23,26 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const showSuccessToast = () => {
+    Toast.show({
+      type: "success",
+      text1: "Account Created Successfully!🎉",
+    });
+  };
+
+  const showErrorToast = (message) => {
+    Toast.show({
+      type: "error",
+      text1: message,
+    });
+  };
+
   const handleSignUp = async () => {
+    if (!email || !password) {
+      showErrorToast("Email and password are required!");
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await createUserWithEmailAndPassword(
@@ -32,15 +52,21 @@ const RegisterScreen = () => {
       );
 
       try {
-        setDoc(doc(FIRESTORE_DB, "users", response.user.uid), {
+        await setDoc(doc(FIRESTORE_DB, "users", response.user.uid), {
           Email: email,
           Password: password,
+          FirstName: firstName,
+          LastName: lastName,
+          Birthday: birthday,
+          Username: userName,
         });
+
+        showSuccessToast();
       } catch (e) {
-        console.log("Error adding document : " + e);
+        console.log("Error adding document: " + e);
       }
     } catch (error) {
-      console.log("Registration Failed : " + error);
+      console.log("Registration Failed: " + error);
       alert("Check your email!");
     } finally {
       setLoading(false);
@@ -61,7 +87,7 @@ const RegisterScreen = () => {
               style={{
                 textAlign: "center",
                 fontWeight: "600",
-                fontSize: "22",
+                fontSize: 22,
                 color: "#333",
                 marginBottom: 40,
               }}

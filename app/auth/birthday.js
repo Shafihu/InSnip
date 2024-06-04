@@ -11,10 +11,33 @@ import {
   Pressable,
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
+import Toast from "react-native-toast-message";
 
 const FullNameScreen = () => {
   const { firstName, lastName } = useLocalSearchParams();
-  const [birthdate, setBirthdate] = useState();
+  const [birthdate, setBirthdate] = useState("");
+
+  const showToast = (message) => {
+    Toast.show({
+      type: "error",
+      text1: message,
+    });
+  };
+
+  const handleContinue = () => {
+    if (!birthdate) {
+      showToast("Birthday is required!");
+    } else {
+      router.push({
+        pathname: "/auth/pickUserName",
+        params: {
+          firstName: firstName,
+          lastName: lastName,
+          birthday: birthdate,
+        },
+      });
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -28,7 +51,7 @@ const FullNameScreen = () => {
               style={{
                 textAlign: "center",
                 fontWeight: "600",
-                fontSize: "22",
+                fontSize: 22,
                 color: "#333",
                 marginBottom: 40,
               }}
@@ -44,16 +67,7 @@ const FullNameScreen = () => {
             />
           </View>
           <TouchableOpacity
-            onPress={() =>
-              router.push({
-                pathname: "/auth/pickUserName",
-                params: {
-                  firstName: firstName,
-                  lastName: lastName,
-                  birthday: birthdate,
-                },
-              })
-            }
+            onPress={handleContinue}
             style={styles.signUpButton}
           >
             <Text style={styles.signUpText}>Continue</Text>

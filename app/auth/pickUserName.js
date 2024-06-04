@@ -11,10 +11,34 @@ import {
   Pressable,
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
+import Toast from "react-native-toast-message";
 
-const pickUserNameScreen = () => {
+const PickUserNameScreen = () => {
   const { firstName, lastName, birthday } = useLocalSearchParams();
-  const [userName, setUserName] = useState();
+  const [userName, setUserName] = useState("");
+
+  const showToast = (message) => {
+    Toast.show({
+      type: "error",
+      text1: message,
+    });
+  };
+
+  const handleContinue = () => {
+    if (!userName) {
+      showToast("Username is required!");
+    } else {
+      router.push({
+        pathname: "/auth/register",
+        params: {
+          firstName: firstName,
+          lastName: lastName,
+          birthday: birthday,
+          userName: userName,
+        },
+      });
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -28,7 +52,7 @@ const pickUserNameScreen = () => {
               style={{
                 textAlign: "center",
                 fontWeight: "600",
-                fontSize: "22",
+                fontSize: 22,
                 color: "#333",
                 marginBottom: 40,
               }}
@@ -44,17 +68,7 @@ const pickUserNameScreen = () => {
             />
           </View>
           <TouchableOpacity
-            onPress={() =>
-              router.push({
-                pathname: "/auth/register",
-                params: {
-                  firstName: firstName,
-                  lastName: lastName,
-                  birthday: birthday,
-                  userName: userName,
-                },
-              })
-            }
+            onPress={handleContinue}
             style={styles.signUpButton}
           >
             <Text style={styles.signUpText}>Continue</Text>
@@ -65,7 +79,7 @@ const pickUserNameScreen = () => {
   );
 };
 
-export default pickUserNameScreen;
+export default PickUserNameScreen;
 
 const styles = StyleSheet.create({
   safeArea: {
