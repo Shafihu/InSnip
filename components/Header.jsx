@@ -1,6 +1,5 @@
 import { router } from "expo-router";
-import { onAuthStateChanged } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { View, Text, Pressable, Image } from 'react-native';
 import {
     MaterialCommunityIcons,
@@ -12,7 +11,7 @@ import {
     AntDesign,
     Foundation
 } from 'react-native-vector-icons';
-// import { FIREBASE_AUTH } from "../Firebase/config";
+
 
 const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
     const [isFlash, setIsFlash] = useState(false);
@@ -23,20 +22,15 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
     }
 
     return (
-        <View className={`flex flex-row justify-between px-2 pt-0 mb-4  ${header === 'Chat' || header === 'Stories' ? 'bg-white' : 'bg-transparent'} ${header === 'Spotlight' || header === '' || header === 'Map' ? 'absolute top-0 left-0 z-50 w-full mx-0 mb-0 pr-4 mt-2' : ''} ${header === '' ? 'items-start' : 'items-center'} ${header === 'Map' ? 'pt-[42px] pb-[10px] bg-black/[0.07]' : ''}`}>
+        <View className={`flex flex-row justify-between px-2 pt-0 mb-4  ${header === 'Chat' || header === 'Stories' ? 'bg-white' : 'bg-transparent'} ${header === 'Spotlight' || header === '' ? 'absolute top-0 left-0 z-50 w-full mx-0 mb-0 pr-4 mt-2' : ''} ${header === '' ? 'items-start' : 'items-center'} ${header === 'Map' ? 'pt-[50px] pb-[10px]' : ''}`}>
             <View className="flex flex-row gap-2 items-center">
                 <Pressable 
                     onPress={()=> router.push('/verified/profile')} 
                     className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                        {/* <MaterialCommunityIcons
-                            name="account"
-                            size={50}
-                            color="yellow"
-                            lassName="absolute top-0 right-1"
-                        /> */}
+
                         <Image source={require('../assets/avatars/avatar_1.png')} className="w-full h-full" />
                 </Pressable>
-                <Pressable className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden transform scale-x-[-1]">
+                <Pressable className={`rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden transform scale-x-[-1] ${header === 'Map' ? 'bg-black/15' : 'bg-black/5'}`}>
                     <Foundation name="magnifying-glass" size={20} color={header === 'Spotlight' || header === '' || header === 'Map' ? 'white' : '#555c57'} />
                 </Pressable>
             </View>
@@ -57,8 +51,8 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                 )}
 
                 {header === 'Map' ? (
-                    <Pressable className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-                        <Ionicons name="settings-sharp" size={25} color="white" className="transform rotate-90" />
+                    <Pressable className={`rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden ${header === 'Map' ? 'bg-black/15' : 'bg-black/5'}`}>
+                        <Ionicons name="settings-sharp" size={25} color="white" />
                     </Pressable>
                 ) : (
                     <View>
