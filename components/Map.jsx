@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, StyleSheet } from 'react-native'
+import { View,  StyleSheet } from 'react-native'
 import React from 'react'
 import Header from './Header'
 import MapView from 'react-native-maps';
@@ -12,7 +12,7 @@ const Map = () => {
           style={styles.background}>
             <Header header='Map' />
         </LinearGradient>
-        <MapView style={{width: '100%', height: '100%',}} className="w-full h-full"/>
+        <MapView style={{width: '100%', height: '100%',}}/>
     </View>
   )
 }
@@ -20,30 +20,11 @@ const Map = () => {
 export default Map
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'orange',
-  },
   background: {
     position: 'absolute',
     left: 0,
     right: 0,
     top: 0,
     zIndex: 999
-  },
-  button: {
-    padding: 15,
-    alignItems: 'center',
-    borderRadius: 5,
-    position: 'absolute',
-    top: '50%',
-    zIndex: 99
-  },
-  text: {
-    backgroundColor: 'transparent',
-    fontSize: 15,
-    color: '#fff',
   },
 });
