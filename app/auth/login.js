@@ -48,7 +48,7 @@ const LoginScreen = () => {
         email,
         password
       );
-      showSuccessToast("Login successful!");
+      // showSuccessToast("Login successful!");
       setEmail("");
       setPassword("");
     } catch (error) {
@@ -82,8 +82,9 @@ const LoginScreen = () => {
               style={styles.input}
               placeholder="EMAIL"
               placeholderTextColor="#00AFFF"
-              value={email}
+              value={email.toLowerCase()}
               onChangeText={setEmail}
+              keyboardType="email-address"
             />
             <TextInput
               style={styles.input}

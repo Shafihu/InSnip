@@ -25,7 +25,7 @@ const UserProfile = () => {
   const handleSignOut = () => {
     try {
       signOut(FIREBASE_AUTH);
-      showSuccessToast("Logout Successful!");
+      // showSuccessToast("Logout Successful!");
     } catch (error) {
       showErrorToast("Failed to logout!");
     }

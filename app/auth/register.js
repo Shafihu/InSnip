@@ -91,15 +91,14 @@ const RegisterScreen = () => {
                 color: "#333",
                 marginBottom: 40,
               }}
-            >
-              Create a new account
-            </Text>
+            ></Text>
             <TextInput
               style={styles.input}
               placeholder="EMAIL"
               placeholderTextColor="#00AFFF"
               value={email}
               onChangeText={setEmail}
+              keyboardType="email-address"
             />
             <TextInput
               style={styles.input}
