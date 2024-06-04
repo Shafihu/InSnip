@@ -9,12 +9,36 @@ import {
   KeyboardAvoidingView,
   SafeAreaView,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { FIREBASE_AUTH } from "../../Firebase/config";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    setLoading(true);
+    try {
+      const response = await signInWithEmailAndPassword(
+        FIREBASE_AUTH,
+        email,
+        password
+      );
+      // // console.log(response);
+      // router.push("/verified");
+    } catch (error) {
+      console.log("Sign In Failed : " + error);
+      alert("Check your email!");
+    } finally {
+      setLoading(false);
+      setEmail("");
+      setPassword("");
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -49,11 +73,12 @@ const LoginScreen = () => {
             value={password}
             onChangeText={setPassword}
           />
-          <TouchableOpacity
-            onPress={() => router.push("/verified")}
-            style={styles.loginButton}
-          >
-            <Text style={styles.loginText}>Log In</Text>
+          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+            {loading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text style={styles.loginText}>Log In</Text>
+            )}
           </TouchableOpacity>
           <TouchableOpacity>
             <Text style={styles.forgotPassword}>Forgot your password?</Text>

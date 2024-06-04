@@ -1,37 +1,73 @@
-import { View, Text, ScrollView, ActivityIndicator, Pressable, Image } from 'react-native';
-import { useState, useEffect } from 'react';
+import { View, Text, ScrollView, ActivityIndicator, Pressable, Image, Button, RefreshControl } from 'react-native';
+import { useState, useEffect, useCallback } from 'react';
 import Header from './Header';
 import { Entypo, MaterialIcons, Feather } from 'react-native-vector-icons';
 import getUserStories from '../utils/getUserStories';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const avatarMap = {
+  avatar1: require('../assets/avatars/avatar_1.png'),
+  avatar2: require('../assets/avatars/avatar_11.png'),
+  avatar3: require('../assets/avatars/avatar_3.webp'),
+  avatar4: require('../assets/avatars/avatar_4.webp'),
+  avatar5: require('../assets/avatars/avatar_5.png'),
+  avatar6: require('../assets/avatars/avatar_6.png'),
+  avatar7: require('../assets/avatars/avatar_7.jpg'),
+  avatar8: require('../assets/avatars/avatar_8.jpg'),
+  avatar9: require('../assets/avatars/avatar_9.png'),
+  avatar10: require('../assets/avatars/avatar_10.webp'),
+};
+
 const Chat = ({ handleChatCam }) => {
-  const circleSize = 60; 
+  const circleSize = 60;
 
   const [userStories, setUserStories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchStories = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await getUserStories();
+      setUserStories(res);
+      await AsyncStorage.setItem('userStories', JSON.stringify(res));
+    } catch (error) {
+      console.error('Failed to fetch stories:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchStories = async () => {
+    const loadStories = async () => {
       setLoading(true);
-      const cachedStories = await AsyncStorage.getItem('userStories');
-      if (cachedStories) {
-        setUserStories(JSON.parse(cachedStories));
-        setLoading(false);
-      } else {
-        const res = await getUserStories();
-        setUserStories(res);
-        await AsyncStorage.setItem('userStories', JSON.stringify(res));
+      try {
+        const cachedStories = await AsyncStorage.getItem('userStories');
+        if (cachedStories) {
+          setUserStories(JSON.parse(cachedStories));
+        } else {
+          await fetchStories();
+        }
+      } catch (error) {
+        console.error('Failed to load stories:', error);
+      } finally {
         setLoading(false);
       }
     };
+    loadStories();
+  }, [fetchStories]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
     fetchStories();
-  }, []);
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white', position: 'relative' }}>
       <Header header="Chat" />
       <View style={{ flex: 1, backgroundColor: 'rgb(243, 244, 246)' }}>
+        <Button title="Refresh" onPress={fetchStories} />
         <View
           style={{
             backgroundColor: '#00BFFF',
@@ -54,7 +90,13 @@ const Chat = ({ handleChatCam }) => {
         >
           <Entypo name="new-message" size={25} color="white" />
         </View>
-        <ScrollView className="flex-1 mb-28" showsVerticalScrollIndicator={false}>
+        <ScrollView
+          className="flex-1 mb-28"
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           <View className="flex flex-row items-center justify-between gap-4 bg-white p-3 m-2 rounded-2xl">
             <View className="w-[60px] h-[60px] bg-yellow-200 rounded-full flex items-center justify-center">
               <Entypo name="archive" size={30} color="black" />
@@ -79,8 +121,9 @@ const Chat = ({ handleChatCam }) => {
                 >
                   <View className="w-[50px] h-[50px] bg-gray-100 rounded-full overflow-hidden">
                     <Image
-                      source={item.avatar !== '' ? { uri: item.avatar } : require('../assets/avatars/user.png')}
-                      className="w-full h-full"
+                      source={avatarMap[`avatar${item.avatarId}`] || require('../assets/avatars/user.png')}
+                      style={{ width: '100%', height: '100%' }}
+                      onError={(error) => console.error('Image loading error:', error)}
                     />
                   </View>
                   <View className="flex-1">

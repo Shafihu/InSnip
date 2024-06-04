@@ -11,10 +11,42 @@ import {
   Pressable,
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../Firebase/config";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { setDoc, doc } from "firebase/firestore";
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSignUp = async () => {
+    setLoading(true);
+    try {
+      const response = await createUserWithEmailAndPassword(
+        FIREBASE_AUTH,
+        email,
+        password
+      );
+
+      try {
+        setDoc(doc(FIRESTORE_DB, "users", response.user.uid), {
+          Email: email,
+          Password: password,
+        });
+        alert("Created!");
+      } catch (e) {
+        console.log("Error adding document : " + e);
+      }
+    } catch (error) {
+      console.log("Registration Failed : " + error);
+      alert("Check your email!");
+    } finally {
+      setLoading(false);
+      setEmail("");
+      setPassword("");
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -49,11 +81,12 @@ const RegisterScreen = () => {
             value={password}
             onChangeText={setPassword}
           />
-          <TouchableOpacity
-            onPress={() => router.push("/verified")}
-            style={styles.loginButton}
-          >
-            <Text style={styles.loginText}>Sign Up</Text>
+          <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
+            {loading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text style={styles.signUpText}>Sign Up</Text>
+            )}
           </TouchableOpacity>
         </KeyboardAvoidingView>
       </View>
@@ -91,22 +124,17 @@ const styles = StyleSheet.create({
     fontSize: 13,
     padding: 10,
   },
-  loginButton: {
+  signUpButton: {
     backgroundColor: "#00AFFF",
     paddingVertical: 15,
     borderRadius: 25,
     marginBottom: 20,
     alignItems: "center",
   },
-  loginText: {
+  signUpText: {
     color: "#fff",
     textAlign: "center",
     fontSize: 16,
     fontWeight: "bold",
-  },
-  forgotPassword: {
-    color: "#00AFFF",
-    textAlign: "center",
-    fontWeight: "500",
   },
 });
