@@ -11,11 +11,13 @@ import {
   Pressable,
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import Toast from "react-native-toast-message";
 
 const FullNameScreen = () => {
   const { firstName, lastName } = useLocalSearchParams();
-  const [birthdate, setBirthdate] = useState("");
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [birthdate, setBirthdate] = useState(new Date());
 
   const showToast = (message) => {
     Toast.show({
@@ -62,10 +64,23 @@ const FullNameScreen = () => {
               style={styles.input}
               placeholder="BIRTHDAY"
               placeholderTextColor="#00AFFF"
-              value={birthdate}
-              onChangeText={setBirthdate}
+              value={birthdate.toDateString()}
+              editable={false}
+              onPress={() => setShowDatePicker(true)}
             />
           </View>
+          {showDatePicker && (
+            <DateTimePicker
+              mode="date"
+              display="spinner"
+              value={birthdate}
+              onChange={(event, selectedDate) => {
+                if (selectedDate) {
+                  setBirthdate(selectedDate);
+                }
+              }}
+            />
+          )}
           <TouchableOpacity
             onPress={handleContinue}
             style={styles.signUpButton}
@@ -107,6 +122,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 13,
     padding: 10,
+    color: "#00AFFF",
   },
   signUpButton: {
     backgroundColor: "#00AFFF",
