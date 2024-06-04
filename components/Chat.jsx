@@ -26,7 +26,7 @@ const Chat = ({ handleChatCam }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchStories = useCallback(async () => {
-    setLoading(true);
+    setLoading(false);
     try {
       const res = await getUserStories();
       setUserStories(res);
@@ -67,7 +67,7 @@ const Chat = ({ handleChatCam }) => {
     <View style={{ flex: 1, backgroundColor: 'white', position: 'relative' }}>
       <Header header="Chat" />
       <View style={{ flex: 1, backgroundColor: 'rgb(243, 244, 246)' }}>
-        <Button title="Refresh" onPress={fetchStories} />
+        {/* <Button title="Refresh" onPress={fetchStories} /> */}
         <View
           style={{
             backgroundColor: '#00BFFF',

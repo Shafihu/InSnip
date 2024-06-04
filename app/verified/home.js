@@ -161,9 +161,9 @@ const HomeScreen = () => {
     <>
       <View
         className={`flex-1 ${stories && "bg-white"} ${
-          chat || maps ? "bg-white" : "bg-black"
+          chat ? "bg-white" : "bg-black"
         } ${
-          camera || stories || chat || spotlight || maps ? "pt-[50px]" : "pt-0"
+          camera || stories || chat || spotlight ? "pt-[50px]" : "pt-0"
         } relative`}
       >
         <View className=" rounded-t-[20px] rounded-b-[5px] overflow-hidden">

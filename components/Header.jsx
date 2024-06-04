@@ -23,7 +23,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
     }
 
     return (
-        <View className={`flex flex-row justify-between px-2 pt-0 mb-4  ${header === 'Chat' || header === 'Stories' && 'bg-white'} ${header === 'Spotlight' || header === '' ? 'absolute top-0 left-0 z-50 w-full mx-0 mb-0 pr-4 mt-2' : ''} ${header === '' ? 'items-start' : 'items-center'}`}>
+        <View className={`flex flex-row justify-between px-2 pt-0 mb-4  ${header === 'Chat' || header === 'Stories' ? 'bg-white' : 'bg-transparent'} ${header === 'Spotlight' || header === '' || header === 'Map' ? 'absolute top-0 left-0 z-50 w-full mx-0 mb-0 pr-4 mt-2' : ''} ${header === '' ? 'items-start' : 'items-center'} ${header === 'Map' ? 'pt-[42px] pb-[10px] bg-black/[0.07]' : ''}`}>
             <View className="flex flex-row gap-2 items-center">
                 <Pressable 
                     onPress={()=> router.push('/verified/profile')} 
