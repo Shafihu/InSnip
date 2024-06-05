@@ -11,10 +11,14 @@ import {
     AntDesign,
     Foundation
 } from 'react-native-vector-icons';
+import processUserImage from "../utils/processUserImage";
+import { useUser } from "../Context/userContext";
 
 
 const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
     const [isFlash, setIsFlash] = useState(false);
+    const { userData } = useUser();
+
 
     const FlashMode = () => {
         setIsFlash((prev) => !prev);
@@ -26,9 +30,12 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
             <View className="flex flex-row gap-2 items-center">
                 <Pressable 
                     onPress={()=> router.push('/verified/profile')} 
-                    className="bg-black/5 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
-
-                        <Image source={require('../assets/avatars/avatar_1.png')} className="w-full h-full" />
+                    className="bg-orange-500 rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden">
+                        {userData ? 
+                            <Image source={processUserImage(userData.UserImage)} className="w-full h-full" />
+                                : 
+                            <Image source={require('../assets/avatars/user.png')} className="w-full h-full" /> 
+                        }
                 </Pressable>
                 <Pressable className={`rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden transform scale-x-[-1] ${header === 'Map' ? 'bg-black/15' : 'bg-black/5'}`}>
                     <Foundation name="magnifying-glass" size={20} color={header === 'Spotlight' || header === '' || header === 'Map' ? 'white' : '#555c57'} />

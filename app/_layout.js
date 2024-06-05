@@ -2,7 +2,7 @@ import React from "react";
 import { Stack } from "expo-router";
 import "../global.css";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
-import { Ionicons } from "react-native-vector-icons";
+import { UserProvider } from "../Context/userContext";
 
 const RootLayout = () => {
   const toastConfig = {
@@ -50,18 +50,20 @@ const RootLayout = () => {
 
   return (
     <>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="auth"
-          options={{ headerShown: false, gestureEnabled: false }}
-        />
-        <Stack.Screen
-          name="verified"
-          options={{ headerShown: false, gestureEnabled: false }}
-        />
-      </Stack>
-      <Toast config={toastConfig} />
+      <UserProvider>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="auth"
+            options={{ headerShown: false, gestureEnabled: false }}
+          />
+          <Stack.Screen
+            name="verified"
+            options={{ headerShown: false, gestureEnabled: false }}
+          />
+        </Stack>
+        <Toast config={toastConfig} />
+      </UserProvider>
     </>
   );
 };

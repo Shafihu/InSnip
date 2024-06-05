@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import {
   View,
@@ -9,17 +9,15 @@ import {
   KeyboardAvoidingView,
   SafeAreaView,
   Pressable,
-  ActivityIndicator,
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { FIREBASE_AUTH } from "../../Firebase/config";
 import Toast from "react-native-toast-message";
 
-const LoginScreen = () => {
+const RegisterScreen = () => {
+  const { firstName, lastName, birthday, userName } = useLocalSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+
 
   const showErrorToast = (message) => {
     Toast.show({
@@ -28,36 +26,24 @@ const LoginScreen = () => {
     });
   };
 
-  const showSuccessToast = (message) => {
-    Toast.show({
-      type: "success",
-      text1: message,
-    });
-  };
-
-  const handleLogin = async () => {
+  const handleContinue = () => {
     if (!email || !password) {
       showErrorToast("Email and password are required!");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const response = await signInWithEmailAndPassword(
-        FIREBASE_AUTH,
-        email,
-        password
-      );
-      // showSuccessToast("Login successful!");
-      setEmail("");
-      setPassword("");
-    } catch (error) {
-      console.log("Sign In Failed: " + error);
-      showErrorToast("Invalid email or password. Please try again.");
-    } finally {
-      setLoading(false);
+    } else {
+      router.push({
+        pathname: "/auth/pickAvatar",
+        params: {
+          firstName: firstName,
+          lastName: lastName,
+          birthday: birthday,
+          userName: userName,
+          email: email,
+          password: password
+        },
+      });
     }
   };
+
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -75,14 +61,12 @@ const LoginScreen = () => {
                 color: "#333",
                 marginBottom: 40,
               }}
-            >
-              Log in to InSnip
-            </Text>
+            >Almost there...</Text>
             <TextInput
               style={styles.input}
               placeholder="EMAIL"
               placeholderTextColor="#00AFFF"
-              value={email.toLowerCase()}
+              value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
             />
@@ -94,16 +78,13 @@ const LoginScreen = () => {
               value={password}
               onChangeText={setPassword}
             />
+            <Text className="text-[12px] font-medium text-gray-400">
+              By tapping Continue, you acknowledge that you have read
+              the Privacy Policy and agree to the Terms of Service.
+            </Text>
           </View>
-          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-            {loading ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <Text style={styles.loginText}>Log In</Text>
-            )}
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={styles.forgotPassword}>Forgot your password?</Text>
+          <TouchableOpacity onPress={handleContinue} style={styles.signUpButton}>
+              <Text style={styles.signUpText}>Continue</Text>
           </TouchableOpacity>
         </KeyboardAvoidingView>
       </View>
@@ -111,7 +92,7 @@ const LoginScreen = () => {
   );
 };
 
-export default LoginScreen;
+export default RegisterScreen;
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -141,22 +122,17 @@ const styles = StyleSheet.create({
     fontSize: 13,
     padding: 10,
   },
-  loginButton: {
+  signUpButton: {
     backgroundColor: "#00AFFF",
     paddingVertical: 15,
     borderRadius: 25,
     marginBottom: 20,
     alignItems: "center",
   },
-  loginText: {
+  signUpText: {
     color: "#fff",
     textAlign: "center",
     fontSize: 16,
     fontWeight: "bold",
-  },
-  forgotPassword: {
-    color: "#00AFFF",
-    textAlign: "center",
-    fontWeight: "500",
   },
 });
