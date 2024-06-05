@@ -23,8 +23,16 @@ const PickAvatarScreen = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const images = [
-    { id: 1, source: require("../../assets/avatars/user.png"), path: "user.png" },
-    { id: 2, source: require("../../assets/avatars/avatar_5.png"), path: "avatar_5.png" },
+    { id: 1, source: require("../../assets/avatars/avatar_1.png"), path: "avatar_1.png" },
+    { id: 2, source: require("../../assets/avatars/avatar_11.png"), path: "avatar_11.png" },
+    { id: 3, source: require("../../assets/avatars/avatar_3.webp"), path: "avatar_3.webp" },
+    { id: 4, source: require("../../assets/avatars/avatar_4.webp"), path: "avatar_4.webp" },
+    { id: 5, source: require("../../assets/avatars/avatar_5.png"), path: "avatar_5.png" },
+    { id: 6, source: require("../../assets/avatars/avatar_6.png"), path: "avatar_6.png" },
+    { id: 7, source: require("../../assets/avatars/avatar_7.jpg"), path: "avatar_7.jpg" },
+    { id: 8, source: require("../../assets/avatars/avatar_8.jpg"), path: "avatar_8.jpg" },
+    { id: 9, source: require("../../assets/avatars/avatar_9.png"), path: "avatar_9.png" },
+    { id: 10, source: require("../../assets/avatars/avatar_10.webp"), path: "avatar_10.webp" },
   ];
 
   const showErrorToast = (message) => {
@@ -102,7 +110,7 @@ const PickAvatarScreen = () => {
       </Pressable>
       <View style={styles.container}>
         <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
-          <View className="flex-1 justify-center">
+          <View className="flex-[0.5]" style={{flex: 0.35, justifyContent: 'flex-end'}}>
             <Text
               style={{
                 textAlign: "center",
@@ -157,13 +165,12 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "space-between",
     marginHorizontal: 20,
   },
   keyboardView: {
     flex: 1,
-    justifyContent: "center",
-    gap: 5,
+    justifyContent: "space-between",
   },
   input: {
     borderBottomWidth: 1,
@@ -174,22 +181,27 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    flexWrap: 'wrap',
+    justifyContent: "center",
+    alignItems: 'center',
     marginBottom: 20,
+    flex: 0.5,
+    gap: 10
   },
   imageWrapper: {
     borderWidth: 2,
     borderColor: "transparent",
-    borderRadius: 10,
+    borderRadius: 30,
+    backgroundColor: 'white',
   },
   selectedImage: {
     borderColor: "#00AFFF",
     borderRadius: 50,
   },
   image: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
   },
   loginButton: {
     backgroundColor: "#00AFFF",

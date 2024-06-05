@@ -40,8 +40,7 @@ const UserProfile = () => {
             source={processUserImage(userData.UserImage)}
             style={styles.userImage}
           />
-          <Text style={styles.userInfo}>{userData.FirstName} {userData.LastName}</Text>
-          <Text style={styles.userInfo}>{userData.Email}</Text>
+          <Text style={styles.userInfo}>{userData.Username}</Text>
         </>
       ) : (
         <Text>No user data available</Text>
