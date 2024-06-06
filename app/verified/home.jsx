@@ -19,7 +19,7 @@ import { Ionicons, Foundation } from "react-native-vector-icons";
 import FilterScrollView from "../../components/FilitersScroll";
 
 import TabBar from "../../components/TabBar";
-import Chat from "../../components/Chat";
+import Chat from "../../components/ChatLists";
 import Stories from "../../components/Stories";
 import Map from "../../components/Map";
 import Spotlight from "../../components/Spotlight";

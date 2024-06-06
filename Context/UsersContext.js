@@ -11,24 +11,31 @@ export const UsersProvider = ({ children }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
-      const currentUser = FIREBASE_AUTH.currentUser;
-      if (currentUser) {
-        try {
-          const querySnapshot = await getDocs(
-            collection(FIRESTORE_DB, "users")
-          );
-          const usersList = [];
-          querySnapshot.forEach((doc) => {
-            if (doc.id !== currentUser.uid) {
-              usersList.push({ id: doc.id, ...doc.data() });
+
+      const unsubscribe = FIREBASE_AUTH.onAuthStateChanged(
+        async (currentUser) => {
+          if (currentUser) {
+            try {
+              console.log("Current User:", currentUser); // Log current user
+              const querySnapshot = await getDocs(
+                collection(FIRESTORE_DB, "users")
+              );
+              const usersList = [];
+              querySnapshot.forEach((doc) => {
+                if (doc.id !== currentUser.uid) {
+                  usersList.push({ id: doc.id, ...doc.data() });
+                }
+              });
+              setUsers(usersList);
+            } catch (error) {
+              console.error("Error fetching users: ", error);
             }
-          });
-          setUsers(usersList);
-        } catch (error) {
-          console.error("Error fetching users: ", error);
+          }
+          setLoading(false);
         }
-      }
-      setLoading(false);
+      );
+
+      return () => unsubscribe();
     };
 
     fetchUsers();
