@@ -12,8 +12,7 @@ import {
     Foundation
 } from 'react-native-vector-icons';
 import processUserImage from "../utils/processUserImage";
-import { useUser } from "../Context/userContext";
-
+import { useUser } from "../context/UserContext";
 
 const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
     const [isFlash, setIsFlash] = useState(false);
@@ -112,3 +111,4 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
 };
 
 export default Header;
+

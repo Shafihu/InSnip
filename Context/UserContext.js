@@ -11,47 +11,77 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, async (authUser) => {
-      if (authUser) {
-        try {
-          const userDoc = await getDoc(
-            doc(FIRESTORE_DB, "users", authUser.uid)
-          );
-          if (userDoc.exists()) {
-            const data = userDoc.data();
-            setUserData(data);
-            await storeUserDataLocally(data); // Save user data to local storage
-          } else {
-            console.log("No such document!");
-          }
-        } catch (error) {
-          console.error("Error fetching user data: ", error);
+    const retrieveUserDataLocally = async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem("@userData");
+        return jsonValue != null ? JSON.parse(jsonValue) : null;
+      } catch (error) {
+        console.error("Error retrieving user data locally: ", error);
+        return null;
+      }
+    };
+
+    const fetchUserData = async (uid) => {
+      try {
+        const userDoc = await getDoc(doc(FIRESTORE_DB, "users", uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          setUserData(data);
+          await storeUserDataLocally(data);
+        } else {
+          console.log("No such document!");
         }
+      } catch (error) {
+        console.error("Error fetching user data: ", error);
+      }
+    };
+
+    const storeUserDataLocally = async (userData) => {
+      try {
+        await AsyncStorage.setItem("@userData", JSON.stringify(userData));
+      } catch (error) {
+        console.error("Error storing user data locally: ", error);
+      }
+    };
+
+    const clearUserDataLocally = async () => {
+      try {
+        await AsyncStorage.removeItem("@userData");
+      } catch (error) {
+        console.error("Error clearing user data locally: ", error);
+      }
+    };
+
+    const initializeUserData = async () => {
+      setLoading(true);
+      const authUser = FIREBASE_AUTH.currentUser;
+      if (authUser) {
+        const localUserData = await retrieveUserDataLocally();
+        if (localUserData) {
+          setUserData(localUserData);
+          setLoading(false);
+        }
+        await fetchUserData(authUser.uid);
+      } else {
+        await clearUserDataLocally();
+        setUserData(null);
+        setLoading(false);
+      }
+    };
+
+    initializeUserData();
+
+    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (authUser) => {
+      if (authUser) {
+        fetchUserData(authUser.uid);
       } else {
         setUserData(null);
-        await clearUserDataLocally(); // Clear local user data if user is not authenticated
+        clearUserDataLocally();
       }
-      setLoading(false); // Update loading state after fetching user data
     });
 
     return () => unsubscribe();
   }, []);
-
-  const storeUserDataLocally = async (userData) => {
-    try {
-      await AsyncStorage.setItem("@userData", JSON.stringify(userData));
-    } catch (error) {
-      console.error("Error storing user data locally: ", error);
-    }
-  };
-
-  const clearUserDataLocally = async () => {
-    try {
-      await AsyncStorage.removeItem("@userData");
-    } catch (error) {
-      console.error("Error clearing user data locally: ", error);
-    }
-  };
 
   return (
     <UserContext.Provider value={{ userData, loading }}>

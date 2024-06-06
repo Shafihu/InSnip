@@ -4,7 +4,7 @@ import { FIREBASE_AUTH } from "../../../Firebase/config";
 import { signOut } from "firebase/auth";
 import Toast from "react-native-toast-message";
 import processUserImage from "../../../utils/processUserImage";
-import { useUser } from "../../../Context/userContext";
+import { useUser } from "../../../context/UserContext";
 
 const UserProfile = () => {
   const { userData, loading } = useUser();
