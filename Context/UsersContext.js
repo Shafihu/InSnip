@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../Firebase/config";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 
 const UsersContext = createContext();
 
@@ -13,16 +13,15 @@ export const UsersProvider = ({ children }) => {
       setLoading(true);
       const currentUser = FIREBASE_AUTH.currentUser;
       if (currentUser) {
-        const q = query(
-          collection(FIRESTORE_DB, "users"),
-          where("uid", "!=", currentUser.uid)
-        );
-
         try {
-          const querySnapshot = await getDocs(q);
+          const querySnapshot = await getDocs(
+            collection(FIRESTORE_DB, "users")
+          );
           const usersList = [];
           querySnapshot.forEach((doc) => {
-            usersList.push({ id: doc.id, ...doc.data() });
+            if (doc.id !== currentUser.uid) {
+              usersList.push({ id: doc.id, ...doc.data() });
+            }
           });
           setUsers(usersList);
         } catch (error) {
