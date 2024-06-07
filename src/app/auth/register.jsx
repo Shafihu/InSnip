@@ -18,7 +18,6 @@ const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-
   const showErrorToast = (message) => {
     Toast.show({
       type: "error",
@@ -38,21 +37,20 @@ const RegisterScreen = () => {
           birthday: birthday,
           userName: userName,
           email: email,
-          password: password
+          password: password,
         },
       });
     }
   };
 
-
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
       <Pressable style={styles.header} onPress={() => router.back()}>
         <FontAwesome6 name="chevron-left" color="#888" size={20} />
       </Pressable>
       <View style={styles.container}>
-        <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
-          <View className="flex-1 justify-center">
+        <View className="flex-1 justify-center">
+          <View>
             <Text
               style={{
                 textAlign: "center",
@@ -61,34 +59,37 @@ const RegisterScreen = () => {
                 color: "#333",
                 marginBottom: 40,
               }}
-            >Almost there...</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="EMAIL"
-              placeholderTextColor="#00AFFF"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="PASSWORD"
-              placeholderTextColor="#00AFFF"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
-            <Text className="text-[12px] font-medium text-gray-400">
-              By tapping Continue, you acknowledge that you have read
-              the Privacy Policy and agree to the Terms of Service.
+            >
+              Almost there...
             </Text>
           </View>
-          <TouchableOpacity onPress={handleContinue} style={styles.signUpButton}>
-              <Text style={styles.signUpText}>Continue</Text>
-          </TouchableOpacity>
-        </KeyboardAvoidingView>
+          <TextInput
+            style={styles.input}
+            placeholder="EMAIL"
+            placeholderTextColor="#00AFFF"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="PASSWORD"
+            placeholderTextColor="#00AFFF"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+          <View>
+            <Text className="text-[12px] font-medium text-gray-400">
+              By tapping Continue, you acknowledge that you have read the Privacy Policy and agree to the Terms of Service.
+            </Text>
+          </View>
+        </View>
+        <TouchableOpacity onPress={handleContinue} style={styles.signUpButton}>
+          <Text style={styles.signUpText}>Continue</Text>
+        </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -109,17 +110,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     marginHorizontal: 20,
+    paddingBottom: 30,
   },
   keyboardView: {
     flex: 1,
     justifyContent: "center",
     gap: 5,
+    paddingTop: 50,
   },
   input: {
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     marginBottom: 20,
-    fontSize: 13,
+    fontSize: 15,
     padding: 10,
   },
   signUpButton: {

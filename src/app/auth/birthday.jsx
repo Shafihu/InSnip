@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     marginBottom: 20,
-    fontSize: 13,
+    fontSize: 15,
     padding: 10,
     color: "#00AFFF",
   },

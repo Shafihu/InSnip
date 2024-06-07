@@ -7,7 +7,6 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
-  SafeAreaView,
   Pressable,
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
@@ -38,13 +37,13 @@ const FullNameScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
       <Pressable style={styles.header} onPress={() => router.back()}>
         <FontAwesome6 name="chevron-left" color="#888" size={20} />
       </Pressable>
       <View style={styles.container}>
-        <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
-          <View className="flex-1 justify-center">
+        <View className="flex-1 justify-center">
+          <View>
             <Text
               style={{
                 textAlign: "center",
@@ -56,39 +55,33 @@ const FullNameScreen = () => {
             >
               What's your name?
             </Text>
-            <TextInput
-              style={styles.input}
-              placeholder="FIRST NAME"
-              placeholderTextColor="#00AFFF"
-              value={firstName}
-              onChangeText={setFirstName}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="LAST NAME"
-              placeholderTextColor="#00AFFF"
-              value={lastName}
-              onChangeText={setLastName}
-            />
           </View>
-          <TouchableOpacity
-            onPress={handleContinue}
-            style={styles.signUpButton}
-          >
-            <Text style={styles.signUpText}>Continue</Text>
-          </TouchableOpacity>
-        </KeyboardAvoidingView>
+          <TextInput
+            style={styles.input}
+            placeholder="FIRST NAME"
+            placeholderTextColor="#00AFFF"
+            value={firstName}
+            onChangeText={setFirstName}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="LAST NAME"
+            placeholderTextColor="#00AFFF"
+            value={lastName}
+            onChangeText={setLastName}
+          />
+        </View>
+        <TouchableOpacity onPress={handleContinue} style={styles.signUpButton}>
+          <Text style={styles.signUpText}>Continue</Text>
+        </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 
 export default FullNameScreen;
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
   header: {
     paddingVertical: 10,
     paddingHorizontal: 10,
@@ -100,17 +93,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     marginHorizontal: 20,
+    paddingBottom: 30
   },
   keyboardView: {
     flex: 1,
     justifyContent: "space-between",
     gap: 5,
+    paddingTop: 50,
   },
   input: {
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     marginBottom: 20,
-    fontSize: 13,
+    fontSize: 15,
     padding: 10,
   },
   signUpButton: {

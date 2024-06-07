@@ -7,7 +7,6 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
-  SafeAreaView,
   Pressable,
   ActivityIndicator,
 } from "react-native";
@@ -20,7 +19,6 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-
 
   const showErrorToast = (message) => {
     Toast.show({
@@ -44,12 +42,7 @@ const LoginScreen = () => {
 
     setLoading(true);
     try {
-      const response = await signInWithEmailAndPassword(
-        FIREBASE_AUTH,
-        email,
-        password
-      );
-
+      const response = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
       setEmail("");
       setPassword("");
       showSuccessToast("Login successful!");
@@ -62,24 +55,26 @@ const LoginScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <Pressable style={styles.header} onPress={() => router.back()}>
-        <FontAwesome6 name="chevron-left" color="#888" size={20} />
-      </Pressable>
-      <View style={styles.container}>
-        <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
+    <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
+      <View style={styles.safeArea}>
+        <Pressable style={styles.header} onPress={() => router.back()}>
+          <FontAwesome6 name="chevron-left" color="#888" size={20} />
+        </Pressable>
+        <View style={styles.container}>
           <View className="flex-1 justify-center">
-            <Text
-              style={{
-                textAlign: "center",
-                fontWeight: "600",
-                fontSize: 22,
-                color: "#333",
-                marginBottom: 40,
-              }}
-            >
-              Log in to InSnip
-            </Text>
+            <View>
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontWeight: "600",
+                  fontSize: 22,
+                  color: "#333",
+                  marginBottom: 40,
+                }}
+              >
+                Log in to InSnip
+              </Text>
+            </View>
             <TextInput
               style={styles.input}
               placeholder="EMAIL"
@@ -108,9 +103,9 @@ const LoginScreen = () => {
           <TouchableOpacity>
             <Text style={styles.forgotPassword}>Forgot your password?</Text>
           </TouchableOpacity>
-        </KeyboardAvoidingView>
+        </View>
       </View>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -119,6 +114,7 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    paddingBottom: 30,
   },
   header: {
     paddingVertical: 10,
@@ -136,13 +132,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     gap: 5,
+    paddingTop: 50,
   },
   input: {
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     marginBottom: 20,
-    fontSize: 13,
     padding: 10,
+    fontSize: 15,
+    fontWeight: "500",
   },
   loginButton: {
     backgroundColor: "#00AFFF",
