@@ -2,9 +2,9 @@ import React from 'react';
 import { View, ScrollView, Text, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from 'react-native-vector-icons';
-import Header from './Header';
-import { useUsers } from '../context/UsersContext';
-import processUserImage from '../utils/processUserImage';
+import Header from '../components/Header';
+import { useUsers } from '../../context/UsersContext';
+import processUserImage from '../../utils/processUserImage';
 
 const Stories = () => {
   const { users, loading } = useUsers();

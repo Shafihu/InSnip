@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { FIREBASE_AUTH, FIRESTORE_DB } from "../../Firebase/config";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../Firebase/config";
 import Toast from "react-native-toast-message";
 import { doc, setDoc } from "firebase/firestore";
 
@@ -23,16 +23,16 @@ const PickAvatarScreen = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const images = [
-    { id: 1, source: require("../../assets/avatars/avatar_1.png"), path: "avatar_1.png" },
-    { id: 2, source: require("../../assets/avatars/avatar_11.png"), path: "avatar_11.png" },
-    { id: 3, source: require("../../assets/avatars/avatar_3.webp"), path: "avatar_3.webp" },
-    { id: 4, source: require("../../assets/avatars/avatar_4.webp"), path: "avatar_4.webp" },
-    { id: 5, source: require("../../assets/avatars/avatar_5.png"), path: "avatar_5.png" },
-    { id: 6, source: require("../../assets/avatars/avatar_6.png"), path: "avatar_6.png" },
-    { id: 7, source: require("../../assets/avatars/avatar_7.jpg"), path: "avatar_7.jpg" },
-    { id: 8, source: require("../../assets/avatars/avatar_8.jpg"), path: "avatar_8.jpg" },
-    { id: 9, source: require("../../assets/avatars/avatar_9.png"), path: "avatar_9.png" },
-    { id: 10, source: require("../../assets/avatars/avatar_10.webp"), path: "avatar_10.webp" },
+    { id: 1, source: require("../../../assets/avatars/avatar_1.png"), path: "avatar_1.png" },
+    { id: 2, source: require("../../../assets/avatars/avatar_11.png"), path: "avatar_11.png" },
+    { id: 3, source: require("../../../assets/avatars/avatar_3.webp"), path: "avatar_3.webp" },
+    { id: 4, source: require("../../../assets/avatars/avatar_4.webp"), path: "avatar_4.webp" },
+    { id: 5, source: require("../../../assets/avatars/avatar_5.png"), path: "avatar_5.png" },
+    { id: 6, source: require("../../../assets/avatars/avatar_6.png"), path: "avatar_6.png" },
+    { id: 7, source: require("../../../assets/avatars/avatar_7.jpg"), path: "avatar_7.jpg" },
+    { id: 8, source: require("../../../assets/avatars/avatar_8.jpg"), path: "avatar_8.jpg" },
+    { id: 9, source: require("../../../assets/avatars/avatar_9.png"), path: "avatar_9.png" },
+    { id: 10, source: require("../../../assets/avatars/avatar_10.webp"), path: "avatar_10.webp" },
   ];
 
   const showErrorToast = (message) => {

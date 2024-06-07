@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { FIREBASE_AUTH } from "../../Firebase/config";
+import { FIREBASE_AUTH } from "../../../Firebase/config";
 import Toast from "react-native-toast-message";
 
 const LoginScreen = () => {

@@ -1,9 +1,9 @@
 import React from "react";
 import { Stack } from "expo-router";
-import "../global.css";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
-import { UserProvider } from "../context/UserContext";
-import { UsersProvider } from "../context/UsersContext";
+import { UserProvider } from "../../context/UserContext";
+import { UsersProvider } from "../../context/UsersContext";
+import "../../global.css";
 
 const RootLayout = () => {
   const toastConfig = {

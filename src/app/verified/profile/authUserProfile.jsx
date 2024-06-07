@@ -1,10 +1,10 @@
 import { Text, Pressable, Image, StyleSheet } from "react-native";
 import React from "react";
-import { FIREBASE_AUTH } from "../../../Firebase/config";
+import { FIREBASE_AUTH } from "../../../../Firebase/config";
 import { signOut } from "firebase/auth";
 import Toast from "react-native-toast-message";
-import processUserImage from "../../../utils/processUserImage";
-import { useUser } from "../../../context/UserContext";
+import processUserImage from "../../../../utils/processUserImage";
+import { useUser } from "../../../../context/UserContext";
 
 const UserProfile = () => {
   const { userData, loading } = useUser();

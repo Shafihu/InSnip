@@ -14,7 +14,7 @@ export default function SplashScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.logoContainer}>
         <Image
-          source={require("../../assets/snapchat.png")}
+          source={require("../../../assets/snapchat.png")}
           style={styles.logo}
         />
       </View>

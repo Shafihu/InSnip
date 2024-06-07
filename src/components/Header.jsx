@@ -11,8 +11,8 @@ import {
     AntDesign,
     Foundation
 } from 'react-native-vector-icons';
-import processUserImage from "../utils/processUserImage";
-import { useUser } from "../context/UserContext";
+import processUserImage from "../../utils/processUserImage";
+import { useUser } from "../../context/UserContext";
 
 const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
     const [isFlash, setIsFlash] = useState(false);
@@ -33,7 +33,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                         {userData ? 
                             <Image source={processUserImage(userData.UserImage)} className="w-full h-full" />
                                 : 
-                            <Image source={require('../assets/avatars/user.png')} className="w-full h-full" /> 
+                            <Image source={require('../../assets/avatars/user.png')} className="w-full h-full" /> 
                         }
                 </Pressable>
                 <Pressable className={`rounded-full w-[40px] h-[40px] flex justify-center items-center relative overflow-hidden transform scale-x-[-1] ${header === 'Map' ? 'bg-black/15' : 'bg-black/5'}`}>

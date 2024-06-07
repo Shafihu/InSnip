@@ -7,7 +7,7 @@ import {
   MaterialIcons,
   Fontisto,
 } from 'react-native-vector-icons';
-import Header from './Header';
+import Header from '../components/Header';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 

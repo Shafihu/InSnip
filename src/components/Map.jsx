@@ -1,6 +1,6 @@
 import { View,  StyleSheet } from 'react-native'
 import React from 'react'
-import Header from './Header'
+import Header from '../components/Header'
 import MapView from 'react-native-maps';
 import { LinearGradient } from 'expo-linear-gradient';
 

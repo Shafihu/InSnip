@@ -6,21 +6,21 @@ const FilterScrollView = ({handleCapture}) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const filters = [
-    { id: 1, image: require("../assets/filters/filterOne.png") },
-    { id: 2, image: require("../assets/filters/filterFourteen.png") },
-    { id: 3, image: require("../assets/filters/filterThree.png") },
-    { id: 4, image: require("../assets/filters/filterThirteen.png") },
-    { id: 5, image: require("../assets/filters/filterFive.png") },
-    { id: 6, image: require("../assets/filters/filterSix.png") },
-    { id: 7, image: require("../assets/filters/filterTwelve.png") },
-    { id: 8, image: require("../assets/filters/filterEight.png") },
-    { id: 9, image: require("../assets/filters/filterNine.png") },
-    { id: 10, image: require("../assets/filters/filterEleven.png") },
-    { id: 11, image: require("../assets/filters/filterTen.png") },
-    { id: 15, image: require("../assets/filters/filterFifteen.png") },
-    { id: 12, image: require("../assets/filters/filterSeven.png") },
-    { id: 13, image: require("../assets/filters/filterFour.png") },
-    { id: 14, image: require("../assets/filters/filterTen.png") },
+    { id: 1, image: require("../../assets/filters/filterOne.png") },
+    { id: 2, image: require("../../assets/filters/filterFourteen.png") },
+    { id: 3, image: require("../../assets/filters/filterThree.png") },
+    { id: 4, image: require("../../assets/filters/filterThirteen.png") },
+    { id: 5, image: require("../../assets/filters/filterFive.png") },
+    { id: 6, image: require("../../assets/filters/filterSix.png") },
+    { id: 7, image: require("../../assets/filters/filterTwelve.png") },
+    { id: 8, image: require("../../assets/filters/filterEight.png") },
+    { id: 9, image: require("../../assets/filters/filterNine.png") },
+    { id: 10, image: require("../../assets/filters/filterEleven.png") },
+    { id: 11, image: require("../../assets/filters/filterTen.png") },
+    { id: 15, image: require("../../assets/filters/filterFifteen.png") },
+    { id: 12, image: require("../../assets/filters/filterSeven.png") },
+    { id: 13, image: require("../../assets/filters/filterFour.png") },
+    { id: 14, image: require("../../assets/filters/filterTen.png") },
   ];
 
   const handleScroll = (event) => {

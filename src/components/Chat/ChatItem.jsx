@@ -3,7 +3,7 @@ import React from 'react'
 import { MaterialIcons, Feather } from 'react-native-vector-icons';
 import { router } from 'expo-router';
 
-const Chat = ({ handleChatCam }) => {
+const ChatItem = ({ handleChatCam }) => {
   return (
     <Pressable
     onPress={()=>router.push('/verified/chatRoom')}
@@ -11,7 +11,7 @@ const Chat = ({ handleChatCam }) => {
   >
     <View className="w-[50px] h-[50px] bg-gray-100 rounded-full overflow-hidden">
       <Image
-        source={require('../../assets/avatars/user.png')}
+        source={require('../../../assets/avatars/user.png')}
         style={{ width: '100%', height: '100%' }}
       />
     </View>
@@ -34,4 +34,4 @@ const Chat = ({ handleChatCam }) => {
   )
 }
 
-export default Chat
+export default ChatItem

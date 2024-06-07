@@ -13,9 +13,9 @@ import {
   AntDesign,
   Foundation,
 } from "react-native-vector-icons";
-import FilterScrollView from "./FilitersScroll";
-import TabBar from "./TabBar";
-import TabBarPreview from "./TabBarPreview";
+import FilterScrollView from "../components/FilitersScroll";
+import TabBar from "../components/TabBar";
+import TabBarPreview from "../components/TabBarPreview";
 
 const Camera = () => {
   const [facing, setFacing] = useState("front");

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { FIREBASE_AUTH } from "../Firebase/config";
+import { FIREBASE_AUTH } from "../../Firebase/config";
 import { ActivityIndicator, View } from "react-native";
 import { router } from "expo-router";
 

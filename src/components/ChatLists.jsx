@@ -2,22 +2,22 @@ import { View, Text, ScrollView, ActivityIndicator, Pressable, Image, Button, Re
 import { useState, useEffect, useCallback } from 'react';
 import Header from './Header';
 import { Entypo, MaterialIcons, Feather } from 'react-native-vector-icons';
-import getUserStories from '../utils/getUserStories';
+import getUserStories from '../../utils/getUserStories';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ChatList from './Chat/Chat';
+import ChatItem from './Chat/ChatItem'
 
-const avatarMap = {
-  avatar1: require('../assets/avatars/avatar_1.png'),
-  avatar2: require('../assets/avatars/avatar_11.png'),
-  avatar3: require('../assets/avatars/avatar_3.webp'),
-  avatar4: require('../assets/avatars/avatar_4.webp'),
-  avatar5: require('../assets/avatars/avatar_5.png'),
-  avatar6: require('../assets/avatars/avatar_6.png'),
-  avatar7: require('../assets/avatars/avatar_7.jpg'),
-  avatar8: require('../assets/avatars/avatar_8.jpg'),
-  avatar9: require('../assets/avatars/avatar_9.png'),
-  avatar10: require('../assets/avatars/avatar_10.webp'),
-};
+// const avatarMap = {
+//   avatar1: require('../assets/avatars/avatar_1.png'),
+//   avatar2: require('../assets/avatars/avatar_11.png'),
+//   avatar3: require('../assets/avatars/avatar_3.webp'),
+//   avatar4: require('../assets/avatars/avatar_4.webp'),
+//   avatar5: require('../assets/avatars/avatar_5.png'),
+//   avatar6: require('../assets/avatars/avatar_6.png'),
+//   avatar7: require('../assets/avatars/avatar_7.jpg'),
+//   avatar8: require('../assets/avatars/avatar_8.jpg'),
+//   avatar9: require('../assets/avatars/avatar_9.png'),
+//   avatar10: require('../assets/avatars/avatar_10.webp'),
+// };
 
 const Chat = () => {
   const circleSize = 60;
@@ -72,7 +72,7 @@ const Chat = () => {
             <ActivityIndicator size="small" />
           ) : (
             <>
-                <ChatList />
+                <ChatItem />
             </>
           )}
         </ScrollView>
