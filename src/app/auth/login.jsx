@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Pressable,
   ActivityIndicator,
+  SafeAreaView,
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -56,7 +57,7 @@ const LoginScreen = () => {
 
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
-      <View style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea}>
         <Pressable style={styles.header} onPress={() => router.back()}>
           <FontAwesome6 name="chevron-left" color="#888" size={20} />
         </Pressable>
@@ -104,7 +105,7 @@ const LoginScreen = () => {
             <Text style={styles.forgotPassword}>Forgot your password?</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 };
@@ -114,7 +115,6 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    paddingBottom: 30,
   },
   header: {
     paddingVertical: 10,
@@ -132,7 +132,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     gap: 5,
-    paddingTop: 50,
   },
   input: {
     borderBottomWidth: 1,

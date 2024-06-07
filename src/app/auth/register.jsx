@@ -45,10 +45,10 @@ const RegisterScreen = () => {
 
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
+      <SafeAreaView style={styles.container}>
       <Pressable style={styles.header} onPress={() => router.back()}>
         <FontAwesome6 name="chevron-left" color="#888" size={20} />
       </Pressable>
-      <View style={styles.container}>
         <View className="flex-1 justify-center">
           <View>
             <Text
@@ -60,7 +60,7 @@ const RegisterScreen = () => {
                 marginBottom: 40,
               }}
             >
-              Almost there...
+              Completing Your Registration
             </Text>
           </View>
           <TextInput
@@ -88,7 +88,7 @@ const RegisterScreen = () => {
         <TouchableOpacity onPress={handleContinue} style={styles.signUpButton}>
           <Text style={styles.signUpText}>Continue</Text>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 };
@@ -104,19 +104,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     alignSelf: "flex-start",
     borderRadius: 25,
-    marginHorizontal: 20,
   },
   container: {
     flex: 1,
     justifyContent: "center",
     marginHorizontal: 20,
-    paddingBottom: 30,
   },
   keyboardView: {
     flex: 1,
     justifyContent: "center",
     gap: 5,
-    paddingTop: 50,
   },
   input: {
     borderBottomWidth: 1,

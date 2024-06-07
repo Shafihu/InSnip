@@ -47,7 +47,6 @@ const FullNameScreen = () => {
         <FontAwesome6 name="chevron-left" color="#888" size={20} />
       </Pressable>
       <View style={styles.container}>
-        <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
           <View className="flex-1 justify-center">
             <Text
               style={{
@@ -87,7 +86,6 @@ const FullNameScreen = () => {
           >
             <Text style={styles.signUpText}>Continue</Text>
           </TouchableOpacity>
-        </KeyboardAvoidingView>
       </View>
     </SafeAreaView>
   );

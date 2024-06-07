@@ -47,8 +47,7 @@ const PickUserNameScreen = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
     >
-      <View className="flex-1 justify-center">
-        <View style={styles.safeArea}>
+        <SafeAreaView style={styles.safeArea}>
           <Pressable style={styles.header} onPress={() => router.back()}>
             <FontAwesome6 name="chevron-left" color="#888" size={20} />
           </Pressable>
@@ -80,8 +79,7 @@ const PickUserNameScreen = () => {
             >
               <Text style={styles.signUpText}>Continue</Text>
             </TouchableOpacity>
-        </View>
-      </View>
+        </SafeAreaView>
     </KeyboardAvoidingView>
   );
 };
@@ -91,8 +89,6 @@ export default PickUserNameScreen;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    paddingTop: 50,
-    paddingBottom: 30
   },
   header: {
     paddingVertical: 10,
