@@ -42,7 +42,7 @@ const FilterScrollView = ({handleCapture}) => {
       onScroll={handleScroll}
       scrollEventThrottle={1} 
       contentContainerStyle={styles.scrollViewContent}
-      className={`max-h-[100px] absolute left-0 bottom-5 right-0`}
+      className={` max-h-28`}
     >
       {filters.map((filter, index) => (
         <TouchableOpacity

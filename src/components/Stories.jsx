@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, Text, StyleSheet, ActivityIndicator, Image } from 'react-native';
+import { View, ScrollView, Text, StyleSheet, ActivityIndicator, Image, SafeAreaView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from 'react-native-vector-icons';
 import Header from '../components/Header';
@@ -10,7 +10,7 @@ const Stories = () => {
   const { users, loading } = useUsers();
 
   return (
-    <View className="flex-1">
+    <SafeAreaView className="" style={{flex: 1}}>
       <Header header="Stories" />
       {loading ? (
         <View>
@@ -67,7 +67,7 @@ const Stories = () => {
           </View>
         </ScrollView>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 

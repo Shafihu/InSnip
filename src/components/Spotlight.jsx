@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { View, FlatList, Dimensions, StyleSheet, Pressable, Text } from 'react-native';
+import { View, FlatList, Dimensions, StyleSheet, Pressable, Text, SafeAreaView } from 'react-native';
 import {
-  MaterialCommunityIcons,
-  Ionicons,
   AntDesign,
   MaterialIcons,
   Fontisto,
@@ -62,21 +60,25 @@ const Spotlight = () => {
   };
 
   return (
-    <View className="flex-1  bg-transparent rounded-t-2xl rounded-b-xl overflow-hidden relative mb-24">
-      <Header header='Spotlight' />
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        snapToAlignment="start"
-        snapToInterval={SCREEN_HEIGHT - 112}
-        decelerationRate="fast"
-        showsVerticalScrollIndicator={false}
-        pagingEnabled={true}
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.5}
-      />
-    </View>
+    <SafeAreaView className="" style={{flex: 1}}>
+        <View style={{ flex: 1, backgroundColor: 'transparent', position: 'relative' }}>
+          <View style={{position: 'absolute', left: 0, right: 0, top: 0, zIndex: 999}}>
+            <Header header='Spotlight'/>
+          </View>
+          <FlatList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+            snapToAlignment="start"
+            snapToInterval={SCREEN_HEIGHT - 112}
+            decelerationRate="fast"
+            showsVerticalScrollIndicator={false}
+            pagingEnabled={true}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.5}
+          />
+        </View>
+    </SafeAreaView>
   );
 };
 
@@ -84,7 +86,7 @@ export default Spotlight;
 
 const styles = StyleSheet.create({
   itemContainer: {
-    height: SCREEN_HEIGHT - 112, // 7rem ≈ 112dp
+    height: SCREEN_HEIGHT - 112, 
     justifyContent: 'center',
     alignItems: 'center',
   },
