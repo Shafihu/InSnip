@@ -48,7 +48,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                     }}
                 >
                     {userData ? 
-                        <Image source={processUserImage(userData.UserImage)} style={{ width: '100%', height: '100%' }} />
+                        <Image source={processUserImage(userData.avatar)} style={{ width: '100%', height: '100%' }} />
                     : 
                         <Image source={require('../../assets/avatars/user.png')} style={{ width: '100%', height: '100%' }} /> 
                     }

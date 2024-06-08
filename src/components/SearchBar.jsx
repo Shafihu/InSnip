@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextInput, View, Text, Pressable } from 'react-native';
 import { Foundation } from 'react-native-vector-icons';
+import { router } from 'expo-router';
 
 const SearchBar = ({ onChangeText }) => {
   const [searchText, setSearchText] = useState('');
@@ -23,7 +24,7 @@ const SearchBar = ({ onChangeText }) => {
                  style={{ paddingVertical: 10, paddingLeft: 40, paddingRight: 15, borderRadius: 100, fontSize: 15, fontWeight: '500', color: '#555c57' }}
                 />
         </View>
-        <Pressable  style={{width: '20%'}}>
+        <Pressable onPress={() => router.back()}  style={{width: '20%'}}>
             <Text style={{textAlign: 'center', fontWeight: 'bold', color: '#333'}}>Cancel</Text>
         </Pressable>
     </View>

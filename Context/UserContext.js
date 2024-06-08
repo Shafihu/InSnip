@@ -83,10 +83,10 @@ export const UserProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  const updateProfilePicture = async (uid, newProfilePic) => {
+  const updateProfilePicture = async (id, newProfilePic) => {
     try {
       await setDoc(
-        doc(FIRESTORE_DB, "users", uid),
+        doc(FIRESTORE_DB, "users", id),
         { picture: newProfilePic },
         { merge: true }
       );
