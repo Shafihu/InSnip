@@ -9,7 +9,14 @@ const HomeLayout = () => {
         options={{ headerShown: false, gestureEnabled: false }}
       />
       <Stack.Screen name="profile" options={{ headerShown: false }} />
-      <Stack.Screen name="chatRoom" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="chatRoom"
+        options={{ headerShown: false, presentation: "card" }}
+      />
+      <Stack.Screen
+        name="searchUsers"
+        options={{ headerShown: false, presentation: "modal" }}
+      />
     </Stack>
   );
 };

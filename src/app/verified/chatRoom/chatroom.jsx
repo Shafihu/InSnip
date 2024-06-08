@@ -24,7 +24,7 @@ const chatroom = () => {
                         </Text>
                     </View>
                 </View>
-                <View className="bg-white w-[95%] p-2 rounded-sm rounded-tr-lg rounded-br-lg gap-2  border-l-4 border-red-400">
+                <View className="bg-white w-[95%] p-2 rounded-sm rounded-zzztr-lg rounded-br-lg gap-2  border-l-4 border-red-400">
                     <View className="flex flex-row items-center justify-between">
                         <Text className="text-red-500">MY AI</Text>
                         <Text className="text-gray-400 text-[10px]">1:33</Text>

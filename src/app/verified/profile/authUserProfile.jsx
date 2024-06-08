@@ -1,16 +1,28 @@
-import { Text, Pressable, Image, StyleSheet } from "react-native";
-import React from "react";
-import { FIREBASE_AUTH } from "../../../../Firebase/config";
+import { Text, Pressable, Image, StyleSheet, View } from "react-native";
+import React, { useState, useEffect } from "react";
 import { signOut } from "firebase/auth";
 import Toast from "react-native-toast-message";
-import processUserImage from "../../../../utils/processUserImage";
 import { useUser } from "../../../../context/UserContext";
+import { pickAndUploadImage } from "../../../../utils/pickAndUploadImage";
+import processUserImage from "../../../../utils/processUserImage";
+import { FIREBASE_AUTH } from "../../../../Firebase/config";
 
 const UserProfile = () => {
-  const { userData, loading } = useUser();
+  const { userData, loading, updateProfilePicture } = useUser();
+  const [profilePic, setProfilePic] = useState(null);
+
+  useEffect(() => {
+    if (userData) {
+      setProfilePic(userData.picture);
+    }
+  }, [userData]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
   }
 
   const showErrorToast = (message) => {
@@ -28,25 +40,45 @@ const UserProfile = () => {
     }
   };
 
+  const handlePickImage = async () => {
+    try {
+      const downloadURL = await pickAndUploadImage();
+      setProfilePic(downloadURL);
+      if (userData && userData.id) {
+        await updateProfilePicture(userData.id, downloadURL);
+      } else {
+        console.error("User data or UID is not available");
+        showErrorToast("User data or UID is not available");
+      }
+    } catch (error) {
+      console.error("Error handling image:", error);
+      showErrorToast("Error handling image");
+    }
+  };
 
   return (
-    <Pressable
-      onPress={handleSignOut}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       {userData ? (
         <>
-          <Image
-            source={processUserImage(userData.UserImage)}
-            style={styles.userImage}
-          />
+          <Pressable onPress={handlePickImage}>
+            {profilePic ? (
+              <Image source={{ uri: profilePic }} style={styles.userImage} />
+            ) : (
+              <View>
+                <Text>No banner pic</Text>
+              </View>
+            )}
+            <Image source={processUserImage(userData.UserImage)} style={styles.userImage} />
+          </Pressable>
           <Text style={styles.userInfo}>{userData.Username}</Text>
         </>
       ) : (
         <Text>No user data available</Text>
       )}
-      <Text style={styles.logoutText}>Log Out</Text>
-    </Pressable>
+      <Pressable onPress={handleSignOut}>
+        <Text style={styles.logoutText}>Log Out</Text>
+      </Pressable>
+    </View>
   );
 };
 

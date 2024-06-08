@@ -54,6 +54,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                     }
                 </Pressable>
                 <Pressable
+                    onPress={() => router.push('/verified/searchUsers')}
                     style={{
                         borderRadius: 20,
                         width: 40,

@@ -82,13 +82,19 @@ const PickAvatarScreen = () => {
 
       try {
         await setDoc(doc(FIRESTORE_DB, "users", response.user.uid), {
+          id: response.user.uid,
           Email: email,
           Password: password,
           FirstName: firstName,
           LastName: lastName,
           Birthday: birthday,
           Username: userName,
-          UserImage: selectedImage.path,
+          avatar: selectedImage.path,
+          blocked: []
+        });
+
+        await setDoc(doc(FIRESTORE_DB, "userchats", response.user.uid), {
+          chats: []
         });
 
       } catch (e) {

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../Firebase/config";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -59,9 +59,9 @@ export const UserProvider = ({ children }) => {
         const localUserData = await retrieveUserDataLocally();
         if (localUserData) {
           setUserData(localUserData);
-          setLoading(false);
         }
         await fetchUserData(authUser.uid);
+        setLoading(false);
       } else {
         await clearUserDataLocally();
         setUserData(null);
@@ -83,8 +83,23 @@ export const UserProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
+  const updateProfilePicture = async (uid, newProfilePic) => {
+    try {
+      await setDoc(
+        doc(FIRESTORE_DB, "users", uid),
+        { picture: newProfilePic },
+        { merge: true }
+      );
+      const updatedUserData = { ...userData, picture: newProfilePic };
+      setUserData(updatedUserData);
+      await AsyncStorage.setItem("@userData", JSON.stringify(updatedUserData));
+    } catch (error) {
+      console.error("Error updating profile picture: ", error);
+    }
+  };
+
   return (
-    <UserContext.Provider value={{ userData, loading }}>
+    <UserContext.Provider value={{ userData, loading, updateProfilePicture }}>
       {children}
     </UserContext.Provider>
   );

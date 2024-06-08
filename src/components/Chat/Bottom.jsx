@@ -20,6 +20,7 @@ const Bottom = () => {
           className="h-full rounded-full text-[17px]"
           value={message}
           onChangeText={(text) => setMessage(text)}
+          returnKeyType='send'
         />
       </View>
       <View className="flex flex-row">
