@@ -14,8 +14,12 @@ const HomeLayout = () => {
         options={{ headerShown: false, presentation: "card" }}
       />
       <Stack.Screen
-        name="searchUsers"
+        name="addChat"
         options={{ headerShown: false, presentation: "modal" }}
+      />
+      <Stack.Screen
+        name="searchUsers"
+        options={{ headerShown: false, presentation: "" }}
       />
     </Stack>
   );

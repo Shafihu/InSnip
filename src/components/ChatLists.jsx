@@ -1,20 +1,47 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, StyleSheet, SafeAreaView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView,StyleSheet, SafeAreaView, Pressable } from 'react-native';
 import { Entypo } from 'react-native-vector-icons';
 import Header from './Header';
 import ChatItem from './Chat/ChatItem';
+import { useUser } from '../../context/UserContext';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { FIRESTORE_DB } from '../../Firebase/config';
+import { router } from 'expo-router';
 
 const Chat = () => {
-  const circleSize = 60;
   const [loading, setLoading] = useState(false);
+  const [chats, setChats] = useState([])
+  const { userData } = useUser();
+
+  useEffect(()=>{
+    const unSub = onSnapshot(doc(FIRESTORE_DB, "userchats", userData.id), async (res) => {
+      const items = res.data().chats
+
+      const promises = items.map( async (item) => {
+        const userDocRef = doc(FIRESTORE_DB, 'users', item.recieverId);
+        const userDocSnap = await getDoc(userDocRef);
+
+        const user = userDocSnap.data()
+
+        return {...item, user}
+      })
+
+      const chatData = await Promise.all(promises);
+      setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
+    });
+
+    return ()=>{
+      unSub()
+    }
+  },[userData.id])
 
   return (
     <SafeAreaView style={styles.container}>
       <Header header="Chat" />
       <View style={styles.content}>
-        <View style={styles.newMessageButton}>
+        <Pressable onPress={() => router.push('/verified/addChat')} style={styles.newMessageButton}>
           <Entypo name="new-message" size={25} color="white" />
-        </View>
+        </Pressable>
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.archiveContainer}>
             <View style={styles.archiveIcon}>
@@ -28,11 +55,11 @@ const Chat = () => {
               <Entypo name="new" size={25} color="#FFD700" />
             </View>
           </View>
-          {loading ? (
-            <ActivityIndicator size="small" />
-          ) : (
-            <ChatItem />
-          )}
+
+            {chats.map((chat) => (
+              <ChatItem key={chat.chatId} lastMessage={chat.lastMessage}  />
+            ))}
+
         </ScrollView>
       </View>
     </SafeAreaView>

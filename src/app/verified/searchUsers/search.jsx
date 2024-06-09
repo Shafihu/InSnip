@@ -20,9 +20,9 @@ const Search = () => {
     }
 
     return (
-        <SafeAreaView style={{ backgroundColor: '#f5f5f5', flex: 1 }}>
-            <SearchBar onChangeText={handleSearchQuery} />
-            <View style={{ paddingHorizontal: 15 }}>
+        <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
+            <SearchBar onChangeText={handleSearchQuery} color='white'/>
+            <View style={{ paddingHorizontal: 15, backgroundColor: '#f5f5f5' }}>
                 <View style={{ marginVertical: 15 }}>
                     <Text className="font-semibold tracking-wider text-[16px]">Friends & Groups</Text>
                 </View>

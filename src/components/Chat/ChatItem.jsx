@@ -3,7 +3,7 @@ import React from 'react'
 import { MaterialIcons, Feather } from 'react-native-vector-icons';
 import { router } from 'expo-router';
 
-const ChatItem = ({ handleChatCam }) => {
+const ChatItem = ({ handleChatCam, lastMessage }) => {
   return (
     <Pressable
     onPress={()=>router.push('/verified/chatRoom')}
