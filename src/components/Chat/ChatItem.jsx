@@ -2,8 +2,9 @@ import { View, Text, Image, Pressable } from 'react-native'
 import React from 'react'
 import { MaterialIcons, Feather } from 'react-native-vector-icons';
 import { router } from 'expo-router';
+import processUserImage from '../../../utils/processUserImage';
 
-const ChatItem = ({ handleChatCam, lastMessage }) => {
+const ChatItem = ({ handleChatCam, avatar, firstName, lastName, lastMessage }) => {
   return (
     <Pressable
     onPress={()=>router.push('/verified/chatRoom')}
@@ -11,12 +12,12 @@ const ChatItem = ({ handleChatCam, lastMessage }) => {
   >
     <View className="w-[50px] h-[50px] bg-gray-100 rounded-full overflow-hidden">
       <Image
-        source={require('../../../assets/avatars/user.png')}
+        source={processUserImage(avatar)}
         style={{ width: '100%', height: '100%' }}
       />
     </View>
     <View className="flex-1">
-      <Text className="font-medium text-lg tracking-wider capitalize">John</Text>
+      <Text className="font-medium text-lg tracking-wider capitalize">{firstName} {lastName}</Text>
       <View className="flex flex-row items-center gap-2">
         <MaterialIcons
           name="chat-bubble-outline"
@@ -24,7 +25,7 @@ const ChatItem = ({ handleChatCam, lastMessage }) => {
           color="#00BFFF"
           className="transform scale-x-[-1]"
         />
-        <Text className="text-[11px] font-medium text-gray-500">Tap to chat</Text>
+        <Text className="text-[11px] font-medium text-gray-500">{lastMessage === '' ? 'Tap to chat' : lastMessage}</Text>
       </View>
     </View>
     <Pressable onPress={handleChatCam}>

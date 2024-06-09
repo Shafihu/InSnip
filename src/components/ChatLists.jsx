@@ -1,39 +1,48 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView,StyleSheet, SafeAreaView, Pressable } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, SafeAreaView, Pressable, ActivityIndicator } from 'react-native';
 import { Entypo } from 'react-native-vector-icons';
 import Header from './Header';
 import ChatItem from './Chat/ChatItem';
 import { useUser } from '../../context/UserContext';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
 import { FIRESTORE_DB } from '../../Firebase/config';
 import { router } from 'expo-router';
 
 const Chat = () => {
   const [loading, setLoading] = useState(false);
-  const [chats, setChats] = useState([])
+  const [chats, setChats] = useState([]);
   const { userData } = useUser();
 
-  useEffect(()=>{
+  useEffect(() => {
+    setLoading(true);
     const unSub = onSnapshot(doc(FIRESTORE_DB, "userchats", userData.id), async (res) => {
-      const items = res.data().chats
-
-      const promises = items.map( async (item) => {
-        const userDocRef = doc(FIRESTORE_DB, 'users', item.recieverId);
-        const userDocSnap = await getDoc(userDocRef);
-
-        const user = userDocSnap.data()
-
-        return {...item, user}
-      })
-
-      const chatData = await Promise.all(promises);
-      setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
+      try {
+        if (!res.exists()) {
+          // Create the document if it doesn't exist
+          await setDoc(doc(FIRESTORE_DB, "userchats", userData.id), { chats: [] });
+          setChats([]);
+        } else {
+          const items = res.data().chats;
+          const promises = items.map(async (item) => {
+            const userDocRef = doc(FIRESTORE_DB, 'users', item.receiverId);
+            const userDocSnap = await getDoc(userDocRef);
+            const user = userDocSnap.data();
+            return { ...item, user };
+          });
+          const chatData = await Promise.all(promises);
+          setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
+        }
+      } catch (error) {
+        console.error('Error fetching chat data:', error);
+      } finally {
+        setLoading(false);
+      }
     });
 
-    return ()=>{
-      unSub()
-    }
-  },[userData.id])
+    return () => {
+      unSub();
+    };
+  }, [userData.id]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -56,10 +65,19 @@ const Chat = () => {
             </View>
           </View>
 
-            {chats.map((chat) => (
-              <ChatItem key={chat.chatId} lastMessage={chat.lastMessage}  />
-            ))}
-
+          {loading ? (
+            <ActivityIndicator size="small" color="#00BFFF" />
+          ) : (
+            chats.map((chat) => (
+              <ChatItem
+                key={chat.chatId}
+                avatar={chat.user.avatar}
+                firstName={chat.user.FirstName}
+                lastName={chat.user.LastName}
+                lastMessage={chat.lastMessage}
+              />
+            ))
+          )}
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -69,7 +87,7 @@ const Chat = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   content: {
     flex: 1,

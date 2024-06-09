@@ -55,8 +55,8 @@ const UserProfile = () => {
       if (userData && userData.id) {
         await updateProfilePicture(userData.id, downloadURL);
       } else {
-        console.error("User data or UID is not available");
-        showErrorToast("User data or UID is not available");
+        console.error("User data or ID is not available");
+        showErrorToast("User data or ID is not available");
       }
     } catch (error) {
       console.error("Error handling image:", error);

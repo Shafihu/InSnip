@@ -11,7 +11,7 @@ const Bottom = () => {
     <View className="flex flex-row justify-between items-start p-3 gap-3 h-[60px] bg-white">
       <View className="w-[35px] h-[35px] rounded-full items-center justify-center">
         <Pressable className="w-[40px] h-[40px] rounded-full items-center justify-center bg-black/5">
-          <FontAwesome name="video-camera" size={18} color="gray" />
+          <FontAwesome name="camera" size={18} color="rgb(50,50,50)" />
         </Pressable>
       </View>
       <View className="flex-1 bg-black/5 rounded-full h-full px-3">
@@ -25,13 +25,13 @@ const Bottom = () => {
       </View>
       <View className="flex flex-row">
         <Pressable className="w-[40px] h-[40px] rounded-full items-center justify-center">
-          <Ionicons name="send" size={25} color="gray" />
+          <Ionicons name="send" size={25} color="rgb(50,50,50)" />
         </Pressable>
         <Pressable className="w-[40px] h-[40px] rounded-full items-center justify-center">
-          <Entypo name="emoji-flirt" size={25} color="gray" />
+          <Entypo name="emoji-flirt" size={25} color="rgb(50,50,50)" />
         </Pressable>
         <Pressable className="w-[40px] h-[40px] rounded-full items-center justify-center">
-          <Ionicons name="images-outline" size={23} color="gray" className="transform rotate-90" />
+          <Ionicons name="images-outline" size={23} color="rgb(50,50,50)" className="transform rotate-90" />
         </Pressable>
       </View>
     </View>
