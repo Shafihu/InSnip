@@ -4,6 +4,7 @@ import { Entypo } from 'react-native-vector-icons';
 import Header from './Header';
 import ChatItem from './Chat/ChatItem';
 import { useUser } from '../../context/UserContext';
+import { useChatStore } from '../../context/ChatContext';
 import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
 import { FIRESTORE_DB } from '../../Firebase/config';
 import { router } from 'expo-router';
@@ -12,6 +13,7 @@ const Chat = () => {
   const [loading, setLoading] = useState(false);
   const [chats, setChats] = useState([]);
   const { userData } = useUser();
+  // const { chat } = useChatStore();
 
   useEffect(() => {
     setLoading(true);
@@ -71,6 +73,9 @@ const Chat = () => {
             chats.map((chat) => (
               <ChatItem
                 key={chat.chatId}
+                id={chat.id}
+                isSeen={chat.isSeen}
+                chat={chat}
                 avatar={chat.user.avatar}
                 firstName={chat.user.FirstName}
                 lastName={chat.user.LastName}

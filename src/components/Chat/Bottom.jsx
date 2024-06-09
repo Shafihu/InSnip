@@ -2,10 +2,15 @@ import { View, TextInput, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import { Ionicons, Entypo, FontAwesome } from 'react-native-vector-icons';
 
-const Bottom = () => {
+const Bottom = ({ handleSend }) => {
   const [message, setMessage] = useState("");
 
-  console.log(message)
+  const onSend = () => {
+    if (message.trim()) {
+      handleSend(message.trim());
+      setMessage("");
+    }
+  };
 
   return (
     <View className="flex flex-row justify-between items-start p-3 gap-3 h-[60px] bg-white">
@@ -20,11 +25,12 @@ const Bottom = () => {
           className="h-full rounded-full text-[17px]"
           value={message}
           onChangeText={(text) => setMessage(text)}
+          onSubmitEditing={onSend}
           returnKeyType='send'
         />
       </View>
       <View className="flex flex-row">
-        <Pressable className="w-[40px] h-[40px] rounded-full items-center justify-center">
+        <Pressable onPress={onSend} className="w-[40px] h-[40px] rounded-full items-center justify-center">
           <Ionicons name="send" size={25} color="rgb(50,50,50)" />
         </Pressable>
         <Pressable className="w-[40px] h-[40px] rounded-full items-center justify-center">
