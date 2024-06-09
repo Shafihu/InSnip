@@ -2,11 +2,11 @@ import { View, TextInput, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import { Ionicons, Entypo, FontAwesome } from 'react-native-vector-icons';
 
-const Bottom = ({ handleSend }) => {
+const Bottom = ({ handleSend, handlePickImage }) => {
   const [message, setMessage] = useState("");
 
   const onSend = () => {
-    if (message.trim()) {
+    if (message.trim() || handlePickImage) {
       handleSend(message.trim());
       setMessage("");
     }
@@ -36,7 +36,7 @@ const Bottom = ({ handleSend }) => {
         <Pressable className="w-[40px] h-[40px] rounded-full items-center justify-center">
           <Entypo name="emoji-flirt" size={25} color="rgb(50,50,50)" />
         </Pressable>
-        <Pressable className="w-[40px] h-[40px] rounded-full items-center justify-center">
+        <Pressable onPress={handlePickImage} className="w-[40px] h-[40px] rounded-full items-center justify-center">
           <Ionicons name="images-outline" size={23} color="rgb(50,50,50)" className="transform rotate-90" />
         </Pressable>
       </View>

@@ -3,7 +3,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { FIREBASE_STORAGE } from '../Firebase/config';
 
 // Function to pick an image and get the download URL
-export const pickAndUploadImage = async () => {
+export const pickAndUploadImage = async (setUploadProgress, setLocalImageUri) => {
   try {
     // Pick image from library
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -15,10 +15,14 @@ export const pickAndUploadImage = async () => {
 
     if (result.canceled) {
       // throw new Error('Image picking was canceled');
+      return;
     }
 
     // Get the URI of the picked image
     const uri = result.assets[0].uri;
+
+    // Set the local image URI
+    setLocalImageUri(uri);
 
     // Fetch the image as a blob
     const response = await fetch(uri);
@@ -35,7 +39,7 @@ export const pickAndUploadImage = async () => {
       uploadTask.on('state_changed',
         (snapshot) => {
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log('Upload is ' + progress + '% done');
+          setUploadProgress(progress);
         },
         (error) => {
           console.error("Upload failed:", error);
@@ -44,7 +48,7 @@ export const pickAndUploadImage = async () => {
         async () => {
           try {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            console.log('File available at', downloadURL);
+            setUploadProgress(100); // Ensure progress is set to 100% when done
             resolve(downloadURL);
           } catch (error) {
             console.error("Failed to get download URL:", error);
@@ -54,7 +58,6 @@ export const pickAndUploadImage = async () => {
       );
     });
   } catch (error) {
-    // console.error("Error picking or uploading image:", error);
     throw error;
   }
 };

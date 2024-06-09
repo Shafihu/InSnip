@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
+import { View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, Image, Dimensions, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Header from '../../../components/Chat/Header';
 import Bottom from '../../../components/Chat/Bottom';
@@ -7,12 +7,18 @@ import { FIRESTORE_DB } from '../../../../Firebase/config';
 import { useLocalSearchParams } from 'expo-router';
 import { useUser } from '../../../../context/UserContext';
 import { useChatStore } from '../../../../context/ChatContext';
+import { pickAndUploadImage } from '../../../../utils/pickAndUploadImage';
+
+const { width } = Dimensions.get('window');
 
 const ChatRoom = () => {
     const { userData } = useUser();
     const { user } = useChatStore();
     const { chatId, userId } = useLocalSearchParams();
     const [chat, setChat] = useState(null);
+    const [img, setImg] = useState(null);
+    const [localImageUri, setLocalImageUri] = useState(null);
+    const [uploadProgress, setUploadProgress] = useState(0);
 
     const currentUserId = userData.id;
 
@@ -31,14 +37,22 @@ const ChatRoom = () => {
 
     const handleSend = async (message) => {
         try {
+            if (!message && !img) return;  // Do nothing if both message and image are absent
+
             const chatRef = doc(FIRESTORE_DB, 'chats', chatId);
 
+            let messageData = {
+                senderId: currentUserId,
+                text: message,
+                createdAt: new Date(),
+            };
+
+            if (img) {
+                messageData.imageUrl = img;
+            }
+
             await updateDoc(chatRef, {
-                messages: arrayUnion({
-                    senderId: currentUserId,
-                    text: message,
-                    createdAt: new Date(),
-                })
+                messages: arrayUnion(messageData)
             });
 
             const userIDs = [currentUserId, userId];
@@ -53,19 +67,28 @@ const ChatRoom = () => {
                     const chatIndex = userChatsData.chats.findIndex(c => c.chatId === chatId);
 
                     if (chatIndex !== -1) {
-                        userChatsData.chats[chatIndex].lastMessage = message;
-                        userChatsData.chats[chatIndex].isSeen = id === currentUserId ? true : false;
+                        userChatsData.chats[chatIndex].lastMessage = img ? 'Img ' + message : message;
+                        userChatsData.chats[chatIndex].isSeen = id === currentUserId;
                         userChatsData.chats[chatIndex].updatedAt = new Date();
 
                         await updateDoc(userChatsRef, {
                             chats: userChatsData.chats,
                         });
+
+                        setImg(null);
+                        setLocalImageUri(null);
                     }
                 }
             }
         } catch (error) {
             console.log('Error sending message: ' + error);
         }
+    };
+
+    const handlePickImage = async () => {
+        await pickAndUploadImage(setUploadProgress, setLocalImageUri).then((res) => {
+            setImg(res);
+        });
     };
 
     return (
@@ -79,9 +102,21 @@ const ChatRoom = () => {
                 <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', padding: 10, gap: 8 }}>
                     {chat && chat.messages &&
                         chat.messages.map((message, index) => (
-                            <View key={index} style={{ backgroundColor: 'white', width: '95%', padding: 8, borderRadius: 4, borderLeftWidth: 4, borderLeftColor: '#00BFFF', marginBottom: 8 }}>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Text style={{ color: '#00BFFF' }}>ME</Text>
+                            <View 
+                                key={index} 
+                                style={{ 
+                                    alignSelf: 'flex-start', 
+                                    padding: 8, 
+                                    borderRadius: 4, 
+                                    borderLeftWidth: 4, 
+                                    borderLeftColor: message.senderId === currentUserId ? '#00BFFF' : 'red', 
+                                    marginBottom: 8,
+                                    backgroundColor: 'white',
+
+                                }}
+                            >
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+                                    <Text style={{ color: message.senderId === currentUserId ? '#00BFFF' : 'red' }}>{message.senderId === currentUserId ? 'ME' : 'JESSICA'}</Text>
                                     <Text style={{ color: 'gray', fontSize: 10 }}>{message.createdAt.toDate().toLocaleTimeString()}</Text>
                                 </View>
                                 <View>
@@ -89,7 +124,7 @@ const ChatRoom = () => {
                                         <>
                                             <Image
                                                 source={{ uri: message.imageUrl }}
-                                                style={{ width: '100%', height: 200, borderRadius: 8, objectFit: 'cover', marginVertical: 5 }}
+                                                style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
                                             />
                                             <Text style={{ letterSpacing: 1, fontSize: 16, color: 'gray' }}>
                                                 {message.text}
@@ -103,8 +138,30 @@ const ChatRoom = () => {
                                 </View>
                             </View>
                         ))}
+                    {localImageUri && (
+                        <View style={{ 
+                            alignSelf: 'flex-start', 
+                            padding: 8, 
+                            borderRadius: 4, 
+                            borderLeftWidth: 4, 
+                            borderLeftColor: '#00BFFF', 
+                            marginBottom: 8,
+                            backgroundColor: 'white' 
+                        }}>
+                            <Image
+                                source={{ uri: localImageUri }}
+                                style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
+                            />
+                            {uploadProgress > 0 && uploadProgress < 100 && (
+                                <View style={{ padding: 10, display:'flex', flexDirection: 'row', alignItems: 'center'}}>
+                                    <Text>Upload Progress: {uploadProgress.toFixed(2)}%</Text>
+                                    <ActivityIndicator size="small" color="gray" />
+                                </View>
+                            )}
+                        </View>
+                    )}
                 </ScrollView>
-                <Bottom handleSend={handleSend} />
+                <Bottom handleSend={handleSend} handlePickImage={handlePickImage} />
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
