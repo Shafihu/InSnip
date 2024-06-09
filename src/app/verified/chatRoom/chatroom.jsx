@@ -1,9 +1,26 @@
 import { View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../../../components/Chat/Header'
 import Bottom from '../../../components/Chat/Bottom'
+import { onSnapshot } from 'firebase/firestore'
+import { FIRESTORE_DB } from '../../../../Firebase/config'
 
 const chatroom = () => {
+    const [chat, setChat] = useState()
+
+    useEffect(() => {
+        const unSub = onSnapshot(doc(FIRESTORE_DB, 'chats', '4jC7XaXeQVcgC5JWZYGrGG4etQf2'), (res) => {
+            setChat(res.data());
+        });
+    
+        return () => {
+            unSub();
+        };
+    }, []);
+    
+
+    console.log(chat)
+
   return (
     <>
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
