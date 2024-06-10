@@ -13,12 +13,13 @@ const { width } = Dimensions.get('window');
 
 const ChatRoom = () => {
     const { userData } = useUser();
-    const { user } = useChatStore();
-    const { chatId, userId } = useLocalSearchParams();
+    // const { user } = useChatStore();
+    const { chatId, userId, firstname, lastname, avatar } = useLocalSearchParams();
     const [chat, setChat] = useState(null);
     const [img, setImg] = useState(null);
     const [localImageUri, setLocalImageUri] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
+
 
     const currentUserId = userData.id;
 
@@ -26,7 +27,7 @@ const ChatRoom = () => {
         if (chatId) {
             const unSub = onSnapshot(doc(FIRESTORE_DB, 'chats', chatId), (doc) => {
                 setChat(doc.data());
-                console.log(doc.data()?.messages);
+                // console.log(doc.data()?.messages);
             });
 
             return () => {
@@ -93,13 +94,13 @@ const ChatRoom = () => {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-            <Header />
+            <Header title={firstname + " " + lastname} avatar={avatar}/>
             <KeyboardAvoidingView
                 style={{ flex: 1, backgroundColor: '#F8F8FF' }}
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
             >
-                <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', padding: 10, gap: 8 }}>
+                <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'flex-end', padding: 10, gap: 8 }}>
                     {chat && chat.messages &&
                         chat.messages.map((message, index) => (
                             <View 
@@ -112,11 +113,10 @@ const ChatRoom = () => {
                                     borderLeftColor: message.senderId === currentUserId ? '#00BFFF' : 'red', 
                                     marginBottom: 8,
                                     backgroundColor: 'white',
-
                                 }}
                             >
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
-                                    <Text style={{ color: message.senderId === currentUserId ? '#00BFFF' : 'red' }}>{message.senderId === currentUserId ? 'ME' : 'JESSICA'}</Text>
+                                    <Text style={{ color: message.senderId === currentUserId ? '#00BFFF' : 'red' }}>{message.senderId === currentUserId ? 'Me' : firstname}</Text>
                                     <Text style={{ color: 'gray', fontSize: 10 }}>{message.createdAt.toDate().toLocaleTimeString()}</Text>
                                 </View>
                                 <View>

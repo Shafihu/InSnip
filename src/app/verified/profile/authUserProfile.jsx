@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Text, Pressable, Image, StyleSheet, View, ScrollView, Animated } from "react-native";
+import { Text, Pressable, Image, StyleSheet, View, Animated } from "react-native";
 import { signOut } from "firebase/auth";
 import Toast from "react-native-toast-message";
 import { useUser } from "../../../../context/UserContext";
-import { pickAndUploadImage } from "../../../../utils/pickAndUploadImage";
+import { pickAndUploadBanner } from "../../../../utils/pickAndUploadBanner";
 import { FIREBASE_AUTH } from "../../../../Firebase/config";
 import processUserImage from "../../../../utils/processUserImage";
 import { router } from "expo-router";
-import { FontAwesome6, MaterialCommunityIcons, Octicons } from 'react-native-vector-icons';
+import { FontAwesome6, MaterialCommunityIcons } from 'react-native-vector-icons';
 import { shareAsync } from "expo-sharing";
 
 const HEADER_MAX_HEIGHT = 280;
@@ -50,7 +50,7 @@ const UserProfile = () => {
 
   const handlePickImage = async () => {
     try {
-      const downloadURL = await pickAndUploadImage();
+      const downloadURL = await pickAndUploadBanner();
       setProfilePic(downloadURL);
       if (userData && userData.id) {
         await updateProfilePicture(userData.id, downloadURL);
@@ -83,23 +83,22 @@ const UserProfile = () => {
   });
 
   const handleShare = async (username) => {
-      await shareAsync(username)
-  }
+    await shareAsync(username);
+  };
 
   return (
     <View style={styles.container}>
-      <View  style={styles.buttonContainer}>
-        <Pressable  onPress={() => router.back()} style={styles.button}>
-            <FontAwesome6 name="chevron-left" color="#fff" size={20} />
+      <View style={styles.buttonContainer}>
+        <Pressable onPress={() => router.back()} style={styles.button}>
+          <FontAwesome6 name="chevron-left" color="#fff" size={20} />
         </Pressable>
         <Pressable onPress={handlePickImage} style={styles.button}>
-            <MaterialCommunityIcons name="image-edit-outline" color="#fff" size={20} />
+          <MaterialCommunityIcons name="image-edit-outline" color="#fff" size={20} />
         </Pressable>
-
       </View>
       <Animated.View style={[styles.header, { height: headerHeight }]}>
         <Animated.Image
-          source={profilePic ?{ uri: profilePic } : processUserImage(userData.avatar)}
+          source={profilePic ? { uri: profilePic } : processUserImage(userData.avatar)}
           style={[
             styles.headerImage,
             { opacity: imageOpacity, transform: [{ translateY: imageTranslate }] },
@@ -119,15 +118,15 @@ const UserProfile = () => {
         <View style={styles.scrollViewInner}>
           {userData ? (
             <>
-                <View className="flex-1 flex-row items-center gap-4">
-                <Pressable style={{borderWidth: 3, borderColor: 'pink', borderRadius: '100%'}}>
-                <Image source={processUserImage(userData.avatar)} style={styles.userImage} />
-              </Pressable>
-              <View className=" w-full h-full items-start justify-center gap-2">
-              <Text style={styles.userInfo} className="font-bold tracking-wide">{userData.FirstName} {userData.LastName}</Text>
-              <Text style={{fontSize: 12, fontWeight: 500, color: 'gray'}}>{userData.Username}</Text>
-              </View>
+              <View className="flex-1 flex-row items-center gap-4">
+                <Pressable style={{ borderWidth: 3, borderColor: 'pink', borderRadius: '100%' }}>
+                  <Image source={processUserImage(userData.avatar)} style={styles.userImage} />
+                </Pressable>
+                <View className="w-full h-full items-start justify-center gap-2">
+                  <Text style={styles.userInfo} className="font-bold tracking-wide">{userData.FirstName} {userData.LastName}</Text>
+                  <Text style={{ fontSize: 12, fontWeight: 500, color: 'gray' }}>{userData.Username}</Text>
                 </View>
+              </View>
             </>
           ) : (
             <Text>No user data available</Text>

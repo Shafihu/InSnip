@@ -11,7 +11,7 @@ import { useUser } from '../../../context/UserContext';
 const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, lastMessage }) => {
   const { userData } = useUser();
   const { changeChat } = useChatStore();
-  const router = useRouter(); // Corrected to useRouter hook
+  const router = useRouter(); 
 
   const currentUserId = userData.id;
 
@@ -45,7 +45,10 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
           pathname: '/verified/chatRoom/chatroom',
           params: {
             chatId: chat.chatId,
-            userId: chat.user.id
+            userId: chat.user.id,
+            firstname: firstName,
+            lastname: lastName,
+            avatar: chat.user.avatar
           }
         });
         await handleSelect(chat);

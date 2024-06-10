@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../Firebase/config";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -83,18 +83,18 @@ export const UserProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  const updateProfilePicture = async (id, newProfilePic) => {
+  const updateProfilePicture = async (userId, downloadURL) => {
     try {
-      await setDoc(
-        doc(FIRESTORE_DB, "users", id),
-        { picture: newProfilePic },
-        { merge: true }
-      );
-      const updatedUserData = { ...userData, picture: newProfilePic };
-      setUserData(updatedUserData);
-      await AsyncStorage.setItem("@userData", JSON.stringify(updatedUserData));
+      const userDocRef = doc(FIRESTORE_DB, "users", userId);
+      await updateDoc(userDocRef, { picture: downloadURL });
+
+      // Update local state
+      setUserData((prevData) => ({
+        ...prevData,
+        picture: downloadURL,
+      }));
     } catch (error) {
-      console.error("Error updating profile picture: ", error);
+      console.error("Failed to update profile picture:", error);
     }
   };
 

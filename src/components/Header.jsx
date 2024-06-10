@@ -36,7 +36,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
         >
             <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
                 <Pressable 
-                    onPress={() => router.push('/verified/profile')} 
+                    onPress={() => router.navigate('/verified/profile')} 
                     style={{
                         backgroundColor: 'orange',
                         borderRadius: 20,
