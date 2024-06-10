@@ -13,7 +13,7 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
   const { changeChat } = useChatStore();
   const router = useRouter(); 
 
-  const currentUserId = userData.id;
+  const currentUserId = userData?.id;
 
   const handleSelect = async (selectedChat) => {
     const userChatsRef = doc(FIRESTORE_DB, 'userchats', currentUserId);
@@ -38,6 +38,10 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
     }
   };
 
+  const isImageMessage = (message) => {
+    return message && message.startsWith('https');
+  };
+
   return (
     <Pressable
       onPress={async () => {
@@ -53,8 +57,9 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
         });
         await handleSelect(chat);
       }}
-      className={`flex flex-row items-center justify-between gap-4 py-2 px-3 pr-5 border border-t-1 border-b-0 border-l-0 border-r-0 border-gray-200 ${isSeen ? 'bg-white' : 'bg-green-500'}`}
+      className={`flex flex-row items-center justify-between gap-4 py-2 px-3 pr-5 border border-t-1 border-b-0 border-l-0 border-r-0 border-gray-200 relative bg-white`}
     >
+      <View className={`bg-[#00BFFF] w-3 h-3 rounded-full absolute right-14 top-1/2 ${isSeen ? 'hidden' : 'block'}`} />
       <View className="w-[50px] h-[50px] bg-gray-100 rounded-full overflow-hidden">
         <Image
           source={processUserImage(avatar)}
@@ -64,13 +69,23 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
       <View className="flex-1">
         <Text className="font-medium text-lg tracking-wider capitalize">{firstName} {lastName}</Text>
         <View className="flex flex-row items-center gap-2">
-          <MaterialIcons
-            name="chat-bubble-outline"
-            size={12}
-            color="#00BFFF"
-            className="transform scale-x-[-1]"
-          />
-          <Text className="text-[11px] font-medium text-gray-500">{lastMessage === '' ? 'Tap to chat' : lastMessage}</Text>
+          {isImageMessage(lastMessage) ? (
+            <MaterialIcons
+              name="photo"
+              size={12}
+              color="#00BFFF"
+            />
+          ) : (
+            <MaterialIcons
+              name="chat-bubble-outline"
+              size={12}
+              color="#00BFFF"
+              className="transform scale-x-[-1]"
+            />
+          )}
+          <Text className="text-[11px] font-medium text-gray-500">
+            {lastMessage ? (isImageMessage(lastMessage) ? 'Image' : lastMessage) : 'Tap to chat'}
+          </Text>
         </View>
       </View>
       <Pressable onPress={handleChatCam}>

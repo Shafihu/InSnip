@@ -98,7 +98,7 @@ const UserProfile = () => {
       </View>
       <Animated.View style={[styles.header, { height: headerHeight }]}>
         <Animated.Image
-          source={profilePic ? { uri: profilePic } : processUserImage(userData.avatar)}
+          source={profilePic ? { uri: profilePic } : processUserImage(userData?.avatar)}
           style={[
             styles.headerImage,
             { opacity: imageOpacity, transform: [{ translateY: imageTranslate }] },
@@ -211,5 +211,4 @@ const styles = StyleSheet.create({
     width: 40,
     zIndex: 99999
   }
-  
 });
