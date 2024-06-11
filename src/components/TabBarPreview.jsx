@@ -5,7 +5,7 @@ import { Ionicons, MaterialCommunityIcons, Feather } from 'react-native-vector-i
 const TabBarPreview = ({handleDownload, handleStory, handleShare}) => {
 
   return (
-    <View className="h-28 absolute bottom-0 left-0 right-0 bg-white pt-2 pr-4 pl-4 flex flex-row justify-evenly items-start rounded-t-[1.7rem] gap-3">
+    <View style={{height: 100}} className=" absolute bottom-0 left-0 right-0 bg-white pt-2 pr-4 pl-4 flex flex-row justify-evenly items-start rounded-t-[1.7rem] gap-3">
         <Pressable onPress={handleDownload} className="items-center justify-center bg-gray-400 rounded-full p-3 w-1/5 min-h-14">
           <Feather name='download' size={22} color="white" />
         </Pressable>

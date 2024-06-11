@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CameraView, useCameraPermissions } from "expo-camera";
+import { CameraView, useCameraPermissions, Camera } from "expo-camera";
 import { shareAsync } from "expo-sharing";
 import * as MediaLibrary from "expo-media-library";
 import { Animated, Button, Image, Pressable, SafeAreaView, Text, TouchableOpacity, View, StyleSheet } from "react-native";
@@ -14,6 +14,8 @@ import Map from "../../components/Map";
 import Spotlight from "../../components/Spotlight";
 import TabBarPreview from "../../components/TabBarPreview";
 import Header from "../../components/Header";
+import { Video } from "expo-av";
+
 
 const HomeScreen = () => {
   const [facing, setFacing] = useState("front");
@@ -21,12 +23,15 @@ const HomeScreen = () => {
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
   const [photo, setPhoto] = useState();
+  const [video, setVideo] = useState();
+  const [isRecording, setIsRecording] = useState(false);
   const cameraRef = useRef();
   const [camera, setCamera] = useState(true);
   const [maps, setMaps] = useState(false);
   const [chat, setChat] = useState(false);
   const [stories, setStories] = useState(false);
   const [spotlight, setSpotlight] = useState(false);
+
 
 
   const showToast = (message) => {
@@ -112,6 +117,25 @@ const HomeScreen = () => {
     setPhoto(newPhoto);
   };
 
+  let recordVideo = async () => {
+    setIsRecording(true)
+    console.log('recording...')
+    const options = { maxDuration: 30, mute: false, VideoQuality: '1080p' };
+    cameraRef.current.recordAsync(options).then((recordedVideo) => {
+      setVideo(recordedVideo);
+      console.log('done recording...');
+      console.log(recordedVideo)
+      setIsRecording(false)
+    });
+  };
+
+  let stopRecording = async () => {
+    setIsRecording(false);
+    await cameraRef.current.stopRecording();
+    console.log('stopped');
+
+  }
+
   const toggleCameraFacing = () => {
     setFacing((current) => (current === "back" ? "front" : "back"));
   };
@@ -121,16 +145,27 @@ const HomeScreen = () => {
   };
 
   const handleDownload = () => {
-    MediaLibrary.saveToLibraryAsync(photo.uri).then(() => {
-      showToast('Saved!');
-    });
+    if (photo) {
+      MediaLibrary.saveToLibraryAsync(photo.uri).then(() => {
+        showToast('Photo Saved!');
+      });
+    } else if (video) {
+      MediaLibrary.saveToLibraryAsync(video.uri).then(() => {
+        showToast('Video Saved!');
+      });
+    }
   };
 
   const handleStory = () => {};
 
   const handleShare = async () => {
-    await shareAsync(photo.uri);
-    setPhoto(undefined);
+    if(photo){
+      await shareAsync(photo.uri);
+      setPhoto(undefined);
+    } else if (video){
+      await shareAsync(video.uri);
+      setVideo(undefined);
+    } else {}
   };
 
   return (
@@ -140,6 +175,7 @@ const HomeScreen = () => {
           <View style={styles.cameraContainer}>
             {camera && (
               <CameraView
+                mode= {photo ? 'picture' : 'video'}
                 style={styles.cameraView}
                 facing={facing}
                 flash={flash}
@@ -156,6 +192,24 @@ const HomeScreen = () => {
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => setPhoto(null)}>
                         {/* Edit buttons go dey here */}
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+
+                {video && (
+                  <View style={styles.videoContainer}>
+                    <Video 
+                        style={{alignSelf: 'stretch', flex: 1}}
+                        source={{uri: video.uri}}
+                        useNativeControls
+                        resizeMode="stretch"
+                        isLooping
+                        autofocus
+                    />
+                    <View style={styles.videoControls}>
+                      <TouchableOpacity onPress={() => setVideo(undefined)}>
+                        <Ionicons name="close" color="white" size={30} />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -194,6 +248,8 @@ const HomeScreen = () => {
                           </View>
 
                           {/* FILTERS */}
+                          <Button title='Record' onPress={recordVideo}/>
+                          <Button title='Stop' onPress={stopRecording}/>
                           <FilterScrollView handleCapture={handleCapture} />
                         </View>
                       </>
@@ -210,7 +266,7 @@ const HomeScreen = () => {
           </View>
         </SafeAreaView>
 
-        {!photo && (
+        {!photo || !video && (
           <TabBar
             onPressCamera={handleCameraPress}
             onPressChat={handleChatPress}
@@ -220,7 +276,7 @@ const HomeScreen = () => {
           />
         )}
 
-        {photo && (
+        {photo || video   && (
           <TabBarPreview
             handleDownload={handleDownload}
             handleShare={handleShare}
@@ -260,6 +316,17 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 50,
   },
+
+  videoContainer: {
+    flex: 1,
+    position: "absolute",
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 50,
+    paddingBottom: 70,
+  },
   fullSizeImage: {
     flex: 1,
   },
@@ -267,6 +334,15 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20,
     left: 20,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 0,
+  },
+  videoControls: {
+    position: "absolute",
+    top: 20,
+    left: 40,
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
