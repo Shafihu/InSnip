@@ -1,30 +1,31 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { SafeAreaView, StyleSheet, Image, Text, Pressable } from 'react-native';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { SafeAreaView, StyleSheet, Image, Text, View } from 'react-native';
 import Header from '../components/Header';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Callout, Marker } from 'react-native-maps';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import { collection, getDocs, setDoc, doc } from 'firebase/firestore';
 import { useUser } from '../../context/UserContext';
 import { FIRESTORE_DB } from '../../Firebase/config';
 import processUserImage from '../../utils/processUserImage';
+import { router } from 'expo-router';
 
 const Map = () => {
-  const [location, setLocation] = useState({ latitude: 0, longitude: 0 });
+  const [location, setLocation] = useState(null);
   const [otherUsers, setOtherUsers] = useState([]);
   const mapRef = useRef(null);
   const { userData } = useUser();
 
   useEffect(() => {
     const fetchLocation = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         console.error('Permission to access location was denied');
         return;
       }
 
       try {
-        let { coords } = await Location.getCurrentPositionAsync({});
+        const { coords } = await Location.getCurrentPositionAsync({});
         setLocation(coords);
 
         // Animate the map to the user's location
@@ -49,7 +50,7 @@ const Map = () => {
     };
 
     fetchLocation();
-  }, []);
+  }, [userData.id]);
 
   const updateLocationInFirestore = async (coords) => {
     try {
@@ -61,12 +62,41 @@ const Map = () => {
     }
   };
 
+  const calloutPressed = useCallback((user) => {
+    router.push({
+      pathname: '/verified/profile/[otherUserProfile]',
+      params: {
+        id: user.id,
+        firstname: user.FirstName,
+        lastname: user.LastName,
+        username: user.Username,
+        avatar: user.avatar,
+      },
+    });
+  }, []);
+
+  const renderUserMarker = useCallback((user) => {
+    return (
+      user.location && (
+        <Marker key={user.id} coordinate={user.location}>
+          <Image source={processUserImage(user.avatar)} style={styles.markerImage} />
+          <Callout onPress={() => calloutPressed(user)}>
+            <View style={styles.calloutView}>
+              <Text style={styles.calloutUsername}>{user.Username}</Text>
+              <Image
+                source={user.picture ? { uri: user.picture } : processUserImage(user.avatar)}
+                style={styles.calloutImage}
+              />
+            </View>
+          </Callout>
+        </Marker>
+      )
+    );
+  }, [calloutPressed]);
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <LinearGradient
-        colors={['rgba(0,0,0,0.4)', 'transparent']}
-        style={styles.background}
-      >
+    <SafeAreaView style={styles.container}>
+      <LinearGradient colors={['rgba(0,0,0,0.4)', 'transparent']} style={styles.background}>
         <Header header='Map' />
       </LinearGradient>
 
@@ -77,26 +107,14 @@ const Map = () => {
         ref={mapRef}
         userLocationAnnotationTitle="Your custom title"
       >
-        {location.latitude !== 0 && location.longitude !== 0 && (
-          <Marker
-            coordinate={{ latitude: location.latitude, longitude: location.longitude }}
-            anchor={{ x: 0.5, y: 0.5 }}
-          >
-            <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>You</Text>
-            <Image source={processUserImage(userData?.avatar)} style={{ width: 50, height: 50, borderRadius: 20 }} />
+        {location && (
+          <Marker coordinate={location} anchor={{ x: 0.8, y: 0.8 }}>
+            <Text style={styles.youText}>You</Text>
+            <Image source={processUserImage(userData?.avatar)} style={styles.userImage} />
           </Marker>
         )}
 
-        {otherUsers.map(user => (
-          user.location && (
-            <Marker key={user?.id} coordinate={user?.location}>
-                <Pressable key={user?.id} onPress={()=>console.log('Pam!!!')}>
-                  <Text style={{ fontWeight: 'bold', color: 'pink', textAlign: 'center' }}>{user?.Username}</Text>
-                  <Image source={processUserImage(user?.avatar)} style={{ width: 40, height: 40, borderRadius: 20 }} />
-                </Pressable>
-            </Marker>
-          )
-        ))}
+        {otherUsers.map(renderUserMarker)}
       </MapView>
     </SafeAreaView>
   );
@@ -105,12 +123,46 @@ const Map = () => {
 export default Map;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   background: {
     position: 'absolute',
     left: 0,
     right: 0,
     top: 0,
     zIndex: 999,
+  },
+  youText: {
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  userImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 20,
+  },
+  markerImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  calloutView: {
+    width: 200,
+    height: 200,
+    flex: 1,
+    gap: 5,
+  },
+  calloutUsername: {
+    fontWeight: 'bold',
+    color: '#00bfff',
+    textAlign: 'center',
+  },
+  calloutImage: {
+    width: '100%',
+    height: 180,
+    borderRadius: 10,
+    objectFit: 'cover',
   },
   map: {},
 });

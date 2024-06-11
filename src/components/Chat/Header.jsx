@@ -4,9 +4,18 @@ import { FontAwesome5, FontAwesome } from 'react-native-vector-icons'
 import { router } from 'expo-router'
 import processUserImage from '../../../utils/processUserImage'
 
-const Header = ({title, avatar}) => {
+const Header = ({title, avatar, firstname, lastname, id, username}) => {
   return (
-    <View className="h-[60px] flex flex-row items-center justify-between gap-2 px-2 bg-white">
+    <Pressable onPress={()=>router.push({
+      pathname: '/verified/profile/[otherUserProfile]',
+      params: {
+        id: id,
+        firstname: firstname,
+        lastname: lastname,
+        username: username,
+        avatar: avatar,
+      }
+    })} className="h-[60px] flex flex-row items-center justify-between gap-2 px-2 bg-white">
       <Pressable onPress={()=>router.back()} className="w-[40px] h-[40px] rounded-full items-center justify-center ">
         <FontAwesome5 name="chevron-left" size={25} color="rgb(50,50,50)" />
       </Pressable>
@@ -24,7 +33,7 @@ const Header = ({title, avatar}) => {
         <FontAwesome name="video-camera" size={18} color="black" />
       </Pressable>
       </View>
-    </View>
+    </Pressable>
   )
 }
 

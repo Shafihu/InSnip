@@ -7,13 +7,14 @@ import { FIRESTORE_DB } from '../../../../Firebase/config';
 import { useLocalSearchParams } from 'expo-router';
 import { useUser } from '../../../../context/UserContext';
 import { pickAndUploadImage } from '../../../../utils/pickAndUploadImage';
+import { FontAwesome5, FontAwesome, Entypo } from 'react-native-vector-icons'
 import Modal from 'react-native-modal';
 
 const { width } = Dimensions.get('window');
 
 const ChatRoom = () => {
     const { userData } = useUser();
-    const { chatId, userId, firstname, lastname, avatar } = useLocalSearchParams();
+    const { chatId, userId, firstname, lastname, avatar, username } = useLocalSearchParams();
     const [chat, setChat] = useState(null);
     const [img, setImg] = useState(null);
     const [localImageUri, setLocalImageUri] = useState(null);
@@ -40,6 +41,7 @@ const ChatRoom = () => {
     }, [chatId]);
 
     const handleSend = async (message) => {
+        setLocalImageUri(null);
         try {
             if (!message && !img) return;
 
@@ -80,7 +82,6 @@ const ChatRoom = () => {
                         });
 
                         setImg(null);
-                        setLocalImageUri(null);
                     }
                 }
             }
@@ -107,7 +108,7 @@ const ChatRoom = () => {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-            <Header title={firstname + " " + lastname} avatar={avatar}/>
+            <Header title={firstname + " " + lastname} avatar={avatar} firstname={firstname} lastname={lastname} id={userId} username={username}/>
             <ImageBackground
                 source={require('../../../../assets/chatBackground.png')} 
                 style={{ flex: 1 }}
@@ -131,7 +132,7 @@ const ChatRoom = () => {
                                     style={{ 
                                         alignSelf: message.senderId === currentUserId ? 'flex-end' : 'flex-start',
                                         padding: 8, 
-                                        borderRadius: 4, 
+                                        borderRadius: 6, 
                                         borderLeftWidth: message.senderId === currentUserId ? 0 : 4, 
                                         borderRightWidth: message.senderId === currentUserId ? 4 : 0, 
                                         borderColor: message.senderId === currentUserId ? '#00BFFF' : 'red', 
@@ -155,13 +156,13 @@ const ChatRoom = () => {
                                                     source={{ uri: message.imageUrl }}
                                                     style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
                                                 />
-                                                <Text style={{ letterSpacing: 1, fontSize: 16, color: 'rgba(0,0,0,.8)' }}>
+                                                <Text style={{ letterSpacing: 0.2, fontSize: 16, color: 'rgba(0,0,0,.8)' }}>
                                                     {message.text}
                                                 </Text>
                                             </>
                                         ) : (
                                             <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'rgba(0,0,0,.8)' }}>
-                                                {message.text}
+                                                    {message.text}
                                             </Text>
                                         )}
                                     </View>
@@ -169,17 +170,21 @@ const ChatRoom = () => {
                             ))}
                         {localImageUri && (
                             <View style={{ 
-                                alignSelf: 'flex-start', 
+                                alignSelf: 'center', 
                                 padding: 8, 
-                                borderRadius: 4, 
-                                borderLeftWidth: 4, 
-                                borderLeftColor: '#00BFFF', 
+                                paddingTop: 4,
+                                borderRadius: 20, 
+                                borderWidth: 4, 
+                                borderColor: '#00bfff', 
                                 marginBottom: 8,
                                 backgroundColor: 'white' 
                             }}>
+                                <TouchableOpacity onPress={()=>setLocalImageUri(null)}>
+                                    <Entypo name='cross' size={20} color='gray' style={{textAlign: 'right'}}/>
+                                </TouchableOpacity>
                                 <Image
                                     source={{ uri: localImageUri }}
-                                    style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
+                                    style={{ width: width * 0.5, height: 100, borderRadius: 20,  }}
                                 />
                                 {uploadProgress > 0 && uploadProgress < 100 && (
                                     <View style={{ padding: 10, display:'flex', flexDirection: 'row', alignItems: 'center'}}>

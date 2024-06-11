@@ -54,6 +54,7 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
         userId: chat.user.id,
         firstname: firstName,
         lastname: lastName,
+        username: chat.user.Username,
         avatar: chat.user.avatar
       }
     });

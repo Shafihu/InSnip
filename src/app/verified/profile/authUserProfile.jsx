@@ -8,7 +8,6 @@ import { FIREBASE_AUTH } from "../../../../Firebase/config";
 import processUserImage from "../../../../utils/processUserImage";
 import { router } from "expo-router";
 import { FontAwesome6, MaterialCommunityIcons } from 'react-native-vector-icons';
-import { shareAsync } from "expo-sharing";
 
 const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 0;
