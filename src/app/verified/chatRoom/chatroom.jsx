@@ -10,18 +10,21 @@ import { pickAndUploadImage } from '../../../../utils/pickAndUploadImage';
 import { Entypo } from 'react-native-vector-icons';
 import Modal from 'react-native-modal';
 import { Image } from 'expo-image';
+import { useChatStore } from '../../../../context/ChatContext';
 
 const { width } = Dimensions.get('window');
 
 const ChatRoom = () => {
     const { userData } = useUser();
-    const { chatId, userId, firstname, lastname, avatar, username } = useLocalSearchParams();
+    const { chatId, userId, firstname, lastname, avatar, username, user} = useLocalSearchParams();
     const [chat, setChat] = useState(null);
     const [img, setImg] = useState(null);
     const [localImageUri, setLocalImageUri] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedMessage, setSelectedMessage] = useState(null);
+
+    const {isReceiverBlocked} = useChatStore()
 
     const scrollViewRef = useRef();
     const currentUserId = userData.id;
@@ -125,7 +128,7 @@ const ChatRoom = () => {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-            <Header title={firstname + " " + lastname} avatar={avatar} firstname={firstname} lastname={lastname} id={userId} username={username}/>
+            <Header title={firstname + " " + lastname} avatar={avatar} firstname={firstname} lastname={lastname} id={userId} username={username} user={user}/>
             <ImageBackground
                 source={require('../../../../assets/chatBackground.png')} 
                 style={{ flex: 1 }}
@@ -217,8 +220,14 @@ const ChatRoom = () => {
                                 )}
                             </View>
                         )}
+                        {isReceiverBlocked && 
+                            <View style={{backgroundColor: 'rgba(0,0,0,.3)', padding: 10}}>
+                                <Text style={{textAlign: 'center', fontWeight: '500', color: 'white', fontSize: 12}}>
+                                    You can no longer send or receive messeage from this user!
+                                </Text>
+                            </View>}
                     </ScrollView>
-                    <Bottom handleSend={handleSend} handlePickImage={handlePickImage} />
+                    <Bottom handleSend={handleSend} handlePickImage={handlePickImage} user={user} />
                     <Modal 
                         isVisible={isModalVisible}
                         onBackdropPress={handleCloseModal}

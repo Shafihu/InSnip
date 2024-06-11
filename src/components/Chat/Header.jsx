@@ -3,8 +3,10 @@ import React from 'react'
 import { FontAwesome5, FontAwesome } from 'react-native-vector-icons'
 import { router } from 'expo-router'
 import processUserImage from '../../../utils/processUserImage'
+import { useChatStore } from '../../../context/ChatContext'
 
-const Header = ({title, avatar, firstname, lastname, id, username}) => {
+const Header = ({title, avatar, firstname, lastname, id, username, user}) => {
+  const {isReceiverBlocked} = useChatStore()
   return (
     <Pressable onPress={()=>router.push({
       pathname: '/verified/profile/[otherUserProfile]',
@@ -14,6 +16,7 @@ const Header = ({title, avatar, firstname, lastname, id, username}) => {
         lastname: lastname,
         username: username,
         avatar: avatar,
+        user: user,
       }
     })} className="h-[60px] flex flex-row items-center justify-between gap-2 px-2 bg-white">
       <Pressable onPress={()=>router.back()} className="w-[40px] h-[40px] rounded-full items-center justify-center ">
@@ -21,7 +24,7 @@ const Header = ({title, avatar, firstname, lastname, id, username}) => {
       </Pressable>
       <View className="flex-1 flex-row items-center gap-3">
         <View className="bg-red-500 w-[30px] h-[30px] rounded-full">
-          <Image source={processUserImage(avatar)} style={{objectFit: 'cover', width: '100%', height: '100%', borderRadius: '100%'}} />
+          <Image source={isReceiverBlocked ? require('../../../assets/placeholder.png') : processUserImage(avatar)}  style={{objectFit: 'cover', width: '100%', height: '100%', borderRadius: '100%'}} />
         </View>
         <Text className="font-bold tracking-wider text-[18px]" numberOfLines={1} ellipsizeMode='tail'>{title}</Text>
       </View>

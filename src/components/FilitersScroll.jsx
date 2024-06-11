@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ScrollView, View, StyleSheet, Image, Dimensions, TouchableOpacity } from "react-native";
 
-const FilterScrollView = ({handleCapture, handleRecord, handleStopRecord}) => {
+const FilterScrollView = ({ handleCapture, handleRecord, handleStopRecord }) => {
   const itemWidth = 100; 
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -31,8 +31,6 @@ const FilterScrollView = ({handleCapture, handleRecord, handleStopRecord}) => {
   };
 
   return (
-    <>
-
     <ScrollView
       horizontal={true}
       decelerationRate="fast" 
@@ -47,18 +45,13 @@ const FilterScrollView = ({handleCapture, handleRecord, handleStopRecord}) => {
     >
       {filters.map((filter, index) => (
         <TouchableOpacity
-          onLongPress={()=>{
-            handleRecord();
-          }}
-          onPressOut={()=>{
-            handleStopRecord();
-          }}
-          onPress={()=>  {
-            if(activeIndex === index){
+          onLongPress={handleRecord}
+          onPressOut={handleStopRecord}
+          onPress={() => {
+            if (activeIndex === index) {
               handleCapture();
             }
-          }
-        }
+          }}
           key={filter.id}
           style={[
             styles.item,
@@ -69,7 +62,7 @@ const FilterScrollView = ({handleCapture, handleRecord, handleStopRecord}) => {
               transform: [{ scale: activeIndex === index ? 0.8 : 0.6 }],
               opacity: activeIndex === index ? 1 : 0.7,
               borderWidth: activeIndex === index ? 7 : 0,
-              borderColor: activeIndex === index ? "white" : "transparent", 
+              borderColor: activeIndex === index  ? "white" : "transparent", 
             },
           ]}
         >
@@ -77,7 +70,6 @@ const FilterScrollView = ({handleCapture, handleRecord, handleStopRecord}) => {
         </TouchableOpacity>
       ))}
     </ScrollView>
-    </>
   );
 };
 

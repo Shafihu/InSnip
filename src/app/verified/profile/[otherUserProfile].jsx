@@ -4,18 +4,25 @@ import Toast from "react-native-toast-message";
 import processUserImage from "../../../../utils/processUserImage";
 import { router, useLocalSearchParams } from "expo-router";
 import { FontAwesome6, MaterialCommunityIcons } from 'react-native-vector-icons';
-import { getDoc, doc } from "firebase/firestore";
+import { getDoc, doc, updateDoc, arrayRemove, arrayUnion } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../../../Firebase/config";
 import { Image } from "expo-image";
+import { useUser } from "../../../../context/UserContext";
+import { useChatStore } from "../../../../context/ChatContext";
 
 const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 0;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 const UserProfile = () => {
-    const { id, firstname, lastname, username, avatar } = useLocalSearchParams();
+    const { id, firstname, lastname, username, avatar, } = useLocalSearchParams();
     const [profilePic, setProfilePic] = useState(null);
     const scrollY = new Animated.Value(0);
+    const { userData } = useUser();
+    const { changeBlock, isReceiverBlocked, isCurrentUserBlocked } = useChatStore();
+
+    const currentUser = userData;
+    const currentUserId = currentUser.id;
 
     useEffect(() => {
         if (id) {
@@ -41,6 +48,14 @@ const UserProfile = () => {
             console.error('Error fetching user document:', error);
         }
     };
+    
+    const handleBlock = async () => {
+        changeBlock();
+        const userDocRef = doc(FIRESTORE_DB, 'users', currentUserId);
+        await updateDoc(userDocRef, {
+            blocked: isReceiverBlocked ? arrayRemove(id) : arrayUnion(id)
+        });
+    }
 
     const showErrorToast = (message) => {
         Toast.show({
@@ -79,7 +94,7 @@ const UserProfile = () => {
             </View>
             <Animated.View style={[styles.header, { height: headerHeight }]}>
                 <Animated.Image
-                    source={profilePic ? { uri: profilePic } : processUserImage(avatar)}
+                    source={isReceiverBlocked ? require('../../../../assets/placeholder.png') : profilePic ? { uri: profilePic } : processUserImage(avatar)} 
                     style={[
                         styles.headerImage,
                         { opacity: imageOpacity, transform: [{ translateY: imageTranslate }] },
@@ -99,13 +114,13 @@ const UserProfile = () => {
                     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                     { useNativeDriver: false }
                 )}
-                scrollEventThrottle={16}
+                scrollEventThrottle={16} 
             >
                 <View style={styles.scrollViewInner}>
                     <>
                         <View className="flex-1 flex-row items-center gap-4">
                             <Pressable style={{ borderWidth: 3, borderColor: 'pink', borderRadius: '100%' }}>
-                                <Image source={processUserImage(avatar)} style={styles.userImage} contentFit="cover" transition={500} />
+                                <Image source={isReceiverBlocked ? require('../../../../assets/placeholder.png') : processUserImage(avatar)} style={styles.userImage} contentFit="cover" transition={500} />
                             </Pressable>
                             <View className="w-full h-full items-start justify-center gap-2">
                                 <Text style={styles.userInfo} className="font-bold tracking-wide">{firstname} {lastname}</Text>
@@ -113,9 +128,11 @@ const UserProfile = () => {
                             </View>
                         </View>
                     </>
-                    <Pressable className="w-full">
-                        <Text style={styles.logoutText}>Block</Text>
-                    </Pressable>
+                        <View style={{gap: 10}}>
+                            <Pressable onPress={handleBlock} style={{backgroundColor: 'red', padding: 10, borderRadius: 8}}>
+                                <Text style={styles.logoutText}>{isCurrentUserBlocked ? 'Block' : isReceiverBlocked ? 'Unblock' : 'Block' }</Text>
+                            </Pressable>
+                        </View>
                 </View>
             </Animated.ScrollView>
         </View>
@@ -128,7 +145,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
-        position: 'relative'
+        position: 'relative',
+        justifyContent: 'space-between'
     },
     loadingContainer: {
         flex: 1,
@@ -154,7 +172,9 @@ const styles = StyleSheet.create({
     scrollViewInner: {
         paddingHorizontal: 20,
         paddingVertical: 20,
-        backgroundColor: 'white',
+        flex: 1,
+        justifyContent: 'space-between',
+        gap: 20
     },
     userImage: {
         width: 90,
@@ -166,8 +186,7 @@ const styles = StyleSheet.create({
     },
     logoutText: {
         fontSize: 16,
-        color: "red",
-        marginTop: 20,
+        color: "white",
         textAlign: 'center',
         fontWeight: 'bold'
     },

@@ -10,13 +10,14 @@ import { useUser } from '../../../context/UserContext';
 
 const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, lastMessage }) => {
   const { userData } = useUser();
-  const { changeChat } = useChatStore();
+  const { changeChat, isReceiverBlocked } = useChatStore();
   const router = useRouter(); 
 
   const currentUserId = userData?.id;
 
   const handleSelect = async (selectedChat) => {
     if (!currentUserId) return;
+    changeChat(chat.user.id, chat.user);
 
     const userChatsRef = doc(FIRESTORE_DB, 'userchats', currentUserId);
     const userChatsSnapshot = await getDoc(userChatsRef);
@@ -50,6 +51,7 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
     router.push({
       pathname: '/verified/chatRoom/chatroom',
       params: {
+        user: chat,
         chatId: chat.chatId,
         userId: chat.user.id,
         firstname: firstName,

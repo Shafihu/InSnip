@@ -8,7 +8,6 @@ export const ChatProvider = ({ children }) => {
   const [chatId, setChatId] = useState(null);
   const [isCurrentUserBlocked, setIsCurrentUserBlocked] = useState(false);
   const [isReceiverBlocked, setIsReceiverBlocked] = useState(false);
-  const [blockState, setBlockState] = useState(false);
   const { userData } = useUser();
 
   const changeChat = (chatId, user) => {
@@ -33,7 +32,7 @@ export const ChatProvider = ({ children }) => {
   };
 
   const changeBlock = () => {
-    setBlockState(!blockState);
+    setIsReceiverBlocked((prev) => !prev);
   };
 
   return (
@@ -44,7 +43,6 @@ export const ChatProvider = ({ children }) => {
         chatId,
         isCurrentUserBlocked,
         isReceiverBlocked,
-        blockState,
         changeBlock,
       }}
     >
