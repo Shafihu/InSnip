@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView, Pressable, ActivityIndicator } from 'react-native';
 import { Entypo } from 'react-native-vector-icons';
 import Header from './Header';
 import ChatItem from './Chat/ChatItem';
 import { useUser } from '../../context/UserContext';
-import { useChatStore } from '../../context/ChatContext';
 import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
 import { FIRESTORE_DB } from '../../Firebase/config';
 import { router } from 'expo-router';
@@ -13,7 +12,6 @@ const Chat = () => {
   const [loading, setLoading] = useState(false);
   const [chats, setChats] = useState([]);
   const { userData } = useUser();
-  // const { chat } = useChatStore();
 
   useEffect(() => {
     const userId = userData?.id;
@@ -23,7 +21,6 @@ const Chat = () => {
     const unSub = onSnapshot(doc(FIRESTORE_DB, "userchats", userId), async (res) => {
       try {
         if (!res.exists()) {
-          // Create the document if it doesn't exist
           await setDoc(doc(FIRESTORE_DB, "userchats", userId), { chats: [] });
           setChats([]);
         } else {
@@ -49,11 +46,15 @@ const Chat = () => {
     };
   }, [userData?.id]);
 
+  const handleNewMessagePress = useCallback(() => {
+    router.push('/verified/addChat');
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <Header header="Chat" />
       <View style={styles.content}>
-        <Pressable onPress={() => router.push('/verified/addChat')} style={styles.newMessageButton}>
+        <Pressable onPress={handleNewMessagePress} style={styles.newMessageButton}>
           <Entypo name="new-message" size={25} color="white" />
         </Pressable>
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -74,7 +75,7 @@ const Chat = () => {
             <ActivityIndicator size="small" color="#00BFFF" />
           ) : (
             chats.map((chat) => (
-              <ChatItem
+              <MemoizedChatItem
                 key={chat.chatId}
                 id={chat.id}
                 isSeen={chat.isSeen}
@@ -91,6 +92,8 @@ const Chat = () => {
     </SafeAreaView>
   );
 };
+
+const MemoizedChatItem = React.memo(ChatItem);
 
 const styles = StyleSheet.create({
   container: {

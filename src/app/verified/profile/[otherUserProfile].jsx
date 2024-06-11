@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Text, Pressable, Image, StyleSheet, View, Animated } from "react-native";
+import { Text, Pressable, StyleSheet, View, Animated } from "react-native";
 import Toast from "react-native-toast-message";
 import processUserImage from "../../../../utils/processUserImage";
 import { router, useLocalSearchParams } from "expo-router";
 import { FontAwesome6, MaterialCommunityIcons } from 'react-native-vector-icons';
 import { getDoc, doc } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../../../Firebase/config";
+import { Image } from "expo-image";
 
 const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 0;
@@ -86,6 +87,8 @@ const UserProfile = () => {
                     onError={() => {
                         console.error('Error loading image');
                     }}
+                    contentFit="cover"
+                    transition={1000}
                 />
             </Animated.View>
 
@@ -102,7 +105,7 @@ const UserProfile = () => {
                     <>
                         <View className="flex-1 flex-row items-center gap-4">
                             <Pressable style={{ borderWidth: 3, borderColor: 'pink', borderRadius: '100%' }}>
-                                <Image source={processUserImage(avatar)} style={styles.userImage} />
+                                <Image source={processUserImage(avatar)} style={styles.userImage} contentFit="cover" transition={500} />
                             </Pressable>
                             <View className="w-full h-full items-start justify-center gap-2">
                                 <Text style={styles.userInfo} className="font-bold tracking-wide">{firstname} {lastname}</Text>

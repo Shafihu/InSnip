@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import MapView, { Callout, Marker } from 'react-native-maps';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
-import { collection, getDocs, setDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, setDoc, doc, getDoc } from 'firebase/firestore';
 import { useUser } from '../../context/UserContext';
 import { FIRESTORE_DB } from '../../Firebase/config';
 import processUserImage from '../../utils/processUserImage';
@@ -17,49 +17,78 @@ const Map = () => {
   const { userData } = useUser();
 
   useEffect(() => {
-    const fetchLocation = async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        console.error('Permission to access location was denied');
-        return;
+    const fetchUserLocation = async () => {
+      const userDocRef = doc(FIRESTORE_DB, 'users', userData.id);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.location) {
+          const storedLocation = userData.location;
+          const currentLocation = await getCurrentLocation();
+
+          if (isLocationDifferent(storedLocation, currentLocation)) {
+            setLocation(currentLocation);
+            updateLocationInFirestore(userDocRef, currentLocation);
+          } else {
+            setLocation(storedLocation);
+          }
+          animateMap(storedLocation);
+        } else {
+          await fetchAndSetLocation(userDocRef);
+        }
+      } else {
+        await fetchAndSetLocation(userDocRef);
       }
 
-      try {
-        const { coords } = await Location.getCurrentPositionAsync({});
-        setLocation(coords);
-
-        // Animate the map to the user's location
-        mapRef.current?.animateToRegion({
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        });
-
-        // Update user's location in Firestore
-        await updateLocationInFirestore(coords);
-
-        // Fetch other users' locations from Firestore
-        const usersSnapshot = await getDocs(collection(FIRESTORE_DB, 'users'));
-        const usersData = usersSnapshot.docs.map(doc => doc.data());
-        setOtherUsers(usersData.filter(user => user.id !== userData.id));
-
-      } catch (error) {
-        console.error('Error fetching location:', error);
-      }
+      const usersSnapshot = await getDocs(collection(FIRESTORE_DB, 'users'));
+      const usersData = usersSnapshot.docs.map(doc => doc.data());
+      setOtherUsers(usersData.filter(user => user.id !== userData.id));
     };
 
-    fetchLocation();
+    fetchUserLocation();
   }, [userData.id]);
 
-  const updateLocationInFirestore = async (coords) => {
+  const getCurrentLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      console.error('Permission to access location was denied');
+      return null;
+    }
+    const { coords } = await Location.getCurrentPositionAsync({});
+    return coords;
+  };
+
+  const isLocationDifferent = (location1, location2, threshold = 0.001) => {
+    const latDiff = Math.abs(location1.latitude - location2.latitude);
+    const lonDiff = Math.abs(location1.longitude - location2.longitude);
+    return latDiff > threshold || lonDiff > threshold;
+  };
+
+  const fetchAndSetLocation = async (userDocRef) => {
+    const currentLocation = await getCurrentLocation();
+    if (currentLocation) {
+      setLocation(currentLocation);
+      updateLocationInFirestore(userDocRef, currentLocation);
+      animateMap(currentLocation);
+    }
+  };
+
+  const updateLocationInFirestore = async (userDocRef, coords) => {
     try {
-      await setDoc(doc(FIRESTORE_DB, 'users', userData.id), {
-        location: coords,
-      }, { merge: true });
+      await setDoc(userDocRef, { location: coords }, { merge: true });
     } catch (error) {
       console.error('Error updating user location in Firestore:', error);
     }
+  };
+
+  const animateMap = (coords) => {
+    mapRef.current?.animateToRegion({
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+      latitudeDelta: 0.1,
+      longitudeDelta: 0.1,
+    });
   };
 
   const calloutPressed = useCallback((user) => {
@@ -75,24 +104,22 @@ const Map = () => {
     });
   }, []);
 
-  const renderUserMarker = useCallback((user) => {
-    return (
-      user.location && (
-        <Marker key={user.id} coordinate={user.location}>
-          <Image source={processUserImage(user.avatar)} style={styles.markerImage} />
-          <Callout onPress={() => calloutPressed(user)}>
-            <View style={styles.calloutView}>
-              <Text style={styles.calloutUsername}>{user.Username}</Text>
-              <Image
-                source={user.picture ? { uri: user.picture } : processUserImage(user.avatar)}
-                style={styles.calloutImage}
-              />
-            </View>
-          </Callout>
-        </Marker>
-      )
-    );
-  }, [calloutPressed]);
+  const renderUserMarker = useCallback((user) => (
+    user.location && (
+      <Marker key={user.id} coordinate={user.location}>
+        <Image source={processUserImage(user.avatar)} style={styles.markerImage} />
+        <Callout onPress={() => calloutPressed(user)}>
+          <View style={styles.calloutView}>
+            <Text style={styles.calloutUsername}>{user.Username}</Text>
+            <Image
+              source={user.picture ? { uri: user.picture } : processUserImage(user.avatar)}
+              style={styles.calloutImage}
+            />
+          </View>
+        </Callout>
+      </Marker>
+    )
+  ), [calloutPressed]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -105,11 +132,11 @@ const Map = () => {
         showsUserLocation
         showsMyLocationButton
         ref={mapRef}
-        userLocationAnnotationTitle="Your custom title"
+        userLocationAnnotationTitle=""
       >
         {location && (
-          <Marker coordinate={location} anchor={{ x: 0.8, y: 0.8 }}>
-            <Text style={styles.youText}>You</Text>
+          <Marker coordinate={location} >
+            <Text style={styles.youText}>Me</Text>
             <Image source={processUserImage(userData?.avatar)} style={styles.userImage} />
           </Marker>
         )}

@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, Image, Dimensions, ActivityIndicator, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, Dimensions, ActivityIndicator, TouchableOpacity, ImageBackground } from 'react-native';
 import React, { useEffect, useState, useRef } from 'react';
 import Header from '../../../components/Chat/Header';
 import Bottom from '../../../components/Chat/Bottom';
@@ -7,8 +7,9 @@ import { FIRESTORE_DB } from '../../../../Firebase/config';
 import { useLocalSearchParams } from 'expo-router';
 import { useUser } from '../../../../context/UserContext';
 import { pickAndUploadImage } from '../../../../utils/pickAndUploadImage';
-import { FontAwesome5, FontAwesome, Entypo } from 'react-native-vector-icons'
+import { Entypo } from 'react-native-vector-icons';
 import Modal from 'react-native-modal';
+import { Image } from 'expo-image';
 
 const { width } = Dimensions.get('window');
 
@@ -25,19 +26,35 @@ const ChatRoom = () => {
     const scrollViewRef = useRef();
     const currentUserId = userData.id;
 
-    useEffect(() => {
-        if (chatId) {
-            const unSub = onSnapshot(doc(FIRESTORE_DB, 'chats', chatId), (doc) => {
-                setChat(doc.data());
-                if (scrollViewRef.current) {
-                    scrollViewRef.current.scrollToEnd({ animated: true });
-                }
-            });
+    const blurhash =
+  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
-            return () => {
-                unSub();
-            };
-        }
+
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            if (chatId) {
+                const chatDoc = await getDoc(doc(FIRESTORE_DB, 'chats', chatId));
+                if (chatDoc.exists()) {
+                    setChat(chatDoc.data());
+                    if (scrollViewRef.current) {
+                        scrollViewRef.current.scrollToEnd({ animated: true });
+                    }
+                }
+
+                const unSub = onSnapshot(doc(FIRESTORE_DB, 'chats', chatId), (doc) => {
+                    setChat(doc.data());
+                    if (scrollViewRef.current) {
+                        scrollViewRef.current.scrollToEnd({ animated: true });
+                    }
+                });
+
+                return () => {
+                    unSub();
+                };
+            }
+        };
+
+        fetchInitialData();
     }, [chatId]);
 
     const handleSend = async (message) => {
@@ -120,7 +137,7 @@ const ChatRoom = () => {
                 >
                     <ScrollView 
                         ref={scrollViewRef}
-                        contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', padding: 10 }}
+                        contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', paddingVertical: 10, paddingHorizontal: 5 }}
                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
                     >
                         {chat && chat.messages &&
@@ -155,6 +172,9 @@ const ChatRoom = () => {
                                                 <Image
                                                     source={{ uri: message.imageUrl }}
                                                     style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
+                                                    placeholder={{ blurhash }}
+                                                    contentFit="cover"
+                                                    transition={1000}
                                                 />
                                                 <Text style={{ letterSpacing: 0.2, fontSize: 16, color: 'rgba(0,0,0,.8)' }}>
                                                     {message.text}
@@ -185,6 +205,9 @@ const ChatRoom = () => {
                                 <Image
                                     source={{ uri: localImageUri }}
                                     style={{ width: width * 0.5, height: 100, borderRadius: 20,  }}
+                                    placeholder={{ blurhash }}
+                                    contentFit="cover"
+                                    transition={1000}
                                 />
                                 {uploadProgress > 0 && uploadProgress < 100 && (
                                     <View style={{ padding: 10, display:'flex', flexDirection: 'row', alignItems: 'center'}}>
