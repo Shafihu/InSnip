@@ -111,29 +111,25 @@ const HomeScreen = () => {
     );
   }
 
-  const handleCapture = async () => {
+  let handleCapture = async () => {
     const options = { quality: 1, base64: true, exif: false };
     const newPhoto = await cameraRef.current.takePictureAsync(options);
     setPhoto(newPhoto);
   };
 
-  let recordVideo = async () => {
+  let handleRecord = async () => {
     setIsRecording(true)
-    console.log('recording...')
+    console.log('recording')
     const options = { maxDuration: 30, mute: false, VideoQuality: '1080p' };
     cameraRef.current.recordAsync(options).then((recordedVideo) => {
       setVideo(recordedVideo);
-      console.log('done recording...');
-      console.log(recordedVideo)
       setIsRecording(false)
     });
   };
 
-  let stopRecording = async () => {
+  let handleStopRecord = async () => {
     setIsRecording(false);
     await cameraRef.current.stopRecording();
-    console.log('stopped');
-
   }
 
   const toggleCameraFacing = () => {
@@ -248,9 +244,8 @@ const HomeScreen = () => {
                           </View>
 
                           {/* FILTERS */}
-                          <Button title='Record' onPress={recordVideo}/>
-                          <Button title='Stop' onPress={stopRecording}/>
-                          <FilterScrollView handleCapture={handleCapture} />
+                          {/* <Button title={isRecording ? 'Stop' : 'Record'} onPress={isRecording ? stopRecording : recordVideo}/> */}
+                          <FilterScrollView handleCapture={handleCapture} handleRecord={handleRecord} handleStopRecord={handleStopRecord}/>
                         </View>
                       </>
                     </View>
@@ -266,7 +261,7 @@ const HomeScreen = () => {
           </View>
         </SafeAreaView>
 
-        {!photo || !video && (
+        {(!photo || !video) && (
           <TabBar
             onPressCamera={handleCameraPress}
             onPressChat={handleChatPress}
@@ -276,7 +271,7 @@ const HomeScreen = () => {
           />
         )}
 
-        {photo || video   && (
+        {(photo || video)   && (
           <TabBarPreview
             handleDownload={handleDownload}
             handleShare={handleShare}
@@ -341,8 +336,8 @@ const styles = StyleSheet.create({
   },
   videoControls: {
     position: "absolute",
-    top: 20,
-    left: 40,
+    top: 40,
+    left: 10,
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",

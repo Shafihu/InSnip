@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { ScrollView, View, StyleSheet, Image, Dimensions, TouchableOpacity } from "react-native";
 
-const FilterScrollView = ({handleCapture}) => {
+const FilterScrollView = ({handleCapture, handleRecord, handleStopRecord}) => {
   const itemWidth = 100; 
   const [activeIndex, setActiveIndex] = useState(0);
 
   const filters = [
+    { id: 99, image: '' },
     { id: 1, image: require("../../assets/filters/filterOne.png") },
     { id: 2, image: require("../../assets/filters/filterFourteen.png") },
     { id: 3, image: require("../../assets/filters/filterThree.png") },
@@ -46,11 +47,18 @@ const FilterScrollView = ({handleCapture}) => {
     >
       {filters.map((filter, index) => (
         <TouchableOpacity
+          onLongPress={()=>{
+            handleRecord();
+          }}
+          onPressOut={()=>{
+            handleStopRecord();
+          }}
           onPress={()=>  {
             if(activeIndex === index){
-              handleCapture()
+              handleCapture();
             }
-          }}
+          }
+        }
           key={filter.id}
           style={[
             styles.item,
