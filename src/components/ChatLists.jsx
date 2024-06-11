@@ -16,15 +16,18 @@ const Chat = () => {
   // const { chat } = useChatStore();
 
   useEffect(() => {
+    const userId = userData?.id;
+    if (!userId) return;
+
     setLoading(true);
-    const unSub = onSnapshot(doc(FIRESTORE_DB, "userchats", userData.id), async (res) => {
+    const unSub = onSnapshot(doc(FIRESTORE_DB, "userchats", userId), async (res) => {
       try {
         if (!res.exists()) {
           // Create the document if it doesn't exist
-          await setDoc(doc(FIRESTORE_DB, "userchats", userData.id), { chats: [] });
+          await setDoc(doc(FIRESTORE_DB, "userchats", userId), { chats: [] });
           setChats([]);
         } else {
-          const items = res.data().chats;
+          const items = res.data()?.chats || [];
           const promises = items.map(async (item) => {
             const userDocRef = doc(FIRESTORE_DB, 'users', item.receiverId);
             const userDocSnap = await getDoc(userDocRef);
@@ -44,7 +47,7 @@ const Chat = () => {
     return () => {
       unSub();
     };
-  }, [userData.id]);
+  }, [userData?.id]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -76,9 +79,9 @@ const Chat = () => {
                 id={chat.id}
                 isSeen={chat.isSeen}
                 chat={chat}
-                avatar={chat.user.avatar}
-                firstName={chat.user.FirstName}
-                lastName={chat.user.LastName}
+                avatar={chat.user?.avatar}
+                firstName={chat.user?.FirstName}
+                lastName={chat.user?.LastName}
                 lastMessage={chat.lastMessage}
               />
             ))

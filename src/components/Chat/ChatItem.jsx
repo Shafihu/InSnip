@@ -16,12 +16,14 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
   const currentUserId = userData?.id;
 
   const handleSelect = async (selectedChat) => {
+    if (!currentUserId) return;
+
     const userChatsRef = doc(FIRESTORE_DB, 'userchats', currentUserId);
     const userChatsSnapshot = await getDoc(userChatsRef);
     
     if (userChatsSnapshot.exists()) {
       const userChatsData = userChatsSnapshot.data();
-      const chatIndex = userChatsData.chats.findIndex(item => item.chatId === selectedChat.chatId);
+      const chatIndex = userChatsData?.chats?.findIndex(item => item.chatId === selectedChat.chatId);
 
       if (chatIndex !== -1) {
         userChatsData.chats[chatIndex].isSeen = true;
@@ -42,21 +44,25 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
     return message && message.startsWith('https');
   };
 
+  const handlePress = async () => {
+    if (!chat?.chatId || !chat?.user?.id) return;
+    
+    router.push({
+      pathname: '/verified/chatRoom/chatroom',
+      params: {
+        chatId: chat.chatId,
+        userId: chat.user.id,
+        firstname: firstName,
+        lastname: lastName,
+        avatar: chat.user.avatar
+      }
+    });
+    await handleSelect(chat);
+  };
+
   return (
     <Pressable
-      onPress={async () => {
-        router.push({
-          pathname: '/verified/chatRoom/chatroom',
-          params: {
-            chatId: chat.chatId,
-            userId: chat.user.id,
-            firstname: firstName,
-            lastname: lastName,
-            avatar: chat.user.avatar
-          }
-        });
-        await handleSelect(chat);
-      }}
+      onPress={handlePress}
       className={`flex flex-row items-center justify-between gap-4 py-2 px-3 pr-5 border border-t-1 border-b-0 border-l-0 border-r-0 border-gray-200 relative bg-white`}
     >
       <View className={`bg-[#00BFFF] w-3 h-3 rounded-full absolute right-14 top-1/2 ${isSeen ? 'hidden' : 'block'}`} />

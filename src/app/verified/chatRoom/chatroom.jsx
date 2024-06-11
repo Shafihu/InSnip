@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, Image, Dimensions, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, Image, Dimensions, ActivityIndicator, TouchableOpacity, ImageBackground } from 'react-native';
 import React, { useEffect, useState, useRef } from 'react';
 import Header from '../../../components/Chat/Header';
 import Bottom from '../../../components/Chat/Bottom';
@@ -96,7 +96,7 @@ const ChatRoom = () => {
     };
 
     const handleLongPress = (message) => {
-        setSelectedMessage(message);
+        setSelectedMessage(message.text);
         setIsModalVisible(true);
     };
 
@@ -108,101 +108,108 @@ const ChatRoom = () => {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
             <Header title={firstname + " " + lastname} avatar={avatar}/>
-            <KeyboardAvoidingView
-                style={{ flex: 1, backgroundColor: '#F8F8FF' }}
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+            <ImageBackground
+                source={require('../../../../assets/chatBackground.png')} 
+                style={{ flex: 1 }}
             >
-                <ScrollView 
-                    ref={scrollViewRef}
-                    contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', padding: 10 }}
-                    onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+                <KeyboardAvoidingView
+                    style={{ flex: 1 }}
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
                 >
-                    {chat && chat.messages &&
-                        chat.messages.map((message, index) => (
-                            <TouchableOpacity 
-                                key={index} 
-                                activeOpacity={.9}
-                                onLongPress={() => handleLongPress(message)}
-                                style={{ 
-                                    alignSelf: message.senderId === currentUserId ? 'flex-end' : 'flex-start',
-                                    padding: 8, 
-                                    borderRadius: 4, 
-                                    borderLeftWidth: message.senderId === currentUserId ? 0 : 4, 
-                                    borderRightWidth: message.senderId === currentUserId ? 4 : 0, 
-                                    borderColor: message.senderId === currentUserId ? '#00BFFF' : 'red', 
-                                    marginBottom: 8,
-                                    backgroundColor: 'white',
-                                }}
-                            >
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
-                                    <Text style={{ color: message.senderId === currentUserId ? '#00BFFF' : 'red' }}>
-                                        {message.senderId === currentUserId ? 'Me' : firstname}
-                                    </Text>
-                                    <Text style={{ color: 'gray', fontSize: 10 }}>
-                                        {message.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </Text>
-                                </View>
+                    <ScrollView 
+                        ref={scrollViewRef}
+                        contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', padding: 10 }}
+                        onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+                    >
+                        {chat && chat.messages &&
+                            chat.messages.map((message, index) => (
+                                <TouchableOpacity 
+                                    key={index} 
+                                    activeOpacity={.9}
+                                    onLongPress={() => handleLongPress(message)}
+                                    style={{ 
+                                        alignSelf: message.senderId === currentUserId ? 'flex-end' : 'flex-start',
+                                        padding: 8, 
+                                        borderRadius: 4, 
+                                        borderLeftWidth: message.senderId === currentUserId ? 0 : 4, 
+                                        borderRightWidth: message.senderId === currentUserId ? 4 : 0, 
+                                        borderColor: message.senderId === currentUserId ? '#00BFFF' : 'red', 
+                                        marginBottom: 8,
+                                        backgroundColor: 'white',
+                                    }}
+                                >
+                                    <View style={{marginBottom: 4, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+                                        <Text style={{fontSize: 13, color: message.senderId === currentUserId ? '#00BFFF' : 'red' }}>
+                                            {message.senderId === currentUserId ? 'Me' : firstname}
+                                        </Text>
+                                        <Text style={{ color: 'gray', fontSize: 10 }}>
+                                            {message.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </Text>
+                                    </View>
 
-                                <View>
-                                    {message.imageUrl ? (
-                                        <>
-                                            <Image
-                                                source={{ uri: message.imageUrl }}
-                                                style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
-                                            />
-                                            <Text style={{ letterSpacing: 1, fontSize: 16, color: 'rgba(0,0,0,.8)' }}>
+                                    <View>
+                                        {message.imageUrl ? (
+                                            <>
+                                                <Image
+                                                    source={{ uri: message.imageUrl }}
+                                                    style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
+                                                />
+                                                <Text style={{ letterSpacing: 1, fontSize: 16, color: 'rgba(0,0,0,.8)' }}>
+                                                    {message.text}
+                                                </Text>
+                                            </>
+                                        ) : (
+                                            <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'rgba(0,0,0,.8)' }}>
                                                 {message.text}
                                             </Text>
-                                        </>
-                                    ) : (
-                                        <Text style={{ letterSpacing: 0.3, fontSize: 16, color: 'rgba(0,0,0,.8)' }}>
-                                            {message.text}
-                                        </Text>
-                                    )}
-                                </View>
-                            </TouchableOpacity>
-                        ))}
-                    {localImageUri && (
+                                        )}
+                                    </View>
+                                </TouchableOpacity>
+                            ))}
+                        {localImageUri && (
+                            <View style={{ 
+                                alignSelf: 'flex-start', 
+                                padding: 8, 
+                                borderRadius: 4, 
+                                borderLeftWidth: 4, 
+                                borderLeftColor: '#00BFFF', 
+                                marginBottom: 8,
+                                backgroundColor: 'white' 
+                            }}>
+                                <Image
+                                    source={{ uri: localImageUri }}
+                                    style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
+                                />
+                                {uploadProgress > 0 && uploadProgress < 100 && (
+                                    <View style={{ padding: 10, display:'flex', flexDirection: 'row', alignItems: 'center'}}>
+                                        <Text>Upload Progress: {uploadProgress.toFixed(2)}%</Text>
+                                        <ActivityIndicator size="small" color="gray" />
+                                    </View>
+                                )}
+                            </View>
+                        )}
+                    </ScrollView>
+                    <Bottom handleSend={handleSend} handlePickImage={handlePickImage} />
+                    <Modal 
+                        isVisible={isModalVisible}
+                        onBackdropPress={handleCloseModal}
+                        style={{ justifyContent: 'flex-end', margin: 0 }}
+                    >
                         <View style={{ 
-                            alignSelf: 'flex-start', 
-                            padding: 8, 
-                            borderRadius: 4, 
-                            borderLeftWidth: 4, 
-                            borderLeftColor: '#00BFFF', 
-                            marginBottom: 8,
-                            backgroundColor: 'white' 
+                            backgroundColor: 'white', 
+                            padding: 20, 
+                            borderTopLeftRadius: 20, 
+                            borderTopRightRadius: 20,
+                            paddingBottom: 50,
+                            gap: 15
                         }}>
-                            <Image
-                                source={{ uri: localImageUri }}
-                                style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
-                            />
-                            {uploadProgress > 0 && uploadProgress < 100 && (
-                                <View style={{ padding: 10, display:'flex', flexDirection: 'row', alignItems: 'center'}}>
-                                    <Text>Upload Progress: {uploadProgress.toFixed(2)}%</Text>
-                                    <ActivityIndicator size="small" color="gray" />
-                                </View>
-                            )}
+                            <Text style={{textAlign: 'center'}}>{selectedMessage}</Text>
+                            <Text style={{textAlign: 'center', fontSize: 16, fontWeight: 'bold', color: 'red'}}>Delete</Text>
                         </View>
-                    )}
-                </ScrollView>
-                <Bottom handleSend={handleSend} handlePickImage={handlePickImage} />
-                <Modal 
-                    isVisible={isModalVisible}
-                    onBackdropPress={handleCloseModal}
-                    style={{ justifyContent: 'flex-end', margin: 0 }}
-                >
-                    <View style={{ 
-                        backgroundColor: 'white', 
-                        padding: 20, 
-                        borderTopLeftRadius: 20, 
-                        borderTopRightRadius: 20,
-                        paddingBottom: 50
-                    }}>
-                        <Text style={{textAlign: 'center', fontSize: 16, fontWeight: 'bold', color: 'red'}}>Delete</Text>
-                    </View>
-                </Modal>
-            </KeyboardAvoidingView>
+                    </Modal>
+                </KeyboardAvoidingView>
+            </ImageBackground>
         </SafeAreaView>
     );
 };
