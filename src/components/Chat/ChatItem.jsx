@@ -85,7 +85,7 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
             <MaterialIcons
               name="chat-bubble-outline"
               size={12}
-              color="#00BFFF"
+              color='#00BFFF'
               className="transform scale-x-[-1]"
             />
           )}

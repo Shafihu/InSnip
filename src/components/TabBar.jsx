@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderTopLeftRadius: 27,
     borderTopRightRadius: 27,
+    // display: 'none'
   },
   container: {
     flexDirection: 'row',

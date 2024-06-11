@@ -82,9 +82,6 @@ const UserProfile = () => {
     extrapolate: 'clamp',
   });
 
-  const handleShare = async (username) => {
-    await shareAsync(username);
-  };
 
   return (
     <View style={styles.container}>
