@@ -223,7 +223,7 @@ const ChatRoom = () => {
                         {isReceiverBlocked && 
                             <View style={{backgroundColor: 'rgba(0,0,0,.3)', padding: 10}}>
                                 <Text style={{textAlign: 'center', fontWeight: '500', color: 'white', fontSize: 12}}>
-                                    You can no longer send or receive messeage from this user!
+                                    You can no longer send or receive messeages from this user!
                                 </Text>
                             </View>}
                     </ScrollView>
