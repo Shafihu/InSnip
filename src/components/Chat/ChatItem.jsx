@@ -93,7 +93,7 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
             />
           )}
           <Text className="text-[11px] font-medium text-gray-500">
-            {lastMessage ? (isImageMessage(lastMessage) ? 'Image' : lastMessage) : 'Tap to chat'}
+            {lastMessage ? (isImageMessage(lastMessage) ? 'Media' : lastMessage) : 'Tap to chat'}
           </Text>
         </View>
       </View>
