@@ -221,13 +221,19 @@ const ChatRoom = () => {
                                 <View>
                                     {message.mediaUrl ? (
                                         message.mediaType === 'image' ? (
-                                            <Image
+                                            <>
+                                                                                            <Image
                                                 source={{ uri: message.mediaUrl }}
                                                 style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
                                                 placeholder={{ blurhash }}
                                                 contentFit="cover"
                                                 transition={1000}
                                             />
+                                             <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'rgba(0,0,0,.8)' }}>
+                                            {message.text}
+                                        </Text>
+                                            </>
+
                                        
                                         ) : (
                                             <View>
@@ -255,6 +261,9 @@ const ChatRoom = () => {
                                                         <Ionicons name="play-circle" size={60} color="rgba(255,255,255,0.7)" />
                                                     </Pressable>
                                                 )}
+                                                                                             <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'rgba(0,0,0,.8)' }}>
+                                            {message.text}
+                                        </Text>
                                             </View>
                                         )
                                     ) : (
@@ -263,6 +272,7 @@ const ChatRoom = () => {
                                         </Text>
                                     )}
                                 </View>
+                                
                             </TouchableOpacity>
                         ))}
 
