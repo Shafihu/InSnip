@@ -1,4 +1,6 @@
-import { View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, Dimensions, ActivityIndicator, TouchableOpacity, ImageBackground } from 'react-native';
+import { 
+    View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, Dimensions, ActivityIndicator, TouchableOpacity, ImageBackground 
+} from 'react-native';
 import React, { useEffect, useState, useRef } from 'react';
 import Header from '../../../components/Chat/Header';
 import Bottom from '../../../components/Chat/Bottom';
@@ -6,11 +8,12 @@ import { onSnapshot, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firesto
 import { FIRESTORE_DB } from '../../../../Firebase/config';
 import { useLocalSearchParams } from 'expo-router';
 import { useUser } from '../../../../context/UserContext';
-import { pickAndUploadImage } from '../../../../utils/pickAndUploadImage';
+import { pickAndUploadMedia } from '../../../../utils/pickAndUploadMedia';
 import { Entypo } from 'react-native-vector-icons';
 import Modal from 'react-native-modal';
 import { Image } from 'expo-image';
 import { useChatStore } from '../../../../context/ChatContext';
+import { Video } from 'expo-av';
 
 const { width } = Dimensions.get('window');
 
@@ -18,8 +21,8 @@ const ChatRoom = () => {
     const { userData } = useUser();
     const { chatId, userId, firstname, lastname, avatar, username, user} = useLocalSearchParams();
     const [chat, setChat] = useState(null);
-    const [img, setImg] = useState(null);
-    const [localImageUri, setLocalImageUri] = useState(null);
+    const [media, setMedia] = useState(null);
+    const [localMediaUri, setLocalMediaUri] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedMessage, setSelectedMessage] = useState(null);
@@ -31,7 +34,6 @@ const ChatRoom = () => {
 
     const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
-
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -61,9 +63,9 @@ const ChatRoom = () => {
     }, [chatId]);
 
     const handleSend = async (message) => {
-        setLocalImageUri(null);
+        setLocalMediaUri(null);
         try {
-            if (!message && !img) return;
+            if (!message && !media) return;
 
             const chatRef = doc(FIRESTORE_DB, 'chats', chatId);
 
@@ -73,8 +75,9 @@ const ChatRoom = () => {
                 createdAt: new Date(),
             };
 
-            if (img) {
-                messageData.imageUrl = img;
+            if (media) {
+                messageData.mediaUrl = media.url;
+                messageData.mediaType = media.type;
             }
 
             await updateDoc(chatRef, {
@@ -93,7 +96,7 @@ const ChatRoom = () => {
                     const chatIndex = userChatsData.chats.findIndex(c => c.chatId === chatId);
 
                     if (chatIndex !== -1) {
-                        userChatsData.chats[chatIndex].lastMessage = img ? img + message : message;
+                        userChatsData.chats[chatIndex].lastMessage = media ? media.url + message : message;
                         userChatsData.chats[chatIndex].isSeen = id === currentUserId;
                         userChatsData.chats[chatIndex].updatedAt = new Date();
 
@@ -101,7 +104,7 @@ const ChatRoom = () => {
                             chats: userChatsData.chats, 
                         });
 
-                        setImg(null);
+                        setMedia(null);
                     }
                 }
             }
@@ -110,9 +113,9 @@ const ChatRoom = () => {
         }
     };
 
-    const handlePickImage = async () => {
-        await pickAndUploadImage(setUploadProgress, setLocalImageUri).then((res) => {
-            setImg(res);
+    const handlePickMedia = async () => {
+        await pickAndUploadMedia(setUploadProgress, setLocalMediaUri).then((res) => {
+            setMedia(res);
         });
     };
 
@@ -170,28 +173,33 @@ const ChatRoom = () => {
                                     </View>
 
                                     <View>
-                                        {message.imageUrl ? (
-                                            <>
+                                        {message.mediaUrl ? (
+                                            message.mediaType === 'image' ? (
                                                 <Image
-                                                    source={{ uri: message.imageUrl }}
+                                                    source={{ uri: message.mediaUrl }}
                                                     style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
                                                     placeholder={{ blurhash }}
                                                     contentFit="cover"
                                                     transition={1000}
                                                 />
-                                                <Text style={{ letterSpacing: 0.2, fontSize: 16, color: 'rgba(0,0,0,.8)' }}>
-                                                    {message.text}
-                                                </Text>
-                                            </>
+                                            ) : (
+                                                <Video
+                                                    source={{ uri: message.mediaUrl }}
+                                                    style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
+                                                    useNativeControls
+                                                    resizeMode="cover"
+                                                    isLooping
+                                                />
+                                            )
                                         ) : (
                                             <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'rgba(0,0,0,.8)' }}>
-                                                    {message.text}
+                                                {message.text}
                                             </Text>
                                         )}
                                     </View>
                                 </TouchableOpacity>
                             ))}
-                        {localImageUri && (
+                        {localMediaUri && (
                             <View style={{ 
                                 alignSelf: 'center', 
                                 padding: 8, 
@@ -202,16 +210,26 @@ const ChatRoom = () => {
                                 marginBottom: 8,
                                 backgroundColor: 'white' 
                             }}>
-                                <TouchableOpacity onPress={()=>setLocalImageUri(null)}>
+                                <TouchableOpacity onPress={()=>setLocalMediaUri(null)}>
                                     <Entypo name='cross' size={20} color='gray' style={{textAlign: 'right'}}/>
                                 </TouchableOpacity>
-                                <Image
-                                    source={{ uri: localImageUri }}
-                                    style={{ width: width * 0.5, height: 100, borderRadius: 20,  }}
-                                    placeholder={{ blurhash }}
-                                    contentFit="cover"
-                                    transition={1000}
-                                />
+                                {media && media.type === 'image' ? (
+                                    <Image
+                                        source={{ uri: localMediaUri }}
+                                        style={{ width: width * 0.5, height: 100, borderRadius: 20 }}
+                                        placeholder={{ blurhash }}
+                                        contentFit="cover"
+                                        transition={1000}
+                                    />
+                                ) : (
+                                    <Video
+                                        source={{ uri: localMediaUri }}
+                                        style={{ width: width * 0.5, height: 100, borderRadius: 20 }}
+                                        useNativeControls
+                                        resizeMode="cover"
+                                        isLooping
+                                    />
+                                )}
                                 {uploadProgress > 0 && uploadProgress < 100 && (
                                     <View style={{ padding: 10, display:'flex', flexDirection: 'row', alignItems: 'center'}}>
                                         <Text>Upload Progress: {uploadProgress.toFixed(2)}%</Text>
@@ -223,11 +241,11 @@ const ChatRoom = () => {
                         {isReceiverBlocked && 
                             <View style={{backgroundColor: 'rgba(0,0,0,.3)', padding: 10}}>
                                 <Text style={{textAlign: 'center', fontWeight: '500', color: 'white', fontSize: 12}}>
-                                    You can no longer send or receive messeages from this user!
+                                    You can no longer send or receive messages from this user!
                                 </Text>
                             </View>}
                     </ScrollView>
-                    <Bottom handleSend={handleSend} handlePickImage={handlePickImage} user={user} />
+                    <Bottom handleSend={handleSend} handlePickImage={handlePickMedia} user={user} />
                     <Modal 
                         isVisible={isModalVisible}
                         onBackdropPress={handleCloseModal}
