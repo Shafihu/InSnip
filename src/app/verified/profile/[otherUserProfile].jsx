@@ -128,11 +128,11 @@ const UserProfile = () => {
                             </View>
                         </View>
                     </>
-                        <View style={{gap: 10}}>
+                        {/* <View style={{gap: 10}}>
                             <Pressable onPress={handleBlock} style={{backgroundColor: 'red', padding: 10, borderRadius: 8}}>
                                 <Text style={styles.logoutText}>{isCurrentUserBlocked ? 'Block' : isReceiverBlocked ? 'Unblock' : 'Block' }</Text>
                             </Pressable>
-                        </View>
+                        </View> */}
                 </View>
             </Animated.ScrollView>
         </View>

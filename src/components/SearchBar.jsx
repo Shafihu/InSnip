@@ -3,7 +3,7 @@ import { TextInput, View, Text, Pressable } from 'react-native';
 import { Foundation } from 'react-native-vector-icons';
 import { router } from 'expo-router';
 
-const SearchBar = ({ onChangeText, color }) => {
+const SearchBar = ({ onChangeText, onActualChange, color }) => {
   const [searchText, setSearchText] = useState('');
 
   const handleSearch = () => {
@@ -12,6 +12,7 @@ const SearchBar = ({ onChangeText, color }) => {
 
   const handleChangeText = (text) => {
     setSearchText(text);
+    onActualChange(text); // Correctly passing the updated text
   };
 
   return (

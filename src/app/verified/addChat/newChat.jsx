@@ -9,7 +9,7 @@ import { FIRESTORE_DB } from '../../../../Firebase/config';
 import processUserImage from '../../../../utils/processUserImage';
 import { useUser } from "../../../../context/UserContext";
 
-const newChat = () => {
+const NewChat = () => {
     const navigation = useNavigation();
     const { userData } = useUser();
     const [user, setUser] = useState(null);
@@ -108,12 +108,17 @@ const newChat = () => {
         }, 0);
     };
 
+    const onActualChange = (text) => {
+        // Call handleSearchQuery when the text changes
+        handleSearchQuery(text);
+    };
+
     return (
         <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
-            <SearchBar onChangeText={handleSearchQuery} color='#f5f5f5' />
+            <SearchBar onChangeText={handleSearchQuery} onActualChange={onActualChange} color='#f5f5f5' />
             <View style={{ paddingHorizontal: 15, backgroundColor: '#f5f5f5', flex: 1 }}>
                 <View style={{ marginVertical: 15 }}>
-                    <Text className="font-semibold tracking-wider text-[16px]">Friends & Groups</Text>
+                    {/* <Text className="font-semibold tracking-wider text-[16px]">Friends & Groups</Text> */}
                 </View>
                 {loading ? (
                     <ActivityIndicator size="small" color="#03A9F4" />
@@ -163,4 +168,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default newChat;
+export default NewChat;

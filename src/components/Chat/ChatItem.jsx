@@ -17,7 +17,7 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
 
   const handleSelect = async (selectedChat) => {
     if (!currentUserId) return;
-    changeChat(chat.user.id, chat.user);
+    changeChat(chat.user?.id, chat.user);
 
     const userChatsRef = doc(FIRESTORE_DB, 'userchats', currentUserId);
     const userChatsSnapshot = await getDoc(userChatsRef);
@@ -71,7 +71,7 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
       <View className={`bg-[#00BFFF] w-3 h-3 rounded-full absolute right-14 top-1/2 ${isSeen ? 'hidden' : 'block'}`} />
       <View className="w-[50px] h-[50px] bg-gray-100 rounded-full overflow-hidden">
         <Image
-          source={userData.blocked.includes(chat.user.id) ? require('../../../assets/placeholder.png') : processUserImage(avatar)}
+          source={userData?.blocked.includes(chat?.user?.id) ? require('../../../assets/placeholder.png') : processUserImage(avatar)}
           style={{ width: '100%', height: '100%' }}
         />
       </View>
