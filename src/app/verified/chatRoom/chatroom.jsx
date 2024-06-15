@@ -1,21 +1,21 @@
+import React, { useEffect, useState, useRef } from 'react';
 import {
-    View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, Dimensions, ActivityIndicator, TouchableOpacity, ImageBackground,
-    Pressable
-    } from 'react-native';
-    import React, { useEffect, useState, useRef } from 'react';
-    import Header from '../../../components/Chat/Header';
-    import Bottom from '../../../components/Chat/Bottom';
-    import { onSnapshot, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
-    import { FIRESTORE_DB } from '../../../../Firebase/config';
-    import { useLocalSearchParams } from 'expo-router';
-    import { useUser } from '../../../../context/UserContext';
-    import { pickAndUploadMedia } from '../../../../utils/pickAndUploadMedia';
-    import { Entypo } from 'react-native-vector-icons';
-    import Modal from 'react-native-modal';
-    import { Image } from 'expo-image';
-    import { useChatStore } from '../../../../context/ChatContext';
-    import { Video } from 'expo-av';
-    import { Ionicons } from 'react-native-vector-icons';
+    View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, Dimensions, ActivityIndicator,
+    TouchableOpacity, ImageBackground, Pressable
+} from 'react-native';
+import { onSnapshot, doc, updateDoc, arrayUnion, getDoc, deleteDoc } from 'firebase/firestore';
+import { FIRESTORE_DB } from '../../../../Firebase/config';
+import { useLocalSearchParams } from 'expo-router';
+import { useUser } from '../../../../context/UserContext';
+import { pickAndUploadMedia } from '../../../../utils/pickAndUploadMedia';
+import { Entypo } from 'react-native-vector-icons';
+import Modal from 'react-native-modal';
+import { Image } from 'expo-image';
+import { useChatStore } from '../../../../context/ChatContext';
+import { Video } from 'expo-av';
+import { Ionicons } from 'react-native-vector-icons';
+import Header from "../../../components/Chat/Header"
+import Bottom from "../../../components/Chat/Bottom"
 
 const { width } = Dimensions.get('window');
 
@@ -29,7 +29,6 @@ const ChatRoom = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedMessage, setSelectedMessage] = useState(null);
     const [play, setPlay] = useState(false);
-    const [showIcon, setShowIcon] = useState(true)
     const videoRef = useRef(null);
     const currentUserId = userData.id;
 
@@ -38,8 +37,7 @@ const ChatRoom = () => {
     const scrollViewRef = useRef(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
 
-    const blurhash =
-'|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+    const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -131,7 +129,7 @@ const ChatRoom = () => {
     };
 
     const handleLongPress = (message) => {
-        setSelectedMessage(message.text);
+        setSelectedMessage(message);
         setIsModalVisible(true);
     };
 
@@ -162,9 +160,29 @@ const ChatRoom = () => {
         }
     };
 
+    const handleDeleteMessage = async () => {
+        try {
+            const chatRef = doc(FIRESTORE_DB, 'chats', chatId);
+            const chatDoc = await getDoc(chatRef);
+
+            if (chatDoc.exists()) {
+                const updatedMessages = chatDoc.data().messages.filter((msg) => msg.text !== selectedMessage.text);
+
+                await updateDoc(chatRef, {
+                    messages: updatedMessages,
+                });
+
+                setIsModalVisible(false);
+                setSelectedMessage(null);
+            }
+        } catch (error) {
+            console.log('Error deleting message: ', error);
+        }
+    };
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-             <Header title={firstname + " " + lastname} avatar={avatar} firstname={firstname} lastname={lastname} id={userId} username={username} user={user}/>
+            <Header title={`${firstname} ${lastname}`} avatar={avatar} firstname={firstname} lastname={lastname} id={userId} username={username} user={user} />
             <ImageBackground source={require('../../../../assets/chatBackground.png')} style={{ flex: 1 }}>
                 <KeyboardAvoidingView
                     style={{ flex: 1 }}
@@ -210,6 +228,7 @@ const ChatRoom = () => {
                                                 contentFit="cover"
                                                 transition={1000}
                                             />
+                                       
                                         ) : (
                                             <View>
                                                 <Video
@@ -299,21 +318,26 @@ const ChatRoom = () => {
                     <Bottom handleSend={handleSend} handlePickImage={handlePickMedia} user={user} />
 
                     <Modal
-                        isVisible={isModalVisible}
-                        onBackdropPress={handleCloseModal}
-                        style={{ justifyContent: 'flex-end', margin: 0 }}>
-                        <View style={{
-                            backgroundColor: 'white',
-                            padding: 20,
-                            borderTopLeftRadius: 20,
-                            borderTopRightRadius: 20,
-                            paddingBottom: 50,
-                            gap: 15
-                        }}>
-                            <Text style={{ textAlign: 'center' }}>{selectedMessage}</Text>
-                            <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: 'bold', color: 'red' }}>Delete</Text>
-                        </View>
-                    </Modal>
+    isVisible={isModalVisible}
+    onBackdropPress={handleCloseModal}
+    style={{ justifyContent: 'flex-end', margin: 0 }}>
+    <View style={{
+        backgroundColor: 'white',
+        padding: 20,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        paddingBottom: 50,
+        gap: 15
+    }}>
+        {selectedMessage && (
+            <Text style={{ textAlign: 'center' }}>{selectedMessage.text}</Text>
+        )}
+        <Pressable onPress={handleDeleteMessage}>
+            <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: 'bold', color: 'red' }}>Delete</Text>
+        </Pressable>
+    </View>
+</Modal>
+
                 </KeyboardAvoidingView>
             </ImageBackground>
         </SafeAreaView>
