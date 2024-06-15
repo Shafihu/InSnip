@@ -1,7 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-    View, Text, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, Dimensions, ActivityIndicator,
-    TouchableOpacity, ImageBackground, Pressable
+    View,
+    Text,
+    SafeAreaView,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    Dimensions,
+    ActivityIndicator,
+    TouchableOpacity,
+    ImageBackground,
+    Pressable
 } from 'react-native';
 import { onSnapshot, doc, updateDoc, arrayUnion, getDoc, deleteDoc } from 'firebase/firestore';
 import { FIRESTORE_DB } from '../../../../Firebase/config';
@@ -14,8 +23,8 @@ import { Image } from 'expo-image';
 import { useChatStore } from '../../../../context/ChatContext';
 import { Video } from 'expo-av';
 import { Ionicons } from 'react-native-vector-icons';
-import Header from "../../../components/Chat/Header"
-import Bottom from "../../../components/Chat/Bottom"
+import Header from "../../../components/Chat/Header";
+import Bottom from "../../../components/Chat/Bottom";
 
 const { width } = Dimensions.get('window');
 
@@ -31,9 +40,7 @@ const ChatRoom = () => {
     const [play, setPlay] = useState(false);
     const videoRef = useRef(null);
     const currentUserId = userData.id;
-
     const { isReceiverBlocked } = useChatStore();
-
     const scrollViewRef = useRef(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
 
@@ -222,19 +229,17 @@ const ChatRoom = () => {
                                     {message.mediaUrl ? (
                                         message.mediaType === 'image' ? (
                                             <>
-                                                                                            <Image
-                                                source={{ uri: message.mediaUrl }}
-                                                style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
-                                                placeholder={{ blurhash }}
-                                                contentFit="cover"
-                                                transition={1000}
-                                            />
-                                             <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'rgba(0,0,0,.8)' }}>
-                                            {message.text}
-                                        </Text>
+                                                <Image
+                                                    source={{ uri: message.mediaUrl }}
+                                                    style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
+                                                    placeholder={{ blurhash }}
+                                                    contentFit="cover"
+                                                    transition={1000}
+                                                />
+                                                <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'rgba(0,0,0,.8)' }}>
+                                                    {message.text}
+                                                </Text>
                                             </>
-
-                                       
                                         ) : (
                                             <View>
                                                 <Video
@@ -261,9 +266,9 @@ const ChatRoom = () => {
                                                         <Ionicons name="play-circle" size={60} color="rgba(255,255,255,0.7)" />
                                                     </Pressable>
                                                 )}
-                                                                                             <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'rgba(0,0,0,.8)' }}>
-                                            {message.text}
-                                        </Text>
+                                                <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'rgba(0,0,0,.8)' }}>
+                                                    {message.text}
+                                                </Text>
                                             </View>
                                         )
                                     ) : (
@@ -272,7 +277,6 @@ const ChatRoom = () => {
                                         </Text>
                                     )}
                                 </View>
-                                
                             </TouchableOpacity>
                         ))}
 
@@ -316,37 +320,37 @@ const ChatRoom = () => {
                             </View>
                         )}
 
-                        {isReceiverBlocked &&
+                        {isReceiverBlocked && (
                             <View style={{ backgroundColor: 'rgba(0,0,0,.3)', padding: 10 }}>
                                 <Text style={{ textAlign: 'center', fontWeight: '500', color: 'white', fontSize: 12 }}>
                                     You can no longer send or receive messages from this user!
                                 </Text>
                             </View>
-                        }
+                        )}
                     </ScrollView>
 
                     <Bottom handleSend={handleSend} handlePickImage={handlePickMedia} user={user} />
 
                     <Modal
-    isVisible={isModalVisible}
-    onBackdropPress={handleCloseModal}
-    style={{ justifyContent: 'flex-end', margin: 0 }}>
-    <View style={{
-        backgroundColor: 'white',
-        padding: 20,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        paddingBottom: 50,
-        gap: 15
-    }}>
-        {selectedMessage && (
-            <Text style={{ textAlign: 'center' }}>{selectedMessage.text}</Text>
-        )}
-        <Pressable onPress={handleDeleteMessage}>
-            <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: 'bold', color: 'red' }}>Delete</Text>
-        </Pressable>
-    </View>
-</Modal>
+                        isVisible={isModalVisible}
+                        onBackdropPress={handleCloseModal}
+                        style={{ justifyContent: 'flex-end', margin: 0 }}>
+                        <View style={{
+                            backgroundColor: 'white',
+                            padding: 20,
+                            borderTopLeftRadius: 20,
+                            borderTopRightRadius: 20,
+                            paddingBottom: 50,
+                            gap: 15
+                        }}>
+                            {selectedMessage && (
+                                <Text style={{ textAlign: 'center' }}>{selectedMessage.text}</Text>
+                            )}
+                            <Pressable onPress={handleDeleteMessage}>
+                                <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: 'bold', color: 'red' }}>Delete</Text>
+                            </Pressable>
+                        </View>
+                    </Modal>
 
                 </KeyboardAvoidingView>
             </ImageBackground>

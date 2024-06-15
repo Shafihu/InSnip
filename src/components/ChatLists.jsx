@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    bottom: 90,
+    bottom: 60,
     right: 15,
     marginBottom: 28,
     shadowColor: '#000',

@@ -16,7 +16,7 @@ const Bottom = ({ handleSend, handlePickImage, user }) => {
   };
 
   return (
-    <View className="flex flex-row justify-between items-start p-3 gap-3 h-[60px] bg-white">
+    <View className="flex flex-row justify-between items-start p-3 pb-5 gap-3 h-[65px] bg-white">
       <View className="w-[35px] h-[35px] rounded-full items-center justify-center">
         <Pressable disabled={isCurrentUserBlocked || isReceiverBlocked} className="w-[40px] h-[40px] rounded-full items-center justify-center bg-black/5">
           <FontAwesome name="camera" size={18} color={isReceiverBlocked ? 'gray' : "rgb(50,50,50)"} />

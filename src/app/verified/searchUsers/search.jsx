@@ -76,7 +76,7 @@ const Search = () => {
         <Pressable 
             onPress={() => handleUserProfile(item)} 
             style={[styles.pressable, styles.shadow]}
-            className="flex flex-row items-center justify-between gap-4 bg-white py-2 px-3 pr-5 rounded-xl"
+            className="flex flex-row items-center justify-between gap-4 bg-white py-2 px-3 pr-5"
         >
             <View className="w-[50px] h-[50px] bg-gray-100 rounded-full overflow-hidden">
                 <Image source={processUserImage(item.avatar)} style={{ width: '100%', height: '100%' }} />
@@ -97,12 +97,14 @@ const Search = () => {
                 <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
                     <Text className="font-semibold tracking-wider text-[16px]">Results</Text>
                 </View>
-                <FlatList
-                    data={shuffledFilteredUsers}
-                    renderItem={renderItem}
-                    keyExtractor={item => item.id}
-                    contentContainerStyle={{ paddingBottom: 28, paddingHorizontal: 15, gap: 10, paddingVertical: 10}}
-                />
+                <View style={[styles.shadow,{backgroundColor: '#fff',  padding: 0,  borderRadius: 0, overflow:'hidden', }]}>
+                    <FlatList
+                        data={shuffledFilteredUsers}
+                        renderItem={renderItem}
+                        keyExtractor={item => item.id}
+                        contentContainerStyle={{ paddingHorizontal: 10, gap: 0, paddingVertical: 10}}
+                    />
+                </View>
                 <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
                     <Text className="font-semibold tracking-wider text-[16px]">People you may know</Text>
                 </View>
@@ -110,7 +112,7 @@ const Search = () => {
                     data={shuffledUsers}
                     renderItem={renderItem}
                     keyExtractor={item => item.id}
-                    contentContainerStyle={{ paddingBottom: 28, paddingHorizontal: 15, gap: 10, paddingVertical: 10 }}
+                    contentContainerStyle={{ paddingBottom: 28, paddingHorizontal: 15, gap: 0, paddingVertical: 10 }}
                 />
             </View>
         </SafeAreaView>
@@ -119,8 +121,10 @@ const Search = () => {
 
 const styles = StyleSheet.create({
     pressable: {
-        borderRadius: 15,
+        // borderRadius: 15,
         backgroundColor: 'white',
+        borderBottomWidth: 1,
+        borderColor: 'rgba(0,0,0,0.2)'  
     },
     shadow: {
         shadowColor: '#000',
