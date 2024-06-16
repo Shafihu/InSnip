@@ -66,14 +66,14 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                         backgroundColor: header === 'Map' ? 'rgba(0, 0, 0, 0.15)' : 'rgba(0, 0, 0, 0.05)'
                     }}
                 >
-                    <Foundation name="magnifying-glass" size={20} color={header === 'Spotlight' || header === '' || header === 'Map' ? 'white' : '#555c57'} />
+                    <Foundation name="magnifying-glass" size={20} color={header === 'Spotlight' || header === '' || header === 'Map' ? 'white' : '#3B2F2F'} />
                 </Pressable>
             </View>
             <Text style={{
                 fontSize: 21,
                 fontWeight: '600',
                 textAlign: 'center',
-                color: header === 'Spotlight' || header === '' || header === 'Map' ? 'white' : 'black',
+                color: header === 'Spotlight' || header === '' || header === 'Map' ? 'white' : '#3B2F2F',
                 marginRight: header === 'Spotlight' || header === '' || header === 'Map' ? 40 : 0
             }}>
                 {header}
@@ -92,7 +92,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                         <MaterialCommunityIcons
                             name="account-plus"
                             size={20}
-                            color={header === '' ? 'white' : '#555c57'}
+                            color={header === '' ? 'white' : '#3B2F2F'}
                         />
                         <View style={{
                             position: 'absolute',
@@ -200,7 +200,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                                         alignItems: 'center',
                                         overflow: 'hidden'
                                     }}>
-                                        <Fontisto name="more-v-a" size={20} color={header === '' ? 'white' : '#555c57'} style={{ transform: [{ rotate: '90deg' }] }} />
+                                        <Fontisto name="more-v-a" size={20} color={header === '' ? 'white' : '#3B2F2F'} style={{ transform: [{ rotate: '90deg' }] }} />
                                     </Pressable>
                                 )}
                             </View>

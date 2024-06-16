@@ -197,7 +197,7 @@ const ChatRoom = () => {
                     keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}>
                     <ScrollView
                         ref={scrollViewRef}
-                        contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', paddingVertical: 10, paddingHorizontal: 5 }}
+                        contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', paddingVertical: 10, paddingHorizontal: 6 }}
                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}>
 
                         {chat && chat.messages && chat.messages.map((message, index) => (
@@ -213,7 +213,7 @@ const ChatRoom = () => {
                                     borderRightWidth: message.senderId === currentUserId ? 4 : 0,
                                     borderColor: message.senderId === currentUserId ? '#00BFFF' : 'red',
                                     marginBottom: 8,
-                                    backgroundColor: 'white',
+                                    backgroundColor: '#2F3E46',
                                 }}>
 
                                 <View style={{ marginBottom: 4, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
@@ -236,7 +236,7 @@ const ChatRoom = () => {
                                                     contentFit="cover"
                                                     transition={1000}
                                                 />
-                                                <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'rgba(0,0,0,.8)' }}>
+                                                <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'white' }}>
                                                     {message.text}
                                                 </Text>
                                             </>
@@ -266,13 +266,13 @@ const ChatRoom = () => {
                                                         <Ionicons name="play-circle" size={60} color="rgba(255,255,255,0.7)" />
                                                     </Pressable>
                                                 )}
-                                                <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'rgba(0,0,0,.8)' }}>
+                                                <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'white' }}>
                                                     {message.text}
                                                 </Text>
                                             </View>
                                         )
                                     ) : (
-                                        <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'rgba(0,0,0,.8)' }}>
+                                        <Text style={{ letterSpacing: 0.2, fontSize: 15, color: 'white' }}>
                                             {message.text}
                                         </Text>
                                     )}

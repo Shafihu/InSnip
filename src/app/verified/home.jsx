@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { CameraView, useCameraPermissions, Camera } from "expo-camera";
 import { shareAsync } from "expo-sharing";
 import * as MediaLibrary from "expo-media-library";
-import { Animated, Button, Image, Pressable, SafeAreaView, Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Button, Image, Pressable, SafeAreaView, Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import { Ionicons, Foundation } from "react-native-vector-icons";
 import Toast from "react-native-toast-message";
 
@@ -161,29 +161,29 @@ const HomeScreen = () => {
   const handlePostStory = async () => {
     try {
       if (photo) {
-        const downloadUrl = await storyPostUpload(photo.uri);
-        if(downloadUrl) {
+        const downloadUrl = await storyPostUpload(photo.uri, currentUserId);
+        if (downloadUrl) {
           const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
-          await updateDoc(docRef, {
-            posts: arrayUnion(downloadUrl),
-          });
+          // await updateDoc(docRef, {
+          //   posts: arrayUnion(downloadUrl),
+          // });
           showToast("Story Sent!");
         }
       } else if (video) {
-        const downloadUrl = await storyPostUpload(video.uri);
-        if(downloadUrl) {
+        const downloadUrl = await storyPostUpload(video.uri, currentUserId);
+        if (downloadUrl) {
           const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
-          await updateDoc(docRef, {
-            posts: arrayUnion(downloadUrl),
-          });
+          // await updateDoc(docRef, {
+          //   posts: arrayUnion(downloadUrl),
+          // });
           showToast("Story Sent!");
-      }
-
+        }
       }
     } catch (error) {
       console.log('Error getting url and storing it: ' + error);
     }
   };
+  
 
   const handleShare = async () => {
     if(photo){

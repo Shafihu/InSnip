@@ -11,6 +11,7 @@ const NewChatLayout = () => {
           headerShown: true,
           presentation: "modal",
           headerTitle: `New Chat`,
+          headerTintColor: "#3B2F2F",
         }}
       />
     </Stack>

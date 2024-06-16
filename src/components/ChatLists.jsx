@@ -60,7 +60,7 @@ const Chat = () => {
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.archiveContainer}>
             <View style={styles.archiveIcon}>
-              <Entypo name="archive" size={30} color="black" />
+              <Entypo name="archive" size={30} color="#2F3E46" />
             </View>
             <View style={styles.archiveTextContainer}>
               <Text style={styles.archiveText}>Archived</Text>
@@ -72,7 +72,7 @@ const Chat = () => {
           </View>
 
           {loading ? (
-            <ActivityIndicator size="small" color="#00BFFF" />
+            <ActivityIndicator size="small" color="#2F3E46" />
           ) : (
             chats.map((chat) => (
               <MemoizedChatItem
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(243, 244, 246)',
   },
   newMessageButton: {
-    backgroundColor: '#00BFFF',
+    backgroundColor: '#2F3E46',
     borderRadius: 30,
     width: 60,
     height: 60,
@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
   archiveText: {
     fontSize: 18,
     fontWeight: '500',
+    color: '#3B2F2F'
   },
   newIndicator: {
     alignItems: 'center',

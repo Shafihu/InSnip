@@ -119,11 +119,11 @@ const UserProfile = () => {
                 <View style={styles.scrollViewInner}>
                     <>
                         <View className="flex-1 flex-row items-center gap-4">
-                            <Pressable style={{ borderWidth: 3, borderColor: 'pink', borderRadius: '100%' }}>
+                            <Pressable style={{ borderWidth: 3, borderColor: '#2F3E46', borderRadius: '100%' }}>
                                 <Image source={isReceiverBlocked ? require('../../../../assets/placeholder.png') : processUserImage(avatar)} style={styles.userImage} contentFit="cover" transition={500} />
                             </Pressable>
                             <View className="w-full h-full items-start justify-center gap-2">
-                                <Text style={styles.userInfo} className="font-bold tracking-wide">{firstname} {lastname}</Text>
+                                <Text style={styles.userInfo} className="font-bold tracking-wide text-[#3B2F2F]">{firstname} {lastname}</Text>
                                 <Text style={{ fontSize: 12, fontWeight: 500, color: 'gray' }}>{username}</Text>
                             </View>
                         </View>

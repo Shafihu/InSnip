@@ -121,7 +121,7 @@ const NewChat = () => {
                     {/* <Text className="font-semibold tracking-wider text-[16px]">Friends & Groups</Text> */}
                 </View>
                 {loading ? (
-                    <ActivityIndicator size="small" color="#03A9F4" />
+                    <ActivityIndicator size="small" color="#2F3E46" />
                 ) : (
                     user &&
                     <Pressable
@@ -133,7 +133,7 @@ const NewChat = () => {
                             <Image source={processUserImage(user.avatar)} style={{ width: '100%', height: '100%' }} />
                         </View>
                         <View className="flex-1 gap-1">
-                            <Text className="font-medium text-medium tracking-wider capitalize">{user.FirstName} {user.LastName}</Text>
+                            <Text className="font-medium text-medium tracking-wider capitalize text-[#3B2F2F]">{user.FirstName} {user.LastName}</Text>
                             <View className="flex flex-row items-center gap-2">
                                 <MaterialIcons name="chat-bubble-outline" size={12} color="gray" className="transform scale-x-[-1]" />
                                 <Text className="text-[11px] font-semibold text-gray-500">{user.Username}</Text>
@@ -143,9 +143,9 @@ const NewChat = () => {
                             <MaterialCommunityIcons
                                 name="account-plus"
                                 size={18}
-                                color='#555c57'
+                                color='#3B2F2F'
                             />
-                            <Text style={{ fontWeight: 'bold' }}>Add</Text>
+                            <Text style={{ fontWeight: 'bold', color: '#3B2F2F' }}>Add</Text>
                         </Pressable>
                     </Pressable>
                 )}

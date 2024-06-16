@@ -15,6 +15,7 @@ import { FontAwesome6 } from "react-native-vector-icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../../Firebase/config";
 import Toast from "react-native-toast-message";
+import { Image } from "expo-image";
 
 
 const LoginScreen = () => {
@@ -63,24 +64,42 @@ const LoginScreen = () => {
           <FontAwesome6 name="chevron-left" color="#888" size={20} />
         </Pressable>
         <View style={styles.container}>
-          <View className="flex-1 justify-center">
-            <View>
+          <View className="flex-1 justify-start" style={{gap: ''}}>
+            
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, flex: .2,}}>
+              <View style={{backgroundColor: '#2F3E46', width: 60, height: 60, justifyContent: 'center', alignItems: 'center', borderRadius: '100%', paddingBottom: 12}}>
+              <Image
+                source={require('../../../assets/testlogo.png')}
+                style={{objectFit: 'cover', width: 70, height: 70}}
+              />
+             
+              </View>
+                <View>
+                <Text style={{fontWeight: 500, fontSize: 35, letterSpacing: 0.8, color: '#2F3E46'}}>InSnip</Text>
+                </View>
+              </View>
+
+
+
+              <View style={{flex: .6, justifyContent: 'center'}}>
+              <View>
               <Text
                 style={{
                   textAlign: "center",
                   fontWeight: "600",
                   fontSize: 22,
-                  color: "#333",
+                  color: "#3B2F2F",
                   marginBottom: 40,
                 }}
               >
                 Log in to InSnip
               </Text>
-            </View>
+              </View>
+            
             <TextInput
               style={styles.input}
               placeholder="EMAIL"
-              placeholderTextColor="#00AFFF"
+              placeholderTextColor="gray"
               value={email.toLowerCase()}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -88,13 +107,15 @@ const LoginScreen = () => {
             <TextInput
               style={styles.input}
               placeholder="PASSWORD"
-              placeholderTextColor="#00AFFF"
+              placeholderTextColor="gray"
               secureTextEntry
               value={password}
               onChangeText={setPassword}
             />
+            </View>
           </View>
 
+          <View style={{ justifyContent: 'center', gap: 10}}>
           <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
             {loading ? (
               <ActivityIndicator size="small" color="white" />
@@ -105,6 +126,7 @@ const LoginScreen = () => {
           <TouchableOpacity>
             <Text style={styles.forgotPassword}>Forgot your password?</Text>
           </TouchableOpacity>
+          </View>
         </View>
       </SafeAreaView>
     </KeyboardAvoidingView>
@@ -143,10 +165,10 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   loginButton: {
-    backgroundColor: "#00AFFF",
+    backgroundColor: "#2F3E46",
     paddingVertical: 15,
     borderRadius: 25,
-    marginBottom: 20,
+    // marginBottom: 20,
     alignItems: "center",
   },
   loginText: {
@@ -156,7 +178,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   forgotPassword: {
-    color: "#00AFFF",
+    color: "#3B2F2F",
     textAlign: "center",
     fontWeight: "500",
   },

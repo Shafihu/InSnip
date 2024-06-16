@@ -16,19 +16,19 @@ const TabBar = ({ onPressChat, onPressCamera, onPressStories, onPressMaps, onPre
     <View style={styles.tabBar}>
       <View style={styles.container}>
         <Pressable onPress={() => handlePress('maps', onPressMaps)} style={({ pressed }) => [styles.tabButton, pressed && styles.pressed]}>
-          <Ionicons name={activeTab === 'maps' ? 'location' : 'location-outline'} size={30} color="rgb(50,50,50)" />
+          <Ionicons name={activeTab === 'maps' ? 'location' : 'location-outline'} size={30} color="#2F3E46" />
         </Pressable>
         <Pressable onPress={() => handlePress('chat', onPressChat)} style={({ pressed }) => [styles.tabButton, pressed && styles.pressed]}>
-          <MaterialIcons name={activeTab === 'chat' ? 'chat-bubble' : 'chat-bubble-outline'} size={27} color="rgb(50,50,50)" style={styles.chatIcon} />
+          <MaterialIcons name={activeTab === 'chat' ? 'chat-bubble' : 'chat-bubble-outline'} size={27} color="#2F3E46" style={styles.chatIcon} />
         </Pressable>
         <Pressable onPress={() => handlePress('camera', onPressCamera)} style={({ pressed }) => [styles.tabButton, pressed && styles.pressed]}>
-          <MaterialCommunityIcons name={activeTab === 'camera' ? 'camera' : 'camera-outline'} size={30} color="rgb(50,50,50)" />
+          <MaterialCommunityIcons name={activeTab === 'camera' ? 'camera' : 'camera-outline'} size={30} color="#2F3E46" />
         </Pressable>
         <Pressable onPress={() => handlePress('stories', onPressStories)} style={({ pressed }) => [styles.tabButton, pressed && styles.pressed]}>
-          <MaterialCommunityIcons name={activeTab === 'stories' ? 'account-supervisor' : 'account-supervisor-outline'} size={32} color="rgb(50,50,50)" />
+          <MaterialCommunityIcons name={activeTab === 'stories' ? 'account-supervisor' : 'account-supervisor-outline'} size={32} color="#2F3E46" />
         </Pressable>
         <Pressable onPress={() => handlePress('spotlight', onPressSpotlight)} style={({ pressed }) => [styles.tabButton, pressed && styles.pressed]}>
-          <Ionicons name={activeTab === 'spotlight' ? 'play' : 'play-outline'} size={29} color="rgb(50,50,50)" />
+          <Ionicons name={activeTab === 'spotlight' ? 'play' : 'play-outline'} size={29} color="#2F3E46" />
           <View style={styles.spotlightIndicator} />
         </Pressable>
       </View>

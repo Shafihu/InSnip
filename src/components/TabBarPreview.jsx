@@ -13,7 +13,7 @@ const TabBarPreview = ({handleDownload, handlePostStory, handleShare}) => {
           <MaterialCommunityIcons name='shape-square-rounded-plus' size={25} color="white" className="transform scale-x-[-1]" />
           <Text className="font-bold text-white">Story</Text>
         </Pressable>
-        <Pressable onPress={handleShare} className="flex-row items-center justify-center bg-blue-400 rounded-full p-3 w-2/5 min-h-14 gap-2">
+        <Pressable onPress={handleShare} className="flex-row items-center justify-center rounded-full p-3 w-2/5 min-h-14 gap-2" style={{backgroundColor: '#2F3E46'}}>
           <Text className="font-bold text-white">Send To</Text>
           <Ionicons name='send' size={16} color="white" />
         </Pressable>

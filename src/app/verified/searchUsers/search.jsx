@@ -82,7 +82,7 @@ const Search = () => {
                 <Image source={processUserImage(item.avatar)} style={{ width: '100%', height: '100%' }} />
             </View>
             <View className="flex-1 gap-1">
-                <Text className="font-medium text-medium tracking-wider capitalize">{item.FirstName} {item.LastName}</Text>
+                <Text className="font-medium text-medium tracking-wider capitalize" style={{color: '#3B2F2F'}}>{item.FirstName} {item.LastName}</Text>
                 <View className="flex flex-row items-center gap-2">
                     <Text className="text-[11px] font-semibold text-gray-500">{item.Username}</Text>
                 </View>
@@ -95,7 +95,7 @@ const Search = () => {
             <SearchBar onActualChange={onActualChange} color='white'/>
             <View style={{ paddingVertical: 0, backgroundColor: '#fff', }}>
                 <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
-                    <Text className="font-semibold tracking-wider text-[16px]">Results</Text>
+                    <Text className="font-semibold tracking-wider text-[16px] " style={{color: '#3B2F2F'}}>Results</Text>
                 </View>
                 <View style={[styles.shadow,{backgroundColor: '#fff',  padding: 0,  borderRadius: 0, overflow:'hidden', }]}>
                     <FlatList
@@ -106,7 +106,7 @@ const Search = () => {
                     />
                 </View>
                 <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
-                    <Text className="font-semibold tracking-wider text-[16px]">People you may know</Text>
+                    <Text className="font-semibold tracking-wider text-[16px] " style={{color: '#3B2F2F'}}>People you may know</Text>
                 </View>
                 <FlatList
                     data={shuffledUsers}

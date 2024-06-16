@@ -21,6 +21,10 @@ const HomeLayout = () => {
         name="searchUsers"
         options={{ headerShown: false, presentation: "" }}
       />
+      <Stack.Screen
+        name="viewStory"
+        options={{ headerShown: false, presentation: "" }}
+      />
     </Stack>
   );
 };

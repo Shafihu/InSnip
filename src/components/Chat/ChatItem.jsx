@@ -76,7 +76,7 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
         />
       </View>
       <View className="flex-1">
-        <Text className="font-medium text-lg tracking-wider capitalize">{firstName} {lastName}</Text>
+        <Text className="font-medium text-lg tracking-wider capitalize text-[#3B2F2F]">{firstName} {lastName}</Text>
         <View className="flex flex-row items-center gap-2">
           {isImageMessage(lastMessage) ? (
             <MaterialIcons
