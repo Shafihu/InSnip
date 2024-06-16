@@ -15,6 +15,10 @@ import Spotlight from "../../components/Spotlight";
 import TabBarPreview from "../../components/TabBarPreview";
 import Header from "../../components/Header";
 import { Video } from "expo-av";
+import { FIRESTORE_DB } from "../../../Firebase/config";
+import { useUser } from "../../../context/UserContext";
+import { arrayUnion, updateDoc, doc } from "firebase/firestore";
+import { storyPostUpload } from "../../../utils/storyPostUpload";
 
 
 const HomeScreen = () => {
@@ -31,6 +35,8 @@ const HomeScreen = () => {
   const [chat, setChat] = useState(false);
   const [stories, setStories] = useState(false);
   const [spotlight, setSpotlight] = useState(false);
+  const { userData } = useUser();
+  const currentUserId = userData?.id;
 
 
 
@@ -152,7 +158,32 @@ const HomeScreen = () => {
     }
   };
 
-  const handleStory = () => {};
+  const handlePostStory = async () => {
+    try {
+      if (photo) {
+        const downloadUrl = await storyPostUpload(photo.uri);
+        if(downloadUrl) {
+          const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
+          await updateDoc(docRef, {
+            posts: arrayUnion(downloadUrl),
+          });
+          showToast("Story Sent!");
+        }
+      } else if (video) {
+        const downloadUrl = await storyPostUpload(video.uri);
+        if(downloadUrl) {
+          const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
+          await updateDoc(docRef, {
+            posts: arrayUnion(downloadUrl),
+          });
+          showToast("Story Sent!");
+      }
+
+      }
+    } catch (error) {
+      console.log('Error getting url and storing it: ' + error);
+    }
+  };
 
   const handleShare = async () => {
     if(photo){
@@ -202,6 +233,8 @@ const HomeScreen = () => {
                         resizeMode="stretch"
                         isLooping
                         autofocus
+                        shouldRasterizeIOS
+                        shouldPlay
                     />
                     <View style={styles.videoControls}>
                       <TouchableOpacity onPress={() => setVideo(undefined)}>
@@ -275,7 +308,7 @@ const HomeScreen = () => {
           <TabBarPreview
             handleDownload={handleDownload}
             handleShare={handleShare}
-            handleStory={handleStory}
+            handlePostStory={handlePostStory}
           />
         )}
       </View>
