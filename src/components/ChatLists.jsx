@@ -7,6 +7,7 @@ import { useUser } from '../../context/UserContext';
 import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
 import { FIRESTORE_DB } from '../../Firebase/config';
 import { router } from 'expo-router';
+import CustomLoader from './CustomLoader';
 
 const Chat = () => {
   const [loading, setLoading] = useState(false);
@@ -72,7 +73,9 @@ const Chat = () => {
           </View>
 
           {loading ? (
-            <ActivityIndicator size="small" color="#2F3E46" />
+              <View style={{justifyContent:'center', alignItems: 'center'}}>
+                <CustomLoader />
+              </View>
           ) : (
             chats.map((chat) => (
               <MemoizedChatItem
