@@ -17,6 +17,7 @@ import Toast from "react-native-toast-message";
 const PickUserNameScreen = () => {
   const { firstName, lastName, birthday } = useLocalSearchParams();
   const [userName, setUserName] = useState("");
+  const [keyboardVerticalOffset, setKeyboardVerticalOffset] = useState(0);
 
   const showToast = (message) => {
     Toast.show({
@@ -45,41 +46,28 @@ const PickUserNameScreen = () => {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+      keyboardVerticalOffset={keyboardVerticalOffset}
     >
-        <SafeAreaView style={styles.safeArea}>
-          <Pressable style={styles.header} onPress={() => router.back()}>
-            <FontAwesome6 name="chevron-left" color="#888" size={20} />
-          </Pressable>
-          <View style={styles.container}>
-            <View>
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontWeight: "600",
-                  fontSize: 22,
-                  color: "#333",
-                  marginBottom: 40,
-                }}
-              >
-                Pick a username
-              </Text>
-            </View>
-            <TextInput
-              style={styles.input}
-              placeholder="USERNAME"
-              placeholderTextColor="#00AFFF"
-              value={userName}
-              onChangeText={setUserName}
-            />
+      <SafeAreaView style={styles.safeArea}>
+        <Pressable style={styles.header} onPress={() => router.back()}>
+          <FontAwesome6 name="chevron-left" color="#888" size={20} />
+        </Pressable>
+        <View style={styles.container}>
+          <View>
+            <Text style={styles.title}>Pick a username</Text>
           </View>
-          <TouchableOpacity
-              onPress={handleContinue}
-              style={styles.signUpButton}
-            >
-              <Text style={styles.signUpText}>Continue</Text>
-            </TouchableOpacity>
-        </SafeAreaView>
+          <TextInput
+            style={styles.input}
+            placeholder="USERNAME"
+            placeholderTextColor="#00AFFF"
+            value={userName}
+            onChangeText={setUserName}
+          />
+          <TouchableOpacity onPress={handleContinue} style={styles.signUpButton}>
+            <Text style={styles.signUpText}>Continue</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 };
@@ -89,6 +77,7 @@ export default PickUserNameScreen;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
   header: {
     paddingVertical: 10,
@@ -100,27 +89,35 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+    alignItems: "center",
     marginHorizontal: 20,
   },
-  keyboardView: {
-    flex: 1,
-    justifyContent: "center",
-    gap: 5,
+  title: {
+    textAlign: "center",
+    fontWeight: "700",
+    fontSize: 28,
+    color: "#2F3E46",
+    marginBottom: 40,
   },
   input: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    marginBottom: 20,
-    fontSize: 15,
+    borderWidth: 1,
+    borderColor: "#00aaff",
+    borderRadius: 25,
     padding: 10,
+    fontSize: 15,
+    fontWeight: "500",
+    backgroundColor: '#ffffff',
+    color: "#00AFFF",
+    width: '100%',
+    marginBottom: 20,
   },
   signUpButton: {
     backgroundColor: "#00AFFF",
     paddingVertical: 15,
     borderRadius: 25,
-    marginBottom: 20,
     alignItems: "center",
-    marginHorizontal: 20,
+    width: '70%',
+    marginVertical: 20,
   },
   signUpText: {
     color: "#fff",

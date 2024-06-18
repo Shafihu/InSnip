@@ -115,12 +115,12 @@ const UserProfile = () => {
           {userData ? (
             <>
               <View className="flex-1 flex-row items-center gap-4">
-                <Pressable style={{ borderWidth: 3, borderColor: '#2F3E46', borderRadius: '100%' }}>
+                <Pressable style={{ borderWidth: 3, borderColor: '#2ecc71', borderRadius: '100%' }}>
                   <Image source={processUserImage(userData.avatar)} style={styles.userImage} />
                 </Pressable>
                 <View className="w-full h-full items-start justify-center gap-2">
                   <Text style={styles.userInfo} className="font-bold tracking-wide">{userData.FirstName} {userData.LastName}</Text>
-                  <Text style={{ fontSize: 12, fontWeight: 500, color: 'gray' }}>{userData.Username}</Text>
+                  <Text style={{ fontSize: 12, fontWeight: 500, color: '#7f8c8d'}}>{userData.Username}</Text>
                 </View>
               </View>
             </>
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   },
   userInfo: {
     fontSize: 20,
-    color: '#3B2F2F'
+    color: '#333333'
   },
   logoutText: {
     fontSize: 16,

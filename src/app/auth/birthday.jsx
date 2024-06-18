@@ -14,7 +14,7 @@ import { FontAwesome6 } from "react-native-vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Toast from "react-native-toast-message";
 
-const FullNameScreen = () => {
+const BirthdayScreen = () => {
   const { firstName, lastName } = useLocalSearchParams();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [birthdate, setBirthdate] = useState(new Date());
@@ -47,55 +47,46 @@ const FullNameScreen = () => {
         <FontAwesome6 name="chevron-left" color="#888" size={20} />
       </Pressable>
       <View style={styles.container}>
-          <View className="flex-1 justify-center">
-            <Text
-              style={{
-                textAlign: "center",
-                fontWeight: "600",
-                fontSize: 22,
-                color: "#333",
-                marginBottom: 40,
-              }}
-            >
-              What's your birthday?
-            </Text>
+        <View style={styles.contentContainer}>
+          <Text style={styles.title}>What's your birthday?</Text>
+          <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.inputWrapper}>
             <TextInput
               style={styles.input}
               placeholder="BIRTHDAY"
               placeholderTextColor="#00AFFF"
               value={birthdate.toDateString()}
               editable={false}
-              onPress={() => setShowDatePicker(true)}
+              pointerEvents="none"
             />
-          </View>
+          </TouchableOpacity>
           {showDatePicker && (
             <DateTimePicker
               mode="date"
               display="spinner"
               value={birthdate}
               onChange={(event, selectedDate) => {
+                setShowDatePicker(false);
                 if (selectedDate) {
                   setBirthdate(selectedDate);
                 }
               }}
             />
           )}
-          <TouchableOpacity
-            onPress={handleContinue}
-            style={styles.signUpButton}
-          >
+          <TouchableOpacity onPress={handleContinue} style={styles.signUpButton}>
             <Text style={styles.signUpText}>Continue</Text>
           </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
 };
 
-export default FullNameScreen;
+export default BirthdayScreen;
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
   header: {
     paddingVertical: 10,
@@ -106,29 +97,42 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: "center",
-    marginHorizontal: 20,
   },
-  keyboardView: {
+  contentContainer: {
     flex: 1,
     justifyContent: "center",
-    gap: 5,
+    alignItems: "center",
+    marginHorizontal: 20,
+  },
+  title: {
+    textAlign: "center",
+    fontWeight: "700",
+    fontSize: 28,
+    color: "#2F3E46",
+    marginBottom: 40,
+  },
+  inputWrapper: {
+    width: '100%',
+    marginBottom: 20,
   },
   input: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    marginBottom: 20,
-    fontSize: 15,
+    borderWidth: 1,
+    borderColor: "#00aaff",
+    borderRadius: 25,
     padding: 10,
+    fontSize: 15,
+    fontWeight: "500",
+    backgroundColor: '#ffffff',
     color: "#00AFFF",
+    width: '100%',
   },
   signUpButton: {
     backgroundColor: "#00AFFF",
     paddingVertical: 15,
     borderRadius: 25,
-    marginBottom: 20,
     alignItems: "center",
-    marginTop: 10,
+    width: '70%',
+    marginVertical: 20
   },
   signUpText: {
     color: "#fff",

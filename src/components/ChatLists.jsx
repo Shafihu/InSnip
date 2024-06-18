@@ -55,7 +55,7 @@ const Chat = () => {
     <SafeAreaView style={styles.container}>
       <Header header="Chat" />
       <View style={styles.content}>
-        <Pressable onPress={handleNewMessagePress} style={styles.newMessageButton}>
+        <Pressable  onPress={handleNewMessagePress} style={styles.newMessageButton}>
           <Entypo name="new-message" size={25} color="white" />
         </Pressable>
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -73,7 +73,7 @@ const Chat = () => {
           </View>
 
           {loading ? (
-              <View style={{justifyContent:'center', alignItems: 'center'}}>
+              <View style={styles.loaderContainer}>
                 <CustomLoader />
               </View>
           ) : (
@@ -89,7 +89,7 @@ const Chat = () => {
                 lastMessage={chat.lastMessage}
               />
             ))
-          )}
+            )}
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -101,14 +101,14 @@ const MemoizedChatItem = React.memo(ChatItem);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#fff', // Background Color: Light Gray
   },
   content: {
     flex: 1,
-    backgroundColor: 'rgb(243, 244, 246)',
+    backgroundColor: '#f3f4f6', // Background Color: RGB(243, 244, 246)
   },
   newMessageButton: {
-    backgroundColor: '#2F3E46',
+    backgroundColor: '#2F3E46', // Primary Color: Deep Sky Blue
     borderRadius: 30,
     width: 60,
     height: 60,
@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    marginTop: 10
   },
   scrollContent: {
     paddingBottom: 28,
@@ -135,16 +136,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 4,
-    backgroundColor: 'white',
-    padding: 12,
-    margin: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginHorizontal: 8,
+    marginBottom: 8,
+    backgroundColor: 'white', // Background Color: White
     borderRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    gap: 10
   },
   archiveIcon: {
     width: 60,
     height: 60,
-    backgroundColor: 'yellow',
+    // backgroundColor: '#ffd700',
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
@@ -155,7 +163,7 @@ const styles = StyleSheet.create({
   archiveText: {
     fontSize: 18,
     fontWeight: '500',
-    color: '#3B2F2F'
+    color: '#2F3E46', // Text Color: Charcoal Black
   },
   newIndicator: {
     alignItems: 'center',
@@ -164,7 +172,12 @@ const styles = StyleSheet.create({
   newText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FFD700',
+    color: '#FFD700', // Accent Color: Neon Green
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

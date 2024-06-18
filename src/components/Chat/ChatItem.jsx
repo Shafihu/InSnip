@@ -1,5 +1,5 @@
-import { View, Text, Image, Pressable } from 'react-native';
 import React from 'react';
+import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { MaterialIcons, Feather } from 'react-native-vector-icons';
 import { useRouter } from 'expo-router';
 import processUserImage from '../../../utils/processUserImage';
@@ -66,33 +66,33 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
   return (
     <Pressable
       onPress={handlePress}
-      className={`flex flex-row items-center justify-between gap-4 py-2 px-3 pr-5 border border-t-1 border-b-0 border-l-0 border-r-0 border-gray-200 relative bg-white`}
+      style={styles.chatItem}
     >
-      <View className={`bg-[#00BFFF] w-3 h-3 rounded-full absolute right-14 top-1/2 ${isSeen ? 'hidden' : 'block'}`} />
-      <View className="w-[50px] h-[50px] bg-gray-100 rounded-full overflow-hidden">
+      <View style={[styles.newIndicator, { backgroundColor: isSeen ? 'transparent' : '#2ecc71' }]} />
+      <View style={styles.avatarContainer}>
         <Image
           source={userData?.blocked.includes(chat?.user?.id) ? require('../../../assets/placeholder.png') : processUserImage(avatar)}
-          style={{ width: '100%', height: '100%' }}
+          style={styles.avatar}
         />
       </View>
-      <View className="flex-1">
-        <Text className="font-medium text-lg tracking-wider capitalize text-[#3B2F2F]">{firstName} {lastName}</Text>
-        <View className="flex flex-row items-center gap-2">
+      <View style={styles.content}>
+        <Text style={styles.name}>{firstName} {lastName}</Text>
+        <View style={styles.messageContainer}>
           {isImageMessage(lastMessage) ? (
             <MaterialIcons
               name="photo"
               size={12}
-              color="#00BFFF"
+              color="#2ecc71"
             />
           ) : (
             <MaterialIcons
               name="chat-bubble-outline"
               size={12}
-              color='#00BFFF'
-              className="transform scale-x-[-1]"
+              color='#2ecc71'
+              style={styles.iconFlip}
             />
           )}
-          <Text className="text-[11px] font-medium text-gray-500">
+          <Text style={styles.messageText}>
             {lastMessage ? (isImageMessage(lastMessage) ? 'Media' : lastMessage) : 'Tap to chat'}
           </Text>
         </View>
@@ -103,5 +103,58 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
     </Pressable>
   );
 };
+
+const styles = StyleSheet.create({
+  chatItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f5f5f5', // Background Color: Light Gray
+    backgroundColor: '#fff', // Background Color: White
+  },
+  newIndicator: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginRight: 8,
+  },
+  avatarContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    overflow: 'hidden',
+    backgroundColor: '#2F3E46', // Primary Color: Deep Sky Blue
+  },
+  avatar: {
+    width: '100%',
+    height: '100%',
+  },
+  content: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#3B2F2F', // Text Color: Charcoal Black
+  },
+  messageContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  iconFlip: {
+    transform: [{ scaleX: -1 }], // Flip icon horizontally
+  },
+  messageText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#7f8c8d', // Subtext Color: Slate Gray
+    marginLeft: 4,
+  },
+});
 
 export default ChatItem;

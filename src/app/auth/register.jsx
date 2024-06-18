@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   SafeAreaView,
   Pressable,
+  Platform,
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
 import Toast from "react-native-toast-message";
@@ -32,62 +33,58 @@ const RegisterScreen = () => {
       router.push({
         pathname: "/auth/pickAvatar",
         params: {
-          firstName: firstName,
-          lastName: lastName,
-          birthday: birthday,
-          userName: userName,
-          email: email,
-          password: password,
+          firstName,
+          lastName,
+          birthday,
+          userName,
+          email,
+          password,
         },
       });
     }
   };
 
   return (
-    <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
-      <SafeAreaView style={styles.container}>
-      <Pressable style={styles.header} onPress={() => router.back()}>
-        <FontAwesome6 name="chevron-left" color="#888" size={20} />
-      </Pressable>
-        <View className="flex-1 justify-center">
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.keyboardView}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <Pressable style={styles.header} onPress={() => router.back()}>
+          <FontAwesome6 name="chevron-left" color="#888" size={20} />
+        </Pressable>
+        <View style={styles.container}>
           <View>
-            <Text
-              style={{
-                textAlign: "center",
-                fontWeight: "600",
-                fontSize: 22,
-                color: "#333",
-                marginBottom: 40,
-              }}
-            >
-              Completing Your Registration
-            </Text>
+            <Text style={styles.title}>Completing Your Registration</Text>
           </View>
-          <TextInput
-            style={styles.input}
-            placeholder="EMAIL"
-            placeholderTextColor="#00AFFF"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="PASSWORD"
-            placeholderTextColor="#00AFFF"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
+          <View style={styles.inputWrapper}>
+            <Text style={styles.inputLabel}>EMAIL</Text>
+            <TextInput
+              style={styles.input}
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
+          </View>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.inputLabel}>PASSWORD</Text>
+            <TextInput
+              style={styles.input}
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
           <View>
-            <Text className="text-[12px] font-medium text-gray-400">
+            <Text style={styles.privacyText}>
               By tapping Continue, you acknowledge that you have read the Privacy Policy and agree to the Terms of Service.
             </Text>
           </View>
+          <TouchableOpacity onPress={handleContinue} style={styles.continueButton}>
+            <Text style={styles.continueText}>Continue</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={handleContinue} style={styles.signUpButton}>
-          <Text style={styles.signUpText}>Continue</Text>
-        </TouchableOpacity>
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
@@ -98,41 +95,69 @@ export default RegisterScreen;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: "#f5f5f5",
   },
   header: {
     paddingVertical: 10,
     paddingHorizontal: 10,
     alignSelf: "flex-start",
     borderRadius: 25,
+    marginHorizontal: 20,
   },
   container: {
     flex: 1,
     justifyContent: "center",
+    alignItems: "center",
     marginHorizontal: 20,
   },
   keyboardView: {
     flex: 1,
-    justifyContent: "center",
-    gap: 5,
+  },
+  title: {
+    textAlign: "center",
+    fontWeight: "600",
+    fontSize: 22,
+    color: "#333",
+    marginBottom: 20,
+  },
+  inputWrapper: {
+    width: "100%",
+    marginBottom: 20,
+  },
+  inputLabel: {
+    fontSize: 12,
+    color: "#00AFFF",
+    marginBottom: 5,
+    textAlign: "left",
   },
   input: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    marginBottom: 20,
-    fontSize: 15,
+    borderWidth: 1,
+    borderColor: "#00AFFF",
+    borderRadius: 25,
     padding: 10,
+    fontSize: 15,
+    fontWeight: "500",
+    backgroundColor: "#ffffff",
+    color: "#333",
   },
-  signUpButton: {
+  continueButton: {
     backgroundColor: "#00AFFF",
     paddingVertical: 15,
     borderRadius: 25,
-    marginBottom: 20,
     alignItems: "center",
+    width: "70%",
+    marginVertical: 20,
   },
-  signUpText: {
+  continueText: {
     color: "#fff",
     textAlign: "center",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  privacyText: {
+    fontSize: 12,
+    color: "#7f8c8d",
+    textAlign: "center",
+    marginBottom: 20,
   },
 });

@@ -28,7 +28,7 @@ export default function SplashScreen() {
         <TouchableOpacity onPress={() => router.push("/auth/login")}>
           <Text style={styles.loginText}>
             Already have an account?
-            <Text style={styles.loginLink}> Log In</Text>
+            <Text style={styles.loginLink}> Sign In</Text>
           </Text>
         </TouchableOpacity>
       </View>

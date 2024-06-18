@@ -82,9 +82,9 @@ const Search = () => {
                 <Image source={processUserImage(item.avatar)} style={{ width: '100%', height: '100%' }} />
             </View>
             <View className="flex-1 gap-1">
-                <Text className="font-medium text-medium tracking-wider capitalize" style={{color: '#3B2F2F'}}>{item.FirstName} {item.LastName}</Text>
+                <Text className="font-medium text-medium tracking-wider capitalize" style={{color: '#333333'}}>{item.FirstName} {item.LastName}</Text>
                 <View className="flex flex-row items-center gap-2">
-                    <Text className="text-[11px] font-semibold text-gray-500">{item.Username}</Text>
+                    <Text className="text-[11px] font-semibold text-gray-500" style={{color: '#7f8c8d'}}>{item.Username}</Text>
                 </View>
             </View>
         </Pressable>

@@ -17,10 +17,10 @@ import { FIREBASE_AUTH } from "../../../Firebase/config";
 import Toast from "react-native-toast-message";
 import { Image } from "expo-image";
 
-
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const showErrorToast = (message) => {
@@ -64,68 +64,55 @@ const LoginScreen = () => {
           <FontAwesome6 name="chevron-left" color="#888" size={20} />
         </Pressable>
         <View style={styles.container}>
-          <View className="flex-1 justify-start" style={{gap: ''}}>
-            
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, flex: .2,}}>
-              <View style={{backgroundColor: '#2F3E46', width: 60, height: 60, justifyContent: 'center', alignItems: 'center', borderRadius: '100%', paddingBottom: 12}}>
+          <View style={styles.logoContainer}>
+            <View style={styles.logoWrapper}>
               <Image
                 source={require('../../../assets/testlogo.png')}
-                style={{objectFit: 'cover', width: 70, height: 70}}
+                style={styles.logo}
               />
-             
-              </View>
-                <View>
-                <Text style={{fontWeight: 500, fontSize: 35, letterSpacing: 0.8, color: '#2F3E46'}}>InSnip</Text>
-                </View>
-              </View>
-
-
-
-              <View style={{flex: .6, justifyContent: 'center'}}>
-              <View>
-              <Text
-                style={{
-                  textAlign: "center",
-                  fontWeight: "600",
-                  fontSize: 22,
-                  color: "#3B2F2F",
-                  marginBottom: 40,
-                }}
-              >
-                Log in to InSnip
-              </Text>
-              </View>
-            
-            <TextInput
-              style={styles.input}
-              placeholder="EMAIL"
-              placeholderTextColor="gray"
-              value={email.toLowerCase()}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="PASSWORD"
-              placeholderTextColor="gray"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
             </View>
+            <Text style={styles.logoText}>InSnip</Text>
           </View>
 
-          <View style={{ justifyContent: 'center', gap: 10}}>
-          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-            {loading ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <Text style={styles.loginText}>Log In</Text>
-            )}
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={styles.forgotPassword}>Forgot your password?</Text>
-          </TouchableOpacity>
+          <View style={styles.loginContainer}>
+            <Text style={styles.loginTitle}>Welcome Back</Text>
+            <Text style={styles.loginSubtitle}>Please enter your details to continue</Text>
+            <View style={styles.inputWrapper}>
+              <Text style={styles.inputLabel}>EMAIL</Text>
+              <TextInput
+                style={styles.input}
+                value={email.toLowerCase()}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+              />
+            </View>
+            <View style={styles.inputWrapper}>
+              <Text style={styles.inputLabel}>PASSWORD</Text>
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.input}
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                />
+                <TouchableOpacity
+                  style={styles.eyeIcon}
+                  onPress={() => setShowPassword(!showPassword)}
+                >
+                  <FontAwesome6 name={showPassword ? "eye" : "eye-slash"} size={18} color="#888" />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+              {loading ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <Text style={styles.loginText}>Sign-in</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text style={styles.forgotPassword}>Forgot your password?</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
@@ -138,6 +125,7 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
   header: {
     paddingVertical: 10,
@@ -149,27 +137,93 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+    alignItems: "center",
     marginHorizontal: 20,
   },
   keyboardView: {
     flex: 1,
     justifyContent: "center",
-    gap: 5,
+  },
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 40,
+  },
+  logoWrapper: {
+    backgroundColor: '#2F3E46',
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 30,
+    paddingBottom: 12,
+  },
+  logo: {
+    width: 70,
+    height: 70,
+    objectFit: 'cover',
+  },
+  logoText: {
+    fontWeight: '500',
+    fontSize: 35,
+    letterSpacing: 0.8,
+    color: '#2F3E46',
+    marginLeft: 10,
+  },
+  loginContainer: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  loginTitle: {
+    textAlign: "center",
+    fontWeight: "700",
+    fontSize: 28,
+    color: "#2F3E46",
+    marginBottom: 6,
+  },
+  loginSubtitle: {
+    textAlign: "center",
+    fontWeight: "500",
+    fontSize: 14,
+    color: "#3B2F2F",
+    marginBottom: 40,
+  },
+  inputWrapper: {
+    width: '100%',
+    marginBottom: 20,
+  },
+  inputLabel: {
+    fontSize: 12,
+    color: "#00aaff",
+    marginBottom: 5,
   },
   input: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#00aaff",
+    borderRadius: 25,
     padding: 10,
     fontSize: 15,
     fontWeight: "500",
+    backgroundColor: '#ffffff',
+    width: '100%', // Make sure input takes full width of the wrapper
+  },
+
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 15,
   },
   loginButton: {
-    backgroundColor: "#2F3E46",
+    backgroundColor: "#00aaff",
     paddingVertical: 15,
     borderRadius: 25,
-    // marginBottom: 20,
     alignItems: "center",
+    width: '70%',
+    marginVertical: 20
   },
   loginText: {
     color: "#fff",
@@ -178,7 +232,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   forgotPassword: {
-    color: "#3B2F2F",
+    color: "#7f8c8d",
     textAlign: "center",
     fontWeight: "500",
   },

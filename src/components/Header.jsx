@@ -30,7 +30,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                 justifyContent: 'space-between',
                 paddingHorizontal: 8,
                 paddingVertical: 10,
-                backgroundColor: header === 'Map' || 'Spotlight' ? 'transparent' : 'white',
+                backgroundColor: header === 'Map' || 'Spotlight' ? 'transparent' : '#f5f5f5',
                 alignItems: header === '' ? 'flex-start' : 'center'
             }}
         >
@@ -66,14 +66,14 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                         backgroundColor: header === 'Map' ? 'rgba(0, 0, 0, 0.15)' : 'rgba(0, 0, 0, 0.05)'
                     }}
                 >
-                    <Foundation name="magnifying-glass" size={20} color={header === 'Spotlight' || header === '' || header === 'Map' ? 'white' : '#3B2F2F'} />
+                    <Foundation name="magnifying-glass" size={20} color={header === 'Spotlight' || header === '' || header === 'Map' ? 'white' : '#333333'} />
                 </Pressable>
             </View>
             <Text style={{
                 fontSize: 21,
                 fontWeight: '600',
                 textAlign: 'center',
-                color: header === 'Spotlight' || header === '' || header === 'Map' ? 'white' : '#3B2F2F',
+                color: header === 'Spotlight' || header === '' || header === 'Map' ? 'white' : '#333333',
                 marginRight: header === 'Spotlight' || header === '' || header === 'Map' ? 40 : 0
             }}>
                 {header}
@@ -92,13 +92,13 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                         <MaterialCommunityIcons
                             name="account-plus"
                             size={20}
-                            color={header === '' ? 'white' : '#3B2F2F'}
+                            color={header === '' ? 'white' : '#333333'}
                         />
                         <View style={{
                             position: 'absolute',
                             top: -4,
                             right: 0,
-                            backgroundColor: 'red',
+                            backgroundColor: '#2ecc71',
                             paddingVertical: 1,
                             paddingHorizontal: 2,
                             borderRadius: 8
@@ -200,7 +200,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                                         alignItems: 'center',
                                         overflow: 'hidden'
                                     }}>
-                                        <Fontisto name="more-v-a" size={20} color={header === '' ? 'white' : '#3B2F2F'} style={{ transform: [{ rotate: '90deg' }] }} />
+                                        <Fontisto name="more-v-a" size={20} color={header === '' ? 'white' : '#333333'} style={{ transform: [{ rotate: '90deg' }] }} />
                                     </Pressable>
                                 )}
                             </View>
