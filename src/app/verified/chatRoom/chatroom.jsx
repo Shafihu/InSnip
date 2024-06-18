@@ -187,8 +187,8 @@ const ChatRoom = () => {
   };
 
   const theme = {
-    backgroundColor: '#2F3E46',
-    primaryColor: '#00BFFF',
+    backgroundColor: '#333333',
+    primaryColor: '#2ecc71',
     secondaryColor: 'red',
     textColor: 'white',
     modalBackgroundColor: 'white',

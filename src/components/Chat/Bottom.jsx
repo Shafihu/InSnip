@@ -32,11 +32,12 @@ const Bottom = ({ handleSend, handlePickImage, user }) => {
           onSubmitEditing={onSend}
           returnKeyType='send'
           readOnly={isCurrentUserBlocked || isReceiverBlocked}
+          selectionColor="#2ecc71"
         />
       </View>
       <View className="flex flex-row">
-        <Pressable disabled={isCurrentUserBlocked || isReceiverBlocked} onPress={onSend} className="w-[40px] h-[40px] rounded-full items-center justify-center">
-          <Ionicons name="send" size={25} color={isReceiverBlocked ? 'gray' : "#00bfff"} />
+        <Pressable disabled={isCurrentUserBlocked || isReceiverBlocked} onPress={onSend} className="w-[40px] h-[40px] rounded-full items-center justify-center ">
+          <Ionicons name="send" size={25} color={isReceiverBlocked ? 'gray' : "#2ecc71"} />
         </Pressable>
         {/* <Pressable disabled={isCurrentUserBlocked || isReceiverBlocked} className="w-[40px] h-[40px] rounded-full items-center justify-center">
           <Entypo name="emoji-flirt" size={25} color={isReceiverBlocked ? 'gray' : "rgb(50,50,50)"}  />
