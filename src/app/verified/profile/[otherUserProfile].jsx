@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, Pressable, StyleSheet, View, Animated } from "react-native";
+import { Text, Pressable, StyleSheet, View, Animated, Dimensions} from "react-native";
 import Toast from "react-native-toast-message";
 import processUserImage from "../../../../utils/processUserImage";
 import { router, useLocalSearchParams } from "expo-router";
@@ -13,10 +13,13 @@ import { useChatStore } from "../../../../context/ChatContext";
 const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 0;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
+const {width} = Dimensions.get('window');
+const CARD_WIDTH = width/3;
 
 const UserProfile = () => {
     const { id, firstname, lastname, username, avatar, } = useLocalSearchParams();
     const [profilePic, setProfilePic] = useState(null);
+    const [tab, setTab] = useState(true);
     const scrollY = new Animated.Value(0);
     const { userData } = useUser();
     const { changeBlock, isReceiverBlocked, isCurrentUserBlocked } = useChatStore();
@@ -82,6 +85,10 @@ const UserProfile = () => {
         extrapolate: 'clamp',
     });
 
+    const toggleTab = () => {
+        setTab(prev => !prev);
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.buttonContainer}>
@@ -119,7 +126,7 @@ const UserProfile = () => {
                 <View style={styles.scrollViewInner}>
                     <>
                         <View className="flex-1 flex-row items-center gap-4">
-                            <Pressable style={{ borderWidth: 3, borderColor: '#2ecc71', borderRadius: '100%' }}>
+                            <Pressable style={{ borderWidth: 3, borderColor: '#2ecc71', borderRadius: '100%', padding: 3 }}>
                                 <Image source={isReceiverBlocked ? require('../../../../assets/placeholder.png') : processUserImage(avatar)} style={styles.userImage} contentFit="cover" transition={500} />
                             </Pressable>
                             <View className="w-full h-full items-start justify-center gap-2">
@@ -128,11 +135,34 @@ const UserProfile = () => {
                             </View>
                         </View>
                     </>
+                    <View>
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'}}>
+                            <Pressable onPress={toggleTab} style={{borderBottomWidth: tab && 3, borderColor: '#333333', width: '50%', padding: 10}}>
+                                <Text style={{color: tab ? '#333333' : '#7f8c8d', fontWeight: 'bold', fontSize: 15, textAlign: 'center'}}>Stories</Text>
+                            </Pressable>
+                            <Pressable onPress={toggleTab} style={{borderBottomWidth: !tab && 3, borderColor: '#333333', width: '50%', padding: 10}}>
+                                <Text style={{color: !tab ? '#333333' : '#7f8c8d', fontWeight: 'bold', fontSize: 15, textAlign: 'center'}}>Spotlight</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+
                         {/* <View style={{gap: 10}}>
                             <Pressable onPress={handleBlock} style={{backgroundColor: 'red', padding: 10, borderRadius: 8}}>
                                 <Text style={styles.logoutText}>{isCurrentUserBlocked ? 'Block' : isReceiverBlocked ? 'Unblock' : 'Block' }</Text>
                             </Pressable>
                         </View> */}
+                </View>
+                <View style={{ height: '100%', width: '100%', flexWrap: 'wrap', flexDirection: 'row'}}>
+                    {tab && 
+                        <>
+                            <View style={{backgroundColor: 'red', width: CARD_WIDTH, height: 200}}></View>
+                        </>
+                    }
+                    {!tab && 
+                        <>
+                            <View style={{backgroundColor: 'blue', width: CARD_WIDTH, height: 200}}></View>
+                        </>
+                    }
                 </View>
             </Animated.ScrollView>
         </View>
@@ -158,7 +188,7 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        backgroundColor: '#03A9F4',
+        backgroundColor: '#2ecc71',
         overflow: 'hidden',
     },
     headerImage: {
