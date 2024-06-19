@@ -17,7 +17,7 @@ const {width} = Dimensions.get('window');
 const CARD_WIDTH = width/3;
 
 const UserProfile = () => {
-    const { id, firstname, lastname, username, avatar, } = useLocalSearchParams();
+    const { id, firstname, lastname, username, avatar } = useLocalSearchParams();
     const [profilePic, setProfilePic] = useState(null);
     const [tab, setTab] = useState(true);
     const scrollY = new Animated.Value(0);
@@ -67,6 +67,10 @@ const UserProfile = () => {
         });
     };
 
+    const toggleTab = () => {
+        setTab(prev => !prev);
+    }
+
     const headerHeight = scrollY.interpolate({
         inputRange: [0, HEADER_SCROLL_DISTANCE],
         outputRange: [HEADER_MAX_HEIGHT, HEADER_MIN_HEIGHT],
@@ -84,10 +88,6 @@ const UserProfile = () => {
         outputRange: [0, -50],
         extrapolate: 'clamp',
     });
-
-    const toggleTab = () => {
-        setTab(prev => !prev);
-    }
 
     return (
         <View style={styles.container}>

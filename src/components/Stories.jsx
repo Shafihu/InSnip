@@ -11,7 +11,8 @@ import processUserImage from '../../utils/processUserImage';
 import { fetchStories } from '../../utils/fetchStories';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomLoader from './CustomLoader';
-import { MaterialIcons, MaterialCommunityIcons, Feather } from 'react-native-vector-icons';
+import { MaterialIcons, MaterialCommunityIcons, Feather, Ionicons } from 'react-native-vector-icons';
+import { router } from 'expo-router';
 const { width } = Dimensions.get('window');
 
 const Stories = () => {
@@ -21,6 +22,7 @@ const Stories = () => {
   const [selectedStory, setSelectedStory] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
+  const [optionsModal, setOptionsModal] = useState(false)
 
   useEffect(() => {
     loadStories();
@@ -89,6 +91,24 @@ const Stories = () => {
     setShowLoader(false);
   };
 
+  const handleProfile = (data) => {
+    console.log('GO!');
+    router.push({
+      pathname: '/verified/profile/[otherUserProfile]',
+      params: {
+        id: data.userDetails.id,
+        firstname: data.userDetails.FirstName,
+        lastname: data.userDetails.LastName,
+        username: data.userDetails.Username,
+        avatar: data.userDetails.avatar,
+      }
+    })
+    setSelectedStory(null);
+  }
+
+  const toggleOptionsModal = () => {
+    setOptionsModal(prev => !prev);
+  }
   return (
     <SafeAreaView style={styles.safeArea}>
       <Header header="Stories" />
@@ -165,21 +185,57 @@ const Stories = () => {
         <Modal visible={true} transparent={true} animationType="fade">
           <SafeAreaView style={styles.modalContainer}>
             <Pressable onPress={handleClosePreview} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Close</Text>
+              <Ionicons name='close' size={25} color='white' />
             </Pressable>
             <View style={styles.modalContent}>
+            <Pressable onPress={() => handleProfile(selectedStory)} style={styles.top}>
+                <Image source={processUserImage(selectedStory.userDetails.avatar)} style={styles.modalAvatar} />
+                <View style={{gap: 4}}>
+                  <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalUsername}>{selectedStory.userDetails ? selectedStory.userDetails.Username : 'Unknown'}</Text>
+                  <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalTime}>5 days ago</Text>
+                </View>
+            </Pressable>
               {selectedStory && selectedStory.type && selectedStory.type.startsWith('image/') ? (
                 <Image source={{ uri: selectedStory.url }} style={styles.modalMedia} />
               ) : selectedStory && selectedStory.type && selectedStory.type.startsWith('video/') ? (
-                <Video source={{ uri: selectedStory.url }} style={styles.modalMedia} resizeMode="cover" useNativeControls shouldPlay isLooping />
+                <Video source={{ uri: selectedStory.url }} style={styles.modalMedia} resizeMode="cover" shouldPlay isLooping />
               ) : (
                 <Text style={styles.errorText}>Oops! Something went wrong.</Text>
               )}
-              <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.6)']} style={styles.modalOverlay}>
-                <Image source={processUserImage(selectedStory.userDetails.avatar)} style={styles.modalAvatar} />
-                <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalUsername}>{selectedStory.userDetails ? selectedStory.userDetails.Username : 'Unknown'}</Text>
-              </LinearGradient>
             </View>
+            <View style={styles.bottom}>
+              <Pressable  style={[styles.pressable, styles.miniButtons]}>
+                <MaterialCommunityIcons name='camera-wireless' size={25} color="white" />
+              </Pressable>
+              <Pressable onPress={() => handleProfile(selectedStory)} style={[styles.pressable, styles.profileButton]}>
+                <Text style={styles.buttonText}>View Profile</Text>
+              </Pressable>
+              <Pressable onPress={toggleOptionsModal} style={[styles.pressable, styles.miniButtons]}>
+                <Image source={processUserImage(selectedStory.userDetails.avatar)} style={[styles.modalAvatar, {width: 30, height: 30}]} />
+              </Pressable>
+              <Pressable style={[styles.pressable, styles.miniButtons]}>
+                <Feather name='more-horizontal' size={30} color="white" />
+              </Pressable>
+            </View>
+            <Modal
+              animationType='slide'
+              visible={optionsModal} 
+              onMagicTap={toggleOptionsModal}
+              transparent={true}>
+              <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 16}}>
+                <ScrollView contentContainerStyle={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'transparent', paddingHorizontal: 10, paddingBottom: 25, gap: 15}}>
+                  <View style={{backgroundColor: 'white', minHeight: '30%', borderRadius: 16, padding: 10}}>
+                      <Text>Options</Text>
+                  </View>
+                  <View style={{backgroundColor: 'pink', minHeight: '10%', borderRadius: 16, padding: 10}}>
+                      <Text>Options</Text>
+                  </View>
+                  <Pressable onPress={toggleOptionsModal} style={{backgroundColor: 'white', minHeight: '5%', borderRadius: 16, padding: 10, justifyContent: 'center', alignItems: 'center'}}>
+                      <Text style={{fontWeight: 'bold', fontSize: 17, color: '#333333'}}>Done</Text>
+                  </Pressable>
+                </ScrollView>
+              </View>
+            </Modal>
           </SafeAreaView>
         </Modal>
       )}
@@ -210,7 +266,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333333', // Text Color
+    color: '#333333', 
     marginBottom: 8,
   },
   horizontalScrollView: {
@@ -220,7 +276,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
+    marginRight: 10,
     width: 80,
   },
   avatarContainer: {
@@ -229,7 +285,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     backgroundColor: '#fff',
     borderWidth: 2,
-    borderColor: '#2ecc71', // Primary Color
+    borderColor: '#2ecc71', 
     position: 'relative',
     marginBottom: 8,
   },
@@ -267,12 +323,12 @@ const styles = StyleSheet.create({
   userFirstName: {
     fontSize: 13,
     fontWeight: 'bold',
-    color: '#333333', // Text Color
+    color: '#333333',
     textAlign: 'center',
   },
   userUsername: {
     fontSize: 11,
-    color: '#7f8c8d', // Subtext Color
+    color: '#7f8c8d', 
     textAlign: 'center',
   },
   storiesContainer: {
@@ -284,7 +340,7 @@ const styles = StyleSheet.create({
   storyItem: {
     width: '49%',
     height: 280,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(0,0,0,0.2)',
     borderRadius: 8,
     marginBottom: 8,
     overflow: 'hidden',
@@ -322,6 +378,17 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 8,
   },
+  top: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    gap: 8,
+    position: 'absolute',
+    top: 0, 
+    left: 0,
+    zIndex: 99,
+    
+  },
   closeButtonText: {
     color: 'white',
     fontSize: 18,
@@ -333,6 +400,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 15,
     overflow: 'hidden',
+    position: 'relative'
   },
   modalMedia: {
     width: '100%',
@@ -341,24 +409,66 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
   },
-  modalOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    padding: 16,
-    alignItems: 'center',
+  bottom: {
+    height: 70,
+    backgroundColor: 'black',
+    paddingTop: 8,
+    paddingRight: 16,
+    paddingLeft: 16,
     flexDirection: 'row',
-    gap: 15,
+    justifyContent: 'space-evenly',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  pressable: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50,
+    // paddingHorizontal: 12,
+    minHeight: 50,
+    maxHeight: 50,
+    backgroundColor: '#333333',
+  },
+  miniButtons: {
+    width: '15%',
+  },
+  profileButton: {
+    flexDirection: 'row',
+    width: '50%',
+    gap: 8,
+  },
+  buttonText: {
+    fontWeight: 'bold',
+    color: 'white',
+    fontSize: 16,
+    letterSpacing: .5
+  },
+  iconFlip: {
+    transform: [{ scaleX: -1 }],
   },
   modalAvatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 35,
+    height: 35,
+    borderRadius: 17.5,
   },
   modalUsername: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  modalTime: {
+    color: '#f5f5f5',
+    fontSize: 12,
+    fontWeight: '500',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });

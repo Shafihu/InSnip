@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, Pressable, Image, StyleSheet, View, Animated } from "react-native";
+import { Text, Pressable, Image, StyleSheet, View, Animated, Dimensions } from "react-native";
 import { signOut } from "firebase/auth";
 import Toast from "react-native-toast-message";
 import { useUser } from "../../../../context/UserContext";
@@ -12,10 +12,13 @@ import { FontAwesome6, MaterialCommunityIcons } from 'react-native-vector-icons'
 const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 0;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
+const {width} = Dimensions.get('window');
+const CARD_WIDTH = width/3;
 
 const UserProfile = () => {
   const { userData, loading, updateProfilePicture } = useUser();
   const [profilePic, setProfilePic] = useState(null);
+  const [tab, setTab] = useState(true);
   const scrollY = new Animated.Value(0);
 
   useEffect(() => {
@@ -62,6 +65,10 @@ const UserProfile = () => {
       showErrorToast("Error handling image");
     }
   };
+
+  const toggleTab = () => {
+    setTab(prev => !prev);
+}
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE],
@@ -128,9 +135,29 @@ const UserProfile = () => {
             <Text>No user data available</Text>
           )}
           <Pressable onPress={handleSignOut} className="w-full">
-            <Text style={styles.logoutText}>Log Out</Text>
+            <Text style={styles.logoutText}>Sign Out</Text>
           </Pressable>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'}}>
+                <Pressable onPress={toggleTab} style={{borderBottomWidth: tab && 3, borderColor: '#333333', width: '50%', padding: 10}}>
+                      <Text style={{color: tab ? '#333333' : '#7f8c8d', fontWeight: 'bold', fontSize: 15, textAlign: 'center'}}>Stories</Text>
+                </Pressable>
+                <Pressable onPress={toggleTab} style={{borderBottomWidth: !tab && 3, borderColor: '#333333', width: '50%', padding: 10}}>
+                      <Text style={{color: !tab ? '#333333' : '#7f8c8d', fontWeight: 'bold', fontSize: 15, textAlign: 'center'}}>Spotlight</Text>
+                </Pressable>
+            </View>
         </View>
+        <View style={{ height: '100%', width: '100%', flexWrap: 'wrap', flexDirection: 'row'}}>
+              {tab && 
+                  <>
+                      <View style={{backgroundColor: 'red', width: CARD_WIDTH, height: 200}}></View>
+                  </>
+              }
+              {!tab && 
+                  <>
+                      <View style={{backgroundColor: 'blue', width: CARD_WIDTH, height: 200}}></View>
+                  </>
+              }
+                </View>
       </Animated.ScrollView>
     </View>
   );
@@ -183,7 +210,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "red",
     marginTop: 20,
-    textAlign: 'center'
+    textAlign: 'center',
+    fontWeight: 'bold'
   },
   buttonContainer: {
     position: 'absolute',

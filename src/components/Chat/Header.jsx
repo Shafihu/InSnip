@@ -4,7 +4,6 @@ import { FontAwesome5, FontAwesome } from 'react-native-vector-icons'
 import { router } from 'expo-router'
 import processUserImage from '../../../utils/processUserImage'
 import { useChatStore } from '../../../context/ChatContext'
-import { BlurView } from 'expo-blur';
 
 const Header = ({title, avatar, firstname, lastname, id, username, user}) => {
   const {isReceiverBlocked} = useChatStore()

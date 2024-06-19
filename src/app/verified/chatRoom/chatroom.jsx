@@ -207,7 +207,7 @@ const ChatRoom = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <Header title={`${firstname} ${lastname}`} avatar={avatar} firstname={firstname} lastname={lastname} id={userId} username={username} user={user} />
-      <ImageBackground source={theme.chatBackgroundImage} style={{ flex: 1 }}>
+      <ImageBackground source={theme.chatBackgroundImage} style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

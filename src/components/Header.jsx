@@ -31,7 +31,9 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                 paddingHorizontal: 8,
                 paddingVertical: 10,
                 backgroundColor: header === 'Map' || 'Spotlight' ? 'transparent' : '#f5f5f5',
-                alignItems: header === '' ? 'flex-start' : 'center'
+                alignItems: header === '' ? 'flex-start' : 'center',
+                borderBottomWidth: header === 'Stories' ? 1 : 0,
+                borderColor: 'rgba(0,0,0,0.1)'
             }}
         >
             <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>

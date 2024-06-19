@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { CameraView, useCameraPermissions, Camera } from "expo-camera";
 import { shareAsync } from "expo-sharing";
 import * as MediaLibrary from "expo-media-library";
-import { Button, Image, Pressable, SafeAreaView, Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Button, Image, Pressable, SafeAreaView, Text, TouchableOpacity, View, StyleSheet, ActivityIndicator } from "react-native";
 import { Ionicons, Foundation } from "react-native-vector-icons";
 import Toast from "react-native-toast-message";
 
@@ -19,6 +19,7 @@ import { FIRESTORE_DB } from "../../../Firebase/config";
 import { useUser } from "../../../context/UserContext";
 import { arrayUnion, updateDoc, doc } from "firebase/firestore";
 import { storyPostUpload } from "../../../utils/storyPostUpload";
+import CustomLoader from "../../components/CustomLoader";
 
 
 const HomeScreen = () => {
@@ -35,6 +36,7 @@ const HomeScreen = () => {
   const [chat, setChat] = useState(false);
   const [stories, setStories] = useState(false);
   const [spotlight, setSpotlight] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const { userData } = useUser();
   const currentUserId = userData?.id;
 
@@ -161,7 +163,7 @@ const HomeScreen = () => {
   const handlePostStory = async () => {
     try {
       if (photo) {
-        const downloadUrl = await storyPostUpload(photo.uri, currentUserId);
+        const downloadUrl = await storyPostUpload(photo.uri, currentUserId, setUploadProgress);
         if (downloadUrl) {
           const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
           // await updateDoc(docRef, {
@@ -170,7 +172,7 @@ const HomeScreen = () => {
           showToast("Story Sent!");
         }
       } else if (video) {
-        const downloadUrl = await storyPostUpload(video.uri, currentUserId);
+        const downloadUrl = await storyPostUpload(video.uri, currentUserId, setUploadProgress);
         if (downloadUrl) {
           const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
           // await updateDoc(docRef, {
@@ -217,10 +219,16 @@ const HomeScreen = () => {
                       <TouchableOpacity onPress={() => setPhoto(undefined)}>
                         <Ionicons name="close" color="white" size={30} />
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => setPhoto(null)}>
+                      <TouchableOpacity >
                         {/* Edit buttons go dey here */}
                       </TouchableOpacity>
                     </View>
+                    {uploadProgress > 0 && uploadProgress < 100 && (
+                        <View style={{backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute', top: 0, left: 0, padding: 10, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flex: 1, width: '100%', height: '100%', gap: 5}}>
+                          <CustomLoader />
+                          <Text style={{color: '#fff', fontWeight: 'bold', letterSpacing: 0.5, textAlign: 'center', width: '100%'}}>{uploadProgress.toFixed(2)}%</Text>
+                        </View>
+                      )}
                   </View>
                 )}
 
@@ -240,6 +248,12 @@ const HomeScreen = () => {
                       <TouchableOpacity onPress={() => setVideo(undefined)}>
                         <Ionicons name="close" color="white" size={30} />
                       </TouchableOpacity>
+                      {uploadProgress > 0 && uploadProgress < 100 && (
+                        <View style={{ padding: 10, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                          <Text>Upload Progress: {uploadProgress.toFixed(2)}%</Text>
+                          <ActivityIndicator size="large" color='green' />
+                        </View>
+                      )}
                     </View>
                   </View>
                 )}
