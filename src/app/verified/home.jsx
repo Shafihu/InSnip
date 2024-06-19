@@ -248,13 +248,13 @@ const HomeScreen = () => {
                       <TouchableOpacity onPress={() => setVideo(undefined)}>
                         <Ionicons name="close" color="white" size={30} />
                       </TouchableOpacity>
-                      {uploadProgress > 0 && uploadProgress < 100 && (
-                        <View style={{ padding: 10, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                          <Text>Upload Progress: {uploadProgress.toFixed(2)}%</Text>
-                          <ActivityIndicator size="large" color='green' />
+                    </View>
+                    {uploadProgress > 0 && uploadProgress < 100 && (
+                        <View style={{backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute', top: 0, left: 0, padding: 10, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flex: 1, width: '100%', height: '100%', gap: 5}}>
+                          <CustomLoader />
+                          <Text style={{color: '#fff', fontWeight: 'bold', letterSpacing: 0.5, textAlign: 'center', width: '100%'}}>{uploadProgress.toFixed(2)}%</Text>
                         </View>
                       )}
-                    </View>
                   </View>
                 )}
 
