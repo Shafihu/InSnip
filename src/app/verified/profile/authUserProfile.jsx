@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#03A9F4',
+    backgroundColor: '#2ecc71',
     overflow: 'hidden',
   },
   headerImage: {
