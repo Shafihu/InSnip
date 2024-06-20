@@ -86,8 +86,8 @@ const Map = () => {
     mapRef.current?.animateToRegion({
       latitude: coords.latitude,
       longitude: coords.longitude,
-      latitudeDelta: 0.1,
-      longitudeDelta: 0.1,
+      latitudeDelta: 0.005,
+      longitudeDelta: 0.005,
     });
   };
 
@@ -108,7 +108,7 @@ const Map = () => {
     user.location && (
       <Marker key={user.id} coordinate={user.location}>
         <Image source={processUserImage(user.avatar)} style={styles.markerImage} />
-        <Callout onPress={() => calloutPressed(user)}>
+        <Callout  onPress={() => calloutPressed(user)}>
           <View style={styles.calloutView}>
             <Text style={styles.calloutUsername}>{user.Username}</Text>
             <Image
@@ -175,19 +175,21 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   calloutView: {
-    width: 200,
-    height: 200,
+    width: 100,
+    height: 100,
     flex: 1,
-    gap: 5,
+    justifyContent: 'center',
+    alignItems: 'center'
+    // gap: 5,
   },
   calloutUsername: {
     fontWeight: 'bold',
-    color: '#00bfff',
+    color: '#2ecc71',
     textAlign: 'center',
   },
   calloutImage: {
-    width: '100%',
-    height: 180,
+    width: 70,
+    height: 70,
     borderRadius: 10,
     objectFit: 'cover',
   },

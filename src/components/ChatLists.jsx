@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     
   },
   newMessageButton: {
-    backgroundColor: '#2F3E46',
+    backgroundColor: '#2ecc71',
     borderRadius: 30,
     width: 60,
     height: 60,

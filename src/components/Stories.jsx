@@ -228,7 +228,7 @@ const Stories = () => {
                       <Text>Options</Text>
                   </View>
                   <View style={{backgroundColor: 'pink', minHeight: '10%', borderRadius: 16, padding: 10}}>
-                      <Text>Options</Text>
+                      <Text>More options go dey here</Text>
                   </View>
                   <Pressable onPress={toggleOptionsModal} style={{backgroundColor: 'white', minHeight: '5%', borderRadius: 16, padding: 10, justifyContent: 'center', alignItems: 'center'}}>
                       <Text style={{fontWeight: 'bold', fontSize: 17, color: '#333333'}}>Done</Text>
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333333', 
-    marginBottom: 8,
+    marginBottom: 3,
   },
   horizontalScrollView: {
     paddingVertical: 8,
@@ -278,6 +278,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 10,
     width: 80,
+    gap: 3
   },
   avatarContainer: {
     width: 80,
@@ -293,7 +294,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 23,
     borderRadius: 12,
-    backgroundColor: '#2ecc71', // Primary Color
+    backgroundColor: '#2ecc71',
     position: 'absolute',
     bottom: -12,
     left: '50%',
