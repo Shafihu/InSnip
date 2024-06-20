@@ -143,10 +143,11 @@ const styles = StyleSheet.create({
     zIndex: 99,
   },
   scrollView: {
-    flex: 1,
+    flexGrow: 1,
     marginTop: 10,
   },
   scrollContent: {
+    // flexGrow: 1,
     paddingBottom: 28,
   },
   archiveContainer: {

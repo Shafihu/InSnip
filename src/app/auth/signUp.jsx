@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList, Platform } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,8 +7,8 @@ import { FontAwesome, FontAwesome6 } from "react-native-vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../Firebase/config";
-import Toast from "react-native-toast-message";
 import { doc, setDoc } from "firebase/firestore";
+import { useNavigation } from 'expo-router';
 
 const SignUpScreen = () => {
   const [step, setStep] = useState(0);
@@ -21,7 +21,9 @@ const SignUpScreen = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(true);
+  const [valid, setValid] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
 
   const images = [
     { id: 1, source: require("../../../assets/avatars/avatar_1.png"), path: "avatar_1.png" },
@@ -38,7 +40,6 @@ const SignUpScreen = () => {
 
   const handleImageSelect = (item) => {
     setSelectedAvatar(item);
-    console.log("Selected Avatar: ", item);
   };
 
   const steps = [
@@ -123,141 +124,115 @@ const SignUpScreen = () => {
       )
     },
     { 
-        title: `Completing Your Registration`, 
-        fields: (
-          <>
-            <View style={styles.inputWrapper}>
-              <Text style={styles.inputLabel}>EMAIL</Text>
+      title: `Completing your registration`, 
+      fields: (
+        <>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.inputLabel}>EMAIL</Text>
+            <TextInput
+              style={styles.input}
+              value={email.toLowerCase()}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              selectionColor="#2ecc71"
+            />
+          </View>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.inputLabel}>PASSWORD</Text>
+            <View style={styles.passwordContainer}>
               <TextInput
                 style={styles.input}
-                value={email.toLowerCase()}
-                onChangeText={setEmail}
-                keyboardType="email-address"
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
                 selectionColor="#2ecc71"
               />
+              <TouchableOpacity
+                style={styles.eyeIcon}
+                onPress={() => setShowPassword(!showPassword)}
+              >
+                <FontAwesome6 name={showPassword ? "eye" : "eye-slash"} size={18} color="#7f8c8d" />
+              </TouchableOpacity>
             </View>
-            <View style={styles.inputWrapper}>
-              <Text style={styles.inputLabel}>PASSWORD</Text>
-              <View style={styles.passwordContainer}>
-                <TextInput
-                  style={styles.input}
-                  secureTextEntry={!showPassword}
-                  value={password}
-                  onChangeText={setPassword}
-                  selectionColor="#2ecc71"
-                />
-                <TouchableOpacity
-                  style={styles.eyeIcon}
-                  onPress={() => setShowPassword(!showPassword)}
-                >
-                  <FontAwesome6 name={showPassword ? "eye" : "eye-slash"} size={18} color="#7f8c8d" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </>
-        )
-      },
+          </View>
+          <View>
+            <Text style={styles.privacyText}>
+              By tapping sign up, you acknowledge that you have read the Privacy Policy and agree to the Terms of Service.
+            </Text>
+          </View>
+        </>
+      )
+    },
   ];
 
   const progress = (step + 1) / steps.length;
 
-  const showErrorToast = (message) => {
-    Toast.show({
-      type: "error",
-      text1: message,
-    });
-  };
-
-  const showSuccessToast = () => {
-    Toast.show({
-      type: "success",
-      text1: "Account Created Successfully🎉",
-    });
-  };
+  useEffect(() => {
+    validateStep();
+  }, [firstName, lastName, dob, username, selectedAvatar, email, password, step]);
 
   const validateStep = () => {
     switch (step) {
       case 0:
-        if (!firstName || !lastName) {
-          showErrorToast("Please enter your first and last name.");
-          return false;
-        }
+        setValid(firstName.trim() !== '' && lastName.trim() !== '');
         break;
       case 1:
-        if (!dob) {
-          showErrorToast("Please select your date of birth.");
-          return false;
-        }
+        setValid(dob !== null);
         break;
       case 2:
-        if (!username) {
-          showErrorToast("Please enter a username.");
-          return false;
-        }
+        setValid(username.trim() !== '');
         break;
       case 3:
-        if (!selectedAvatar) {
-          showErrorToast("Please choose an avatar.");
-          return false;
-        }
+        setValid(selectedAvatar !== null);
         break;
       case 4:
-        if (!email || !password) {
-          showErrorToast("Please enter your email and password.");
-          return false;
-        }
+        setValid(email.trim() !== '' && password.trim() !== '');
         break;
       default:
-        return true;
+        setValid(false);
     }
-    return true;
   };
 
   const handleNext = async () => {
-    if (!validateStep()) return;
-    
+    if (!valid) return;
+
     if (step < steps.length - 1) {
       setStep(step + 1);
     } else {
-        setLoading(true);
-        try {
-          const response = await createUserWithEmailAndPassword(
-            FIREBASE_AUTH,
-            email,
-            password
-          );
-    
-          showSuccessToast();
-    
-          try {
-            await setDoc(doc(FIRESTORE_DB, "users", response.user.uid), {
-              id: response.user.uid,
-              Email: email,
-              Password: password,
-              FirstName: firstName,
-              LastName: lastName,
-              Birthday: dob,
-              Username: username,
-              avatar: selectedAvatar.path,
-              blocked: []
-            });
-    
-            await setDoc(doc(FIRESTORE_DB, "userchats", response.user.uid), {
-              chats: []
-            });
-    
-          } catch (e) {
-            console.log("Error adding document: " + e);
-            showErrorToast("Failed to add user data. Try again.");
-          }
-        } catch (error) {
-          console.log("Registration Failed: " + error);
-          showErrorToast('Failed to sign up. Try again.');
-        } finally {
-          setLoading(false);
-        }
-      };
+      setLoading(true);
+      try {
+        const response = await createUserWithEmailAndPassword(
+          FIREBASE_AUTH,
+          email,
+          password
+        );
+
+        await setDoc(doc(FIRESTORE_DB, "users", response.user.uid), {
+          id: response.user.uid,
+          Email: email,
+          Password: password,
+          FirstName: firstName,
+          LastName: lastName,
+          Birthday: dob,
+          Username: username,
+          avatar: selectedAvatar.path,
+          blocked: []
+        });
+
+        await setDoc(doc(FIRESTORE_DB, "userchats", response.user.uid), {
+          chats: []
+        });
+
+        // alert("Account Created Successfully 🎉");
+        navigation.goBack();
+      } catch (error) {
+        console.log("Registration Failed: " + error);
+        alert('Failed to sign up. Try again.');
+      } finally {
+        setLoading(false);
+      }
     }
+  };
 
   const handleBack = () => {
     if (step > 0) {
@@ -267,57 +242,59 @@ const SignUpScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-    <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-      
-        <View style={{flexGrow: 1}}>
-        <ProgressBar progress={progress} style={styles.progressBar} color='#2ecc71'/>
-        <Image
-          source={require('../../../assets/signUpImage.png')}
-          style={styles.logo}
-          contentFit="cover"
-        />
-        <View style={{flex: 1, justifyContent: 'space-between'}}>
-          <View style={{flex: 1, gap: 20}}>
-          <Text style={styles.title}>{steps[step].title}</Text>
-          {steps[step].fields}
-          {step === 1 && showDatePicker && (
-            <DateTimePicker
-              mode="date"
-              display="spinner"
-              value={dob}
-              onChange={(event, selectedDate) => {
-                if (selectedDate) {
-                  setDob(selectedDate);
-                }
-              }}
-              textColor='#333333'
-            />
-          )}
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+        <View style={{ flexGrow: 1 }}>
+          <ProgressBar progress={progress} style={styles.progressBar} color='#2ecc71' />
+          <Image
+            source={require('../../../assets/signUpImage.png')}
+            style={styles.logo}
+            contentFit="cover"
+          />
+          <View style={{ flex: 1, justifyContent: 'space-between' }}>
+            <View style={{ flex: 1, gap: 20 }}>
+              <Text style={styles.title}>{steps[step].title}</Text>
+              {steps[step].fields}
+              {step === 1 && showDatePicker && (
+                <DateTimePicker
+                  mode="date"
+                  display="spinner"
+                  value={dob}
+                  onChange={(event, selectedDate) => {
+                    if (selectedDate) {
+                      setDob(selectedDate);
+                    }
+                  }}
+                  textColor='#333333'
+                />
+              )}
+            </View>
           </View>
-        </View>
-        <View style={styles.buttonContainer}>
-            {step > 0 && 
+          <View style={styles.buttonContainer}>
+            {step > 0 &&
               <TouchableOpacity style={styles.backButton} onPress={handleBack}>
                 <Text style={styles.backText}><FontAwesome name='chevron-left' size={18} color='#fff' /></Text>
               </TouchableOpacity>
             }
-            <TouchableOpacity style={styles.continueButton} onPress={handleNext}>
-              <Text style={styles.continueText}>{step === steps.length - 1 ? "Sign-up" : "Continue"}</Text>
+            <TouchableOpacity disabled={!valid} style={[styles.continueButton, { backgroundColor: valid ? '#2ecc71' : 'rgba(0,0,0,0.2)' }]} onPress={handleNext}>
+            {loading ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <Text style={styles.continueText}>{step === steps.length - 1 ? "Sign-up" : "Continue"}</Text>
+              )}
             </TouchableOpacity>
           </View>
-          </View>
-          </KeyboardAvoidingView>
-      </SafeAreaView>
-   
-
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
     paddingBottom: 0,
+    paddingTop: 0,
     backgroundColor: '#fff',
   },
   progressBar: {
@@ -334,7 +311,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 24,
     color: "#333333",
-    // marginBottom: 20,
   },
   inputWrapper: {
     width: '100%',
@@ -350,7 +326,6 @@ const styles = StyleSheet.create({
     borderColor: "#2ecc71",
     borderRadius: 8,
     padding: 10,
-    // marginBottom: 20,
     fontSize: 15,
     fontWeight: "500",
     backgroundColor: '#ffffff',
@@ -375,7 +350,6 @@ const styles = StyleSheet.create({
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    // backgroundColor: 'red'
   },
   eyeIcon: {
     position: 'absolute',
@@ -417,7 +391,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     fontWeight: "bold",
-  }
+  },
+  privacyText: {
+    fontSize: 12,
+    color: "#7f8c8d",
+    textAlign: "center",
+  },
 });
 
 export default SignUpScreen;

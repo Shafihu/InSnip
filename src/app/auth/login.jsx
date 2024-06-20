@@ -1,5 +1,4 @@
-import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,51 +6,52 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
-  Pressable,
   ActivityIndicator,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../../Firebase/config";
-import Toast from "react-native-toast-message";
 import { Image } from "expo-image";
+import { router, useNavigation } from "expo-router";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [valid, setValid] = useState(false);
 
-  const showErrorToast = (message) => {
-    Toast.show({
-      type: "error",
-      text1: message,
-    });
-  };
+  const navigation = useNavigation();
 
-  const showSuccessToast = (message) => {
-    Toast.show({
-      type: "success",
-      text1: message,
-    });
+  useEffect(() => {
+    validateInput();
+  }, [email, password]);
+
+  const validateInput = () => {
+    setValid(email.trim() !== "" && password.trim() !== "");
   };
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      showErrorToast("Please enter your email and password");
+    if (!valid) {
+      Alert.alert("Error", "Please enter your email and password");
       return;
     }
 
     setLoading(true);
     try {
-      const response = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      const response = await signInWithEmailAndPassword(
+        FIREBASE_AUTH,
+        email,
+        password
+      );
       setEmail("");
       setPassword("");
-      showSuccessToast("Login successful!");
+      navigation.goBack();
     } catch (error) {
       console.log("Sign In Failed: " + error);
-      showErrorToast("Invalid email or password. Please try again.");
+      Alert.alert("Error", "Invalid email or password. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -60,25 +60,17 @@ const LoginScreen = () => {
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
       <SafeAreaView style={styles.safeArea}>
-        <Pressable style={styles.header} onPress={() => router.back()}>
-          <FontAwesome6 name="chevron-left" color="#7f8c8d" size={20} />
-        </Pressable>
         <View style={styles.container}>
-          {/* <View style={styles.logoContainer}> */}
-          {/* <SvgUri width={100} height={100} uri={svgUri} /> */}
-            {/* <View style={styles.logoWrapper}> */}
-              <Image
-                source={require('../../../assets/login2.png')}
-                style={styles.logo}
-                contentFit="cover"
-              />
-            {/* </View> */}
-            {/* <Text style={styles.logoText}>InSnip</Text> */}
-          {/* </View> */}
-
+          <Image
+            source={require("../../../assets/login2.png")}
+            style={styles.logo}
+            contentFit="cover"
+          />
           <View style={styles.loginContainer}>
             <Text style={styles.loginTitle}>Welcome Back</Text>
-            <Text style={styles.loginSubtitle}>Please enter your details to continue</Text>
+            <Text style={styles.loginSubtitle}>
+              Please enter your details to continue
+            </Text>
             <View style={styles.inputWrapper}>
               <Text style={styles.inputLabel}>EMAIL</Text>
               <TextInput
@@ -103,11 +95,24 @@ const LoginScreen = () => {
                   style={styles.eyeIcon}
                   onPress={() => setShowPassword(!showPassword)}
                 >
-                  <FontAwesome6 name={showPassword ? "eye" : "eye-slash"} size={18} color="#7f8c8d" />
+                  <FontAwesome6
+                    name={showPassword ? "eye" : "eye-slash"}
+                    size={18}
+                    color="#7f8c8d"
+                  />
                 </TouchableOpacity>
               </View>
             </View>
-            <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+            <TouchableOpacity
+              disabled={!valid}
+              onPress={handleLogin}
+              style={[
+                styles.loginButton,
+                {
+                  backgroundColor: valid ? "#2ecc71" : "rgba(0,0,0,0.2)",
+                },
+              ]}
+            >
               {loading ? (
                 <ActivityIndicator size="small" color="white" />
               ) : (
@@ -124,7 +129,7 @@ const LoginScreen = () => {
   );
 };
 
-export default LoginScreen;
+export default LoginScreen
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -141,8 +146,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: "center",
+    // justifyContent: "center",
     alignItems: "center",
+    paddingTop: 10,
     marginHorizontal: 20,
   },
   keyboardView: {
