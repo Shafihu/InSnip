@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList, Platform } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
@@ -266,7 +266,8 @@ const SignUpScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView behavior='padding' style={{flex: 1}}>
+    <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
       <SafeAreaView style={styles.container}>
         <ProgressBar progress={progress} style={styles.progressBar} color='#2ecc71'/>
         <Image
@@ -275,7 +276,7 @@ const SignUpScreen = () => {
           contentFit="cover"
         />
         <View style={{flex: 1, justifyContent: 'space-between'}}>
-          <View style={{flex: 1}}>
+          <View style={{flex: 1, gap: 20}}>
           <Text style={styles.title}>{steps[step].title}</Text>
           {steps[step].fields}
           {step === 1 && showDatePicker && (
@@ -288,11 +289,12 @@ const SignUpScreen = () => {
                   setDob(selectedDate);
                 }
               }}
-              textColor='#2ecc71'
+              textColor='#333333'
             />
           )}
           </View>
-          <View style={styles.buttonContainer}>
+        </View>
+        <View style={styles.buttonContainer}>
             {step > 0 && 
               <TouchableOpacity style={styles.backButton} onPress={handleBack}>
                 <Text style={styles.backText}><FontAwesome name='chevron-left' size={20} color='#fff' /></Text>
@@ -302,9 +304,9 @@ const SignUpScreen = () => {
               <Text style={styles.continueText}>{step === steps.length - 1 ? "Sign-up" : "Continue"}</Text>
             </TouchableOpacity>
           </View>
-        </View>
       </SafeAreaView>
-    </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+
   );
 }
 const styles = StyleSheet.create({
@@ -317,18 +319,18 @@ const styles = StyleSheet.create({
   progressBar: {
     height: 10,
     borderRadius: 5,
-    marginBottom: 20,
+    // marginBottom: 20,
   },
   logo: {
     width: '100%',
-    height: '38%',
+    height: '35%',
   },
   title: {
     textAlign: "center",
     fontWeight: "500",
     fontSize: 24,
     color: "#333333",
-    marginBottom: 20,
+    // marginBottom: 20,
   },
   inputWrapper: {
     width: '100%',
@@ -344,7 +346,7 @@ const styles = StyleSheet.create({
     borderColor: "#2ecc71",
     borderRadius: 8,
     padding: 10,
-    marginBottom: 20,
+    // marginBottom: 20,
     fontSize: 15,
     fontWeight: "500",
     backgroundColor: '#ffffff',
@@ -384,7 +386,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 5
+    gap: 5,
   },
   continueButton: {
     backgroundColor: "#2ecc71",

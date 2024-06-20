@@ -39,7 +39,7 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      showErrorToast("Email and password are required!");
+      showErrorToast("Please enter your email and password");
       return;
     }
 
