@@ -8,6 +8,7 @@ import { doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
 import { FIRESTORE_DB } from '../../Firebase/config';
 import { router } from 'expo-router';
 import CustomLoader from './CustomLoader';
+import { Image } from 'expo-image';
 
 const Chat = () => {
   const [loading, setLoading] = useState(false);
@@ -72,25 +73,40 @@ const Chat = () => {
             </View>
           </View>
 
-          {loading ? (
-              <View style={styles.loaderContainer}>
-                <CustomLoader />
-              </View>
-          ) : (
-            chats.map((chat) => (
-              <MemoizedChatItem
-                key={chat.chatId}
-                id={chat.id}
-                isSeen={chat.isSeen}
-                chat={chat}
-                avatar={chat.user?.avatar}
-                firstName={chat.user?.FirstName}
-                lastName={chat.user?.LastName}
-                lastMessage={chat.lastMessage}
-              />
-            ))
-            )}
+          {
+  loading ? (
+    <View style={styles.loaderContainer}>
+      <CustomLoader />
+    </View>
+  ) : (
+      chats.map((chat) => (
+        <MemoizedChatItem
+          key={chat.chatId}
+          id={chat.id}
+          isSeen={chat.isSeen}
+          chat={chat}
+          avatar={chat.user?.avatar}
+          firstName={chat.user?.FirstName}
+          lastName={chat.user?.LastName}
+          lastMessage={chat.lastMessage}
+        />
+      ))
+  )
+}
         </ScrollView>
+      <View style={{flex: 1, flexGrow: 4}}>
+      {!loading && chats.length < 1 && (
+                <View style={{flexGrow: 1,paddingBottom: 130, justifyContent: 'center', alignItems: 'center', gap: 10}}>
+                        <Image
+                          source={require('../../assets/chatlistImage.png')}
+                          style={{width: '80%', height: '40%'}}
+                          contentFit="cover"
+                        />
+                  <Text style={{color: 'rgba(0,0,0,0.3)', fontWeight: '500'}}>Add friends to start conversations</Text>
+                </View>
+              )
+            }
+      </View>
       </View>
     </SafeAreaView>
   );
@@ -101,14 +117,15 @@ const MemoizedChatItem = React.memo(ChatItem);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff', // Background Color: Light Gray
+    backgroundColor: '#fff',
   },
   content: {
     flex: 1,
-    backgroundColor: '#f3f4f6', // Background Color: RGB(243, 244, 246)
+    backgroundColor: '#f3f4f6',
+    
   },
   newMessageButton: {
-    backgroundColor: '#2F3E46', // Primary Color: Deep Sky Blue
+    backgroundColor: '#2F3E46',
     borderRadius: 30,
     width: 60,
     height: 60,
@@ -127,7 +144,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    marginTop: 10
+    marginTop: 10,
   },
   scrollContent: {
     paddingBottom: 28,
@@ -140,7 +157,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     marginHorizontal: 8,
     marginBottom: 8,
-    backgroundColor: 'white', // Background Color: White
+    backgroundColor: 'white', 
     borderRadius: 24,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

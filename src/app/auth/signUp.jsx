@@ -266,12 +266,14 @@ const SignUpScreen = () => {
   };
 
   return (
+    <SafeAreaView style={styles.container}>
     <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}>
-      <SafeAreaView style={styles.container}>
+    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+      
+        <View style={{flexGrow: 1}}>
         <ProgressBar progress={progress} style={styles.progressBar} color='#2ecc71'/>
         <Image
-          source={require('../../../assets/signup_1.png')}
+          source={require('../../../assets/signUpImage.png')}
           style={styles.logo}
           contentFit="cover"
         />
@@ -297,15 +299,17 @@ const SignUpScreen = () => {
         <View style={styles.buttonContainer}>
             {step > 0 && 
               <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-                <Text style={styles.backText}><FontAwesome name='chevron-left' size={20} color='#fff' /></Text>
+                <Text style={styles.backText}><FontAwesome name='chevron-left' size={18} color='#fff' /></Text>
               </TouchableOpacity>
             }
             <TouchableOpacity style={styles.continueButton} onPress={handleNext}>
               <Text style={styles.continueText}>{step === steps.length - 1 ? "Sign-up" : "Continue"}</Text>
             </TouchableOpacity>
           </View>
+          </View>
+          </KeyboardAvoidingView>
       </SafeAreaView>
-        </KeyboardAvoidingView>
+   
 
   );
 }
@@ -314,12 +318,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     paddingBottom: 0,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   progressBar: {
     height: 10,
     borderRadius: 5,
-    // marginBottom: 20,
+    marginBottom: 20,
   },
   logo: {
     width: '100%',
@@ -402,7 +406,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   backButton: {
-    backgroundColor: '#7f8c8d',
+    backgroundColor: 'rgba(0,0,0,0.2)',
     borderRadius: 8,
     alignItems: "center",
     justifyContent: 'center',
