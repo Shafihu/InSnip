@@ -175,7 +175,47 @@ const SignUpScreen = () => {
     });
   };
 
+  const validateStep = () => {
+    switch (step) {
+      case 0:
+        if (!firstName || !lastName) {
+          showErrorToast("Please enter your first and last name.");
+          return false;
+        }
+        break;
+      case 1:
+        if (!dob) {
+          showErrorToast("Please select your date of birth.");
+          return false;
+        }
+        break;
+      case 2:
+        if (!username) {
+          showErrorToast("Please enter a username.");
+          return false;
+        }
+        break;
+      case 3:
+        if (!selectedAvatar) {
+          showErrorToast("Please choose an avatar.");
+          return false;
+        }
+        break;
+      case 4:
+        if (!email || !password) {
+          showErrorToast("Please enter your email and password.");
+          return false;
+        }
+        break;
+      default:
+        return true;
+    }
+    return true;
+  };
+
   const handleNext = async () => {
+    if (!validateStep()) return;
+    
     if (step < steps.length - 1) {
       setStep(step + 1);
     } else {
@@ -234,7 +274,8 @@ const SignUpScreen = () => {
           style={styles.logo}
           contentFit="cover"
         />
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, justifyContent: 'space-between'}}>
+          <View style={{flex: 1}}>
           <Text style={styles.title}>{steps[step].title}</Text>
           {steps[step].fields}
           {step === 1 && showDatePicker && (
@@ -243,13 +284,14 @@ const SignUpScreen = () => {
               display="spinner"
               value={dob}
               onChange={(event, selectedDate) => {
-                // setShowDatePicker(false);
                 if (selectedDate) {
                   setDob(selectedDate);
                 }
               }}
+              textColor='#2ecc71'
             />
           )}
+          </View>
           <View style={styles.buttonContainer}>
             {step > 0 && 
               <TouchableOpacity style={styles.backButton} onPress={handleBack}>
@@ -269,9 +311,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    paddingBottom: 0,
     backgroundColor: '#fff'
   },
   progressBar: {
+    height: 10,
+    borderRadius: 5,
     marginBottom: 20,
   },
   logo: {
