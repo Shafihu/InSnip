@@ -61,18 +61,20 @@ const LoginScreen = () => {
     <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
       <SafeAreaView style={styles.safeArea}>
         <Pressable style={styles.header} onPress={() => router.back()}>
-          <FontAwesome6 name="chevron-left" color="#888" size={20} />
+          <FontAwesome6 name="chevron-left" color="#7f8c8d" size={20} />
         </Pressable>
         <View style={styles.container}>
-          <View style={styles.logoContainer}>
-            <View style={styles.logoWrapper}>
+          {/* <View style={styles.logoContainer}> */}
+          {/* <SvgUri width={100} height={100} uri={svgUri} /> */}
+            {/* <View style={styles.logoWrapper}> */}
               <Image
-                source={require('../../../assets/testlogo.png')}
+                source={require('../../../assets/login2.png')}
                 style={styles.logo}
+                contentFit="cover"
               />
-            </View>
-            <Text style={styles.logoText}>InSnip</Text>
-          </View>
+            {/* </View> */}
+            {/* <Text style={styles.logoText}>InSnip</Text> */}
+          {/* </View> */}
 
           <View style={styles.loginContainer}>
             <Text style={styles.loginTitle}>Welcome Back</Text>
@@ -84,6 +86,7 @@ const LoginScreen = () => {
                 value={email.toLowerCase()}
                 onChangeText={setEmail}
                 keyboardType="email-address"
+                selectionColor="#2ecc71"
               />
             </View>
             <View style={styles.inputWrapper}>
@@ -94,12 +97,13 @@ const LoginScreen = () => {
                   secureTextEntry={!showPassword}
                   value={password}
                   onChangeText={setPassword}
+                  selectionColor="#2ecc71"
                 />
                 <TouchableOpacity
                   style={styles.eyeIcon}
                   onPress={() => setShowPassword(!showPassword)}
                 >
-                  <FontAwesome6 name={showPassword ? "eye" : "eye-slash"} size={18} color="#888" />
+                  <FontAwesome6 name={showPassword ? "eye" : "eye-slash"} size={18} color="#7f8c8d" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -125,14 +129,15 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
   },
   header: {
     paddingVertical: 10,
     paddingHorizontal: 10,
     alignSelf: "flex-start",
     borderRadius: 25,
-    marginHorizontal: 20,
+    marginHorizontal: 10,
+    zIndex: 99
   },
   container: {
     flex: 1,
@@ -160,9 +165,8 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   logo: {
-    width: 70,
-    height: 70,
-    objectFit: 'cover',
+    width: '100%',
+    height: '38%',
   },
   logoText: {
     fontWeight: '500',
@@ -179,15 +183,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "700",
     fontSize: 28,
-    color: "#2F3E46",
-    marginBottom: 6,
+    color: "#333333",
+    marginBottom: 4,
   },
   loginSubtitle: {
     textAlign: "center",
     fontWeight: "500",
     fontSize: 14,
-    color: "#3B2F2F",
-    marginBottom: 40,
+    color: "#7f8c8d",
+    marginBottom: 20,
   },
   inputWrapper: {
     width: '100%',
@@ -195,20 +199,20 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 12,
-    color: "#00aaff",
+    color: "#333333",
     marginBottom: 5,
+    fontWeight: '500'
   },
   input: {
     borderWidth: 1,
-    borderColor: "#00aaff",
-    borderRadius: 25,
+    borderColor: "#2ecc71",
+    borderRadius: 8,
     padding: 10,
     fontSize: 15,
     fontWeight: "500",
     backgroundColor: '#ffffff',
-    width: '100%', // Make sure input takes full width of the wrapper
+    width: '100%',
   },
-
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -218,12 +222,12 @@ const styles = StyleSheet.create({
     right: 15,
   },
   loginButton: {
-    backgroundColor: "#00aaff",
+    backgroundColor: "#2ecc71",
     paddingVertical: 15,
-    borderRadius: 25,
+    borderRadius: 8,
     alignItems: "center",
-    width: '70%',
-    marginVertical: 20
+    width: '100%',
+    marginVertical: 8
   },
   loginText: {
     color: "#fff",

@@ -220,7 +220,7 @@ const Stories = () => {
             <Modal
               animationType='slide'
               visible={optionsModal} 
-              onMagicTap={toggleOptionsModal}
+              onBackdropPressed={toggleOptionsModal}
               transparent={true}>
               <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 16}}>
                 <ScrollView contentContainerStyle={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'transparent', paddingHorizontal: 10, paddingBottom: 25, gap: 15}}>

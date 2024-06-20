@@ -233,7 +233,7 @@ const ChatRoom = () => {
                     borderRightWidth: message.senderId === currentUserId ? 4 : 0,
                     borderColor: message.senderId === currentUserId ? theme.primaryColor : theme.secondaryColor,
                     marginBottom: 8,
-                    backgroundColor: message.senderId === currentUserId ? theme.backgroundColor : 'white'
+                    backgroundColor: message.senderId === currentUserId ?  'white' : theme.backgroundColor
                   }}
                 >
                   <View style={{ marginBottom: 4, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
@@ -255,7 +255,7 @@ const ChatRoom = () => {
                             contentFit="cover"
                             transition={1000}
                           />
-                          <Text style={{ letterSpacing: 0.2, fontSize: 15, color: message.senderId === currentUserId ? theme.textColor : theme.backgroundColor }}>
+                          <Text style={{ letterSpacing: 0.2, fontSize: 15,  color: message.senderId === currentUserId ? theme.backgroundColor : theme.textColor }}>
                             {message.text}
                           </Text>
                         </>
@@ -286,13 +286,13 @@ const ChatRoom = () => {
                               <Ionicons name="play-circle" size={60} color={theme.fullScreenPlayIconColor} />
                             </Pressable>
                           )}
-                          <Text style={{ letterSpacing: 0.2, fontSize: 15, color: message.senderId === currentUserId ? theme.textColor : theme.backgroundColor }}>
+                          <Text style={{ letterSpacing: 0.2, fontSize: 15,  color: message.senderId === currentUserId ? theme.backgroundColor : theme.textColor }}>
                             {message.text}
                           </Text>
                         </View>
                       )
                     ) : (
-                      <Text style={{ letterSpacing: 0.2, fontSize: 15, color: message.senderId === currentUserId ? theme.textColor : theme.backgroundColor }}>
+                      <Text style={{ letterSpacing: 0.2, fontSize: 15,   color: message.senderId === currentUserId ? theme.backgroundColor : theme.textColor}}>
                         {message.text}
                       </Text>
                     )}
@@ -310,7 +310,10 @@ const ChatRoom = () => {
                 marginBottom: 8,
                 backgroundColor: 'white'
               }}>
-                <TouchableOpacity onPress={() => setLocalMediaUri(null)}>
+                <TouchableOpacity onPress={() => {
+                  setLocalMediaUri(null);
+                  setMedia(null);
+                }}>
                   <Entypo name='cross' size={20} color={theme.crossIconColor} style={{ textAlign: 'right' }} />
                 </TouchableOpacity>
                 {media && media.type === 'image' ? (

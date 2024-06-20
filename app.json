@@ -5,10 +5,10 @@
     "scheme": "snapchat",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.webp",
+    "icon": "./assets/logo_icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splashScreenSnapchat.jpg",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

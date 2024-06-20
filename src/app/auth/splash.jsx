@@ -27,10 +27,10 @@ export default function SplashScreen() {
           onPress={() => router.push("/auth/login")}
           style={styles.signUpButton}
         >
-          <Ionicons name="mail" size={25} color='white' />
+          <Ionicons name="mail" size={22} color='white' />
           <Text style={styles.signUpText}>Continue with email</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push("/auth/fullName")}>
+        <TouchableOpacity onPress={() => router.push("/auth/signUp")}>
           <Text style={styles.loginText}>
             Don't have an account yet?
             <Text style={styles.loginLink}> Sign Up</Text>
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 10
+    gap: 15
   },
   signUpText: {
     color: "#fff",
