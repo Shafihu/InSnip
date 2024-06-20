@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList, Platform } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList, Platform , ActivityIndicator} from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
@@ -207,6 +207,8 @@ const SignUpScreen = () => {
           password
         );
 
+        navigation.goBack();
+
         await setDoc(doc(FIRESTORE_DB, "users", response.user.uid), {
           id: response.user.uid,
           Email: email,
@@ -222,9 +224,6 @@ const SignUpScreen = () => {
         await setDoc(doc(FIRESTORE_DB, "userchats", response.user.uid), {
           chats: []
         });
-
-        // alert("Account Created Successfully 🎉");
-        navigation.goBack();
       } catch (error) {
         console.log("Registration Failed: " + error);
         alert('Failed to sign up. Try again.');
