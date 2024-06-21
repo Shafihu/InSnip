@@ -1,5 +1,5 @@
-import { View, Text, Pressable, Image, SafeAreaView, StyleSheet, ActivityIndicator } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Pressable, SafeAreaView, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
 import SearchBar from '../../../components/SearchBar';
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -8,164 +8,304 @@ import { collection, getDocs, query, serverTimestamp, setDoc, updateDoc, arrayUn
 import { FIRESTORE_DB } from '../../../../Firebase/config';
 import processUserImage from '../../../../utils/processUserImage';
 import { useUser } from "../../../../context/UserContext";
+import { Image } from 'expo-image';
+import * as Contacts from 'expo-contacts';
 
 const NewChat = () => {
-    const navigation = useNavigation();
-    const { userData } = useUser();
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
+  const { userData } = useUser();
+  const [user, setUser] = useState(null);
+  const [contacts, setContacts] = useState([]);
+  const [permissionGranted, setPermissionGranted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    const handleSearchQuery = async (text) => {
-        setLoading(true);
-        try {
-            const userRef = collection(FIRESTORE_DB, "users");
+  useEffect(() => {
+    (async () => {
+      const { status } = await Contacts.requestPermissionsAsync();
+      setPermissionGranted(status === 'granted');
+      if (status === 'granted') {
+        const { data } = await Contacts.getContactsAsync({
+          fields: [Contacts.Fields.Emails, Contacts.Fields.PhoneNumbers],
+        });
 
-            // Query for Username
-            const usernameQuery = query(userRef, where("Username", "==", text));
-            const usernameSnapshot = await getDocs(usernameQuery);
+        if (data.length > 0) {
+          const sortedContacts = data.sort((a, b) => {
+            if (a.name < b.name) return -1;
+            if (a.name > b.name) return 1;
+            return 0;
+          });
 
-            // Query for FirstName
-            const firstNameQuery = query(userRef, where("FirstName", "==", text));
-            const firstNameSnapshot = await getDocs(firstNameQuery);
-
-            // Combine the results
-            let combinedResults = [];
-            usernameSnapshot.forEach((doc) => {
-                combinedResults.push({ id: doc.id, ...doc.data() });
-            });
-            firstNameSnapshot.forEach((doc) => {
-                combinedResults.push({ id: doc.id, ...doc.data() });
-            });
-
-            if (combinedResults.length > 0) {
-                setUser(combinedResults[0]);
-            } else {
-                setUser(null);
-            }
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setLoading(false);
+          setContacts(sortedContacts);
         }
-    };
+      }
+    })();
+  }, []);
 
-    const handleAdd = async () => {
-        const chatRef = collection(FIRESTORE_DB, 'chats');
-        const userChatsRef = collection(FIRESTORE_DB, 'userchats');
+  const handleSearchQuery = async (text) => {
+    setLoading(true);
+    try {
+      const userRef = collection(FIRESTORE_DB, "users");
 
-        try {
-            const newChatRef = doc(chatRef);
+      const usernameQuery = query(userRef, where("Username", "==", text));
+      const usernameSnapshot = await getDocs(usernameQuery);
 
-            await setDoc(newChatRef, {
-                createdAt: serverTimestamp(),
-                messages: []
-            });
+      const firstNameQuery = query(userRef, where("FirstName", "==", text));
+      const firstNameSnapshot = await getDocs(firstNameQuery);
 
-            const currentTime = Date.now();
+      let combinedResults = [];
+      usernameSnapshot.forEach((doc) => {
+        combinedResults.push({ id: doc.id, ...doc.data() });
+      });
+      firstNameSnapshot.forEach((doc) => {
+        combinedResults.push({ id: doc.id, ...doc.data() });
+      });
 
-            const userChatDocRef = doc(userChatsRef, user.id);
-            const currentUserChatDocRef = doc(userChatsRef, userData.id);
+      if (combinedResults.length > 0) {
+        setUser(combinedResults[0]);
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            // Check if the user chat document exists, if not create it
-            const userChatDocSnap = await getDoc(userChatDocRef);
-            if (!userChatDocSnap.exists()) {
-                await setDoc(userChatDocRef, { chats: [] });
-            }
+  const handleAdd = async () => {
+    const chatRef = collection(FIRESTORE_DB, 'chats');
+    const userChatsRef = collection(FIRESTORE_DB, 'userchats');
 
-            // Check if the current user chat document exists, if not create it
-            const currentUserChatDocSnap = await getDoc(currentUserChatDocRef);
-            if (!currentUserChatDocSnap.exists()) {
-                await setDoc(currentUserChatDocRef, { chats: [] });
-            }
+    try {
+      const newChatRef = doc(chatRef);
 
-            await updateDoc(userChatDocRef, {
-                chats: arrayUnion({
-                    chatId: newChatRef.id,
-                    lastMessage: '',
-                    receiverId: userData.id,
-                    updatedAt: currentTime
-                })
-            });
+      await setDoc(newChatRef, {
+        createdAt: serverTimestamp(),
+        messages: []
+      });
 
-            await updateDoc(currentUserChatDocRef, {
-                chats: arrayUnion({
-                    chatId: newChatRef.id,
-                    lastMessage: '',
-                    receiverId: user.id,
-                    updatedAt: currentTime
-                })
-            });
+      const currentTime = Date.now();
 
-        } catch (error) {
-            console.log(error);
+      const userChatDocRef = doc(userChatsRef, user.id);
+      const currentUserChatDocRef = doc(userChatsRef, userData.id);
+
+      const userChatDocSnap = await getDoc(userChatDocRef);
+      if (!userChatDocSnap.exists()) {
+        await setDoc(userChatDocRef, { chats: [] });
+      }
+
+      const currentUserChatDocSnap = await getDoc(currentUserChatDocRef);
+      if (!currentUserChatDocSnap.exists()) {
+        await setDoc(currentUserChatDocRef, { chats: [] });
+      }
+
+      await updateDoc(userChatDocRef, {
+        chats: arrayUnion({
+          chatId: newChatRef.id,
+          lastMessage: '',
+          receiverId: userData.id,
+          updatedAt: currentTime
+        })
+      });
+
+      await updateDoc(currentUserChatDocRef, {
+        chats: arrayUnion({
+          chatId: newChatRef.id,
+          lastMessage: '',
+          receiverId: user.id,
+          updatedAt: currentTime
+        })
+      });
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUserProfile = (user) => {
+    router.back();
+    setTimeout(() => {
+      router.navigate({
+        pathname: '/verified/profile/[otherUserProfile]',
+        params: {
+          id: user.id,
+          firstname: user.FirstName,
+          lastname: user.LastName,
+          username: user.Username,
+          avatar: user.avatar,
         }
-    };
+      });
+    }, 0);
+  };
 
-    const handleChatRoomPress = () => {
-        router.back();
-        setTimeout(() => {
-            navigation.navigate('chatRoom');
-        }, 0);
-    };
+  const onActualChange = (text) => {
+    handleSearchQuery(text);
+  };
 
-    const onActualChange = (text) => {
-        // Call handleSearchQuery when the text changes
-        handleSearchQuery(text);
-    };
-
+  if (!permissionGranted) {
     return (
-        <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
-            <SearchBar onChangeText={handleSearchQuery} onActualChange={onActualChange} color='#f5f5f5' />
-            <View style={{ paddingHorizontal: 15, backgroundColor: '#f5f5f5', flex: 1 }}>
-                <View style={{ marginVertical: 15 }}>
-                    {/* <Text className="font-semibold tracking-wider text-[16px]">Friends & Groups</Text> */}
-                </View>
-                {loading ? (
-                    <ActivityIndicator size="small" color="#2F3E46" />
-                ) : (
-                    user &&
-                    <Pressable
-                        onPress={handleChatRoomPress}
-                        style={[styles.pressable, styles.shadow]}
-                        className="flex flex-row items-center justify-between gap-4 bg-white py-2 px-3 pr-5 rounded-xl"
-                    >
-                        <View className="w-[50px] h-[50px] bg-gray-100 rounded-full overflow-hidden">
-                            <Image source={processUserImage(user.avatar)} style={{ width: '100%', height: '100%' }} />
-                        </View>
-                        <View className="flex-1 gap-1">
-                            <Text className="font-medium text-medium tracking-wider capitalize text-[#3B2F2F]">{user.FirstName} {user.LastName}</Text>
-                            <View className="flex flex-row items-center gap-2">
-                                <MaterialIcons name="chat-bubble-outline" size={12} color="gray" className="transform scale-x-[-1]" />
-                                <Text className="text-[11px] font-semibold text-gray-500">{user.Username}</Text>
-                            </View>
-                        </View>
-                        <Pressable onPress={handleAdd} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 5, backgroundColor: '#f5f5f5', borderRadius: '100%', paddingHorizontal: 20, paddingVertical: 5 }}>
-                            <MaterialCommunityIcons
-                                name="account-plus"
-                                size={18}
-                                color='#3B2F2F'
-                            />
-                            <Text style={{ fontWeight: 'bold', color: '#3B2F2F' }}>Add</Text>
-                        </Pressable>
-                    </Pressable>
-                )}
-            </View>
-        </SafeAreaView>
+      <View style={styles.container}>
+        <Text>Permission to access contacts was denied</Text>
+      </View>
     );
+  }
+
+  return (
+    <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
+      <SearchBar onChangeText={handleSearchQuery} onActualChange={onActualChange} color='#f5f5f5' />
+      <View style={{ paddingHorizontal: 15, backgroundColor: '#f5f5f5', paddingBottom: 5}}>
+        <View style={{ marginVertical: 0 }}>
+          <Text style={styles.title}>Results</Text>
+        </View>
+        {loading ? (
+          <ActivityIndicator size="small" color="#2ecc71" />
+        ) : (
+          user &&
+          <Pressable
+            onPress={() => handleUserProfile(user)}
+            style={[styles.pressable, styles.shadow]}
+          >
+            <View style={styles.userAvatar}>
+              <Image source={processUserImage(user.avatar)} style={{ width: '100%', height: '100%' }} />
+            </View>
+            <View style={styles.userInfo}>
+              <Text style={styles.userName}>{user.FirstName} {user.LastName}</Text>
+              <View style={styles.userDetails}>
+                <MaterialIcons name="chat-bubble-outline" size={12} color="gray" />
+                <Text style={styles.userUsername}>{user.Username}</Text>
+              </View>
+            </View>
+            <Pressable onPress={handleAdd} style={styles.addButton}>
+              <MaterialCommunityIcons name="account-plus" size={18} color='#3B2F2F' />
+              <Text style={styles.addButtonText}>Add</Text>
+            </Pressable>
+          </Pressable>
+        )}
+      </View>
+      <View style={styles.container}>
+        <Text style={styles.title}>Contacts</Text>
+        <View style={styles.contactListContainer}>
+          <FlatList
+            data={contacts}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.contactItem}>
+                <View style={styles.contactAvatar}>
+                  <Image source={require('../../../../assets/avatars/user.png')} style={styles.avatarImage} />
+                </View>
+                <View style={styles.contactInfo}>
+                  <Text style={styles.contactName}>{item.name}</Text>
+                  {item.phoneNumbers && item.phoneNumbers.length > 0 && (
+                    <Text style={styles.contactDetail}>Phone: {item.phoneNumbers[0].number}</Text>
+                  )}
+                </View>
+              </View>
+            )}
+          />
+        </View>
+      </View>
+    </SafeAreaView>
+  );
 };
 
-const styles = StyleSheet.create({
-    pressable: {
-        borderRadius: 15,
-        backgroundColor: 'white',
-    },
-    shadow: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 10,
-        elevation: 5,
-    },
-});
-
 export default NewChat;
+
+const styles = StyleSheet.create({
+  pressable: {
+    borderRadius: 15,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    // marginVertical: 5,
+  },
+  shadow: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#f3f4f6',
+    padding: 16,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
+    marginVertical: 20,
+  },
+  userAvatar: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 25,
+    overflow: 'hidden',
+  },
+  userInfo: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  userName: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  userDetails: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  userUsername: {
+    fontSize: 12,
+    color: 'gray',
+  },
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  addButtonText: {
+    fontWeight: 'bold',
+    color: '#3B2F2F',
+    marginLeft: 5,
+  },
+  contactListContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    overflow: 'hidden',
+  },
+  contactItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  contactAvatar: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#2ecc71',
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+  },
+  contactInfo: {
+    marginLeft: 10,
+  },
+  contactName: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: 'rgba(0,0,0,0.8)',
+  },
+  contactDetail: {
+    fontSize: 12,
+    color: '#888',
+  },
+});

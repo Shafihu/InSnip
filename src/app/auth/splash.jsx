@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   signUpText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "600",
   },
   loginText: {
     color: "white",

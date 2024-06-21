@@ -40,6 +40,7 @@ export default TabBar;
 
 const styles = StyleSheet.create({
   tabBar: {
+    // display: 'none',
     height: 100,
     position: 'absolute',
     bottom: 0,

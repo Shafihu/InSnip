@@ -198,7 +198,7 @@ const Stories = () => {
               {selectedStory && selectedStory.type && selectedStory.type.startsWith('image/') ? (
                 <Image source={{ uri: selectedStory.url }} style={styles.modalMedia} />
               ) : selectedStory && selectedStory.type && selectedStory.type.startsWith('video/') ? (
-                <Video source={{ uri: selectedStory.url }} style={styles.modalMedia} resizeMode="cover" shouldPlay isLooping />
+                <Video source={{ uri: selectedStory.url }} style={styles.modalMedia} resizeMode="cover" shouldPlay isLooping/>
               ) : (
                 <Text style={styles.errorText}>Oops! Something went wrong.</Text>
               )}

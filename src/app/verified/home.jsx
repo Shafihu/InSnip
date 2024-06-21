@@ -37,6 +37,7 @@ const HomeScreen = () => {
   const [stories, setStories] = useState(false);
   const [spotlight, setSpotlight] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [faces, setFaces] = useState([]);
   const { userData } = useUser();
   const currentUserId = userData?.id;
 
@@ -195,6 +196,10 @@ const HomeScreen = () => {
       await shareAsync(video.uri);
       setVideo(undefined);
     } else {}
+  };
+
+  const handleFacesDetected = ({ faces }) => {
+    console.log(faces);
   };
 
   return (

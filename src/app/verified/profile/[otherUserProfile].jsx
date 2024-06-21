@@ -3,7 +3,7 @@ import { Text, Pressable, StyleSheet, View, Animated, Dimensions} from "react-na
 import Toast from "react-native-toast-message";
 import processUserImage from "../../../../utils/processUserImage";
 import { router, useLocalSearchParams } from "expo-router";
-import { FontAwesome6, MaterialCommunityIcons } from 'react-native-vector-icons';
+import { FontAwesome6, MaterialCommunityIcons, FontAwesome } from 'react-native-vector-icons';
 import { getDoc, doc, updateDoc, arrayRemove, arrayUnion } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../../../Firebase/config";
 import { Image } from "expo-image";
@@ -96,7 +96,7 @@ const UserProfile = () => {
                     <FontAwesome6 name="chevron-left" color="#fff" size={20} />
                 </Pressable>
                 <Pressable style={styles.button}>
-                    <MaterialCommunityIcons name="image-edit-outline" color="#fff" size={20} />
+                    <FontAwesome name="share-square-o" color="#fff" size={20} />
                 </Pressable>
             </View>
             <Animated.View style={[styles.header, { height: headerHeight }]}>
