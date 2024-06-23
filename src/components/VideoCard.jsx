@@ -140,6 +140,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    backgroundColor: 'black',
+    paddingBottom: 140,
   },
   video: {
     width: '100%',
