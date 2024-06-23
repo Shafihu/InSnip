@@ -14,7 +14,8 @@ import {
 import processUserImage from "../../utils/processUserImage";
 import { useUser } from "../../context/UserContext";
 
-const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
+
+const Header = ({ header, toggleCameraFacing, toggleCameraFlash, addSpotlight}) => {
     const [isFlash, setIsFlash] = useState(false);
     const { userData } = useUser();
 
@@ -181,7 +182,9 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash }) => {
                         ) : (
                             <View>
                                 {header === 'Spotlight' ? (
-                                    <Pressable style={{
+                                    <Pressable
+                                    onPress={addSpotlight}
+                                    style={{
                                         backgroundColor: 'rgba(0, 0, 0, 0.05)',
                                         borderRadius: 20,
                                         width: 40,

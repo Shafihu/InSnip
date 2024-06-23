@@ -3,7 +3,7 @@ import { getStorage, ref, listAll, getDownloadURL, getMetadata } from "firebase/
 const storage = getStorage();
 
 export const fetchSpotlights = async () => {
-  const storiesRef = ref(storage, 'stories');
+  const storiesRef = ref(storage, 'spotlight');
   const stories = [];
 
   try {
@@ -12,7 +12,7 @@ export const fetchSpotlights = async () => {
     for (const itemRef of storyList.items) {
       const url = await getDownloadURL(itemRef);
       const metadata = await getMetadata(itemRef);
-      if (metadata.customMetadata.type === 'video/quicktime') {
+      if (metadata.customMetadata.type === 'video') {
         stories.push({ id: itemRef.fullPath, url, userId: metadata.customMetadata.userId, type: metadata.customMetadata.type });
       }
     }

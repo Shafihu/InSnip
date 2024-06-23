@@ -68,7 +68,7 @@ const VideoCard = ({ video, isActive }) => {
         ref={videoRef}
         source={{ uri: video.url }}
         style={styles.video}
-        resizeMode="cover"
+        resizeMode=""
         shouldPlay={play}
         isLooping
       />

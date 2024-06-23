@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Dimensions, SafeAreaView, RefreshControl } from 'react-native';
+import { View, FlatList, Dimensions, SafeAreaView, RefreshControl, Text, StyleSheet} from 'react-native';
 import { fetchSpotlights } from '../../utils/fetchSpotlights';
 import VideoCard from '../components/VideoCard';
 import Header from '../components/Header';
 import CustomLoader from './CustomLoader';
+import { useUser } from '../../context/UserContext';
+import { storyPostUpload } from '../../utils/storyPostUpload';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -12,31 +16,68 @@ const Spotlight = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [spotlightUrl, setSpotlightUrl] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
+  const { userData } = useUser();
+  const currentUserId = userData.id;
+  const [error, setError] = useState(null);
+
+  const showToast = (message) => {
+    Toast.show({
+      type: "success",
+      text1: message,
+    });
+  };
+  const showErrorToast = (message) => {
+    Toast.show({
+      type: "error",
+      text1: message,
+    });
+  };
+
+  const fetchAndSetSpotlights = async () => {
+    const spotlights = await fetchSpotlights();
+    await AsyncStorage.setItem('spotlights', JSON.stringify(spotlights));
+    setData(spotlights);
+  };
+  
   useEffect(() => {
     const loadSpotlights = async () => {
-      setLoading(true);
-      console.log('fetching...');
-      const spotlights = await fetchSpotlights();
-      setLoading(false);
-      setData(spotlights);
+      try {
+        setLoading(true);
+        const localSpotlights = await AsyncStorage.getItem('spotlights');
+        if (localSpotlights) {
+          setData(JSON.parse(localSpotlights));
+        } else {
+          await fetchAndSetSpotlights();
+        }
+      } catch (error) {
+        console.log('Failed to get data from async storage: ' + error);
+        setError('Failed to load spotlights.');
+        showErrorToast(error);
+      } finally {
+        setLoading(false);
+      }
     };
-
+  
     loadSpotlights();
   }, []);
-
+  
   const reloadSpotlights = async () => {
     try {
       setRefreshing(true);
-      console.log('fetching...');
-      const spotlights = await fetchSpotlights();
-      setData(spotlights);
+      await fetchAndSetSpotlights();
     } catch (error) {
       console.log('Failed to reload spotlights: ' + error);
+      setError('Failed to reload spotlights.');
+      showErrorToast(error)
     } finally {
       setRefreshing(false);
     }
   };
+  
+  
 
   const handleEndReached = () => {
     console.log('No videos available');
@@ -56,11 +97,30 @@ const Spotlight = () => {
     itemVisiblePercentThreshold: 50,
   };
 
+  const addSpotlight = async () => {
+    try {
+        const downloadUrl = await storyPostUpload(null, currentUserId, setUploadProgress, 'spotlight');
+        setSpotlightUrl(downloadUrl);
+        showToast('Spotlight uploaded')
+        return downloadUrl;
+    } catch (error) {
+        setError('Failed to upload spotlight');
+        showErrorToast(error);
+        console.log(error);
+    }
+}
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.container}>
+      {uploadProgress > 0 && uploadProgress < 100 && (
+        <View style={styles.overlay}>
+            <CustomLoader />
+            <Text style={styles.loaderText}>{uploadProgress.toFixed(2)}%</Text>
+        </View>
+      )}
       <View style={{ flex: 1, backgroundColor: 'transparent', position: 'relative' }}>
         <View style={{ position: 'absolute', left: 0, right: 0, top: 0, zIndex: 999 }}>
-          <Header header='Spotlight' />
+          <Header header='Spotlight' addSpotlight={addSpotlight}/>
         </View>
         {(loading || refreshing) && (
           <View style={{ position: 'absolute', left: 0, right: 0, top: 50, alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
@@ -90,3 +150,27 @@ const Spotlight = () => {
 };
 
 export default Spotlight;
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999999,
+  },
+  loaderText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+    textAlign: 'center',
+    width: '100%',
+  },
+});
+

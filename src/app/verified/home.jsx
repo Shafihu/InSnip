@@ -164,7 +164,7 @@ const HomeScreen = () => {
   const handlePostStory = async () => {
     try {
       if (photo) {
-        const downloadUrl = await storyPostUpload(photo.uri, currentUserId, setUploadProgress);
+        const downloadUrl = await storyPostUpload(photo.uri, currentUserId, setUploadProgress, 'stories');
         if (downloadUrl) {
           const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
           // await updateDoc(docRef, {
@@ -173,7 +173,7 @@ const HomeScreen = () => {
           showToast("Story Sent!");
         }
       } else if (video) {
-        const downloadUrl = await storyPostUpload(video.uri, currentUserId, setUploadProgress);
+        const downloadUrl = await storyPostUpload(video.uri, currentUserId, setUploadProgress, 'stories');
         if (downloadUrl) {
           const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
           // await updateDoc(docRef, {
