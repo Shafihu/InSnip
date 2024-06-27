@@ -22,7 +22,8 @@ const Stories = () => {
   const [selectedStory, setSelectedStory] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
-  const [optionsModal, setOptionsModal] = useState(false)
+  const [optionsModal, setOptionsModal] = useState(false);
+  const [timer, setTimer] = useState(false);
 
   useEffect(() => {
     loadStories();
@@ -76,11 +77,12 @@ const Stories = () => {
 
   const handlePressStory = (story) => {
     setSelectedStory(story);
-    console.log(story?.type);
+    storyTimer();
   };
 
   const handleClosePreview = () => {
     setSelectedStory(null);
+    setTimer(false)
   };
 
   const onRefresh = async () => {
@@ -108,6 +110,14 @@ const Stories = () => {
 
   const toggleOptionsModal = () => {
     setOptionsModal(prev => !prev);
+  }
+
+  const storyTimer = () => {
+    setTimer(true);
+    setTimeout(()=>{
+      setTimer(false)
+      setSelectedStory(null)
+    },10000)
   }
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -181,7 +191,7 @@ const Stories = () => {
         </ScrollView>
       </View>
 
-      {selectedStory && (
+      {(selectedStory) && (
         <Modal visible={true} transparent={true} animationType="fade">
           <SafeAreaView style={styles.modalContainer}>
             <Pressable onPress={handleClosePreview} style={styles.closeButton}>
@@ -195,7 +205,7 @@ const Stories = () => {
                   <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalTime}>5 days ago</Text>
                 </View>
             </Pressable>
-              {selectedStory && selectedStory.type && selectedStory.type.startsWith('image/') ? (
+              {selectedStory && timer && selectedStory.type && selectedStory.type.startsWith('image/') ? (
                 <Image source={{ uri: selectedStory.url }} style={styles.modalMedia} />
               ) : selectedStory && selectedStory.type && selectedStory.type.startsWith('video/') ? (
                 <Video source={{ uri: selectedStory.url }} style={styles.modalMedia} resizeMode="cover" shouldPlay isLooping/>
