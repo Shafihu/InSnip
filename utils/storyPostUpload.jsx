@@ -2,100 +2,73 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/
 import * as ImagePicker from 'expo-image-picker';
 import { FIREBASE_STORAGE } from '../Firebase/config';
 
-const storage = getStorage();
+const uploadFileToFirebase = (fileRef, blob, metadata, setUploadProgress) => {
+  return new Promise((resolve, reject) => {
+    const uploadTask = uploadBytesResumable(fileRef, blob, metadata);
 
-export const storyPostUpload = async (fileUri, userId, setUploadProgress, sRef) => {
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setUploadProgress(progress);
+      },
+      (error) => {
+        console.error("Error during upload:", error);
+        reject(null);
+      },
+      async () => {
+        try {
+          const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(downloadUrl);
+        } catch (error) {
+          console.error("Error getting download URL:", error);
+          reject(null);
+        }
+      }
+    );
+  });
+};
+
+export const storyPostUpload = async (fileUri, userId, setUploadProgress, sRef, userData) => {
   try {
-    if(sRef === 'spotlight') {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    let uri, type, blob;
 
-    if (result.canceled) {
-      return;
+    if (sRef === 'spotlight') {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (result.canceled) {
+        return;
+      }
+
+      uri = result.assets[0].uri;
+      type = result.assets[0].type;
+    } else {
+      uri = fileUri;
     }
 
-    const uri = result.assets[0].uri;
-    const type = result.assets[0].type; 
-
     const response = await fetch(uri);
-    const blob = await response.blob();
+    blob = await response.blob();
+    type = type || blob.type;
 
-    const fileRef = ref(storage, `${sRef}/${Date.now()}`);
+    const fileRef = ref(FIREBASE_STORAGE, `${sRef}/${Date.now()}`);
     const metadata = {
       customMetadata: {
         userId: userId,
         type: type,
+        ...(userData && {
+          username: userData.Username,
+          avatar: userData.avatar,
+        }),
       },
     };
-        // Create the upload task
-        const uploadTask = uploadBytesResumable(fileRef, blob, metadata);
-            // Return a promise that resolves with the download URL once the upload completes
-    return new Promise((resolve, reject) => {
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(progress);
-        },
-        (error) => {
-          console.error("Error during upload:", error);
-          reject(null);
-        },
-        async () => {
-          try {
-            const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-            resolve(downloadUrl);
-          } catch (error) {
-            console.error("Error getting download URL:", error);
-            reject(null);
-          }
-        }
-      );
-    });
-    } 
-    else {
-      const response = await fetch(fileUri);
-      const blob = await response.blob();
-      const type = blob.type;
-      
-      const fileRef = ref(storage, `${sRef}/${Date.now()}`);
-      const metadata = {
-        customMetadata: {
-          userId: userId,
-          type: type,
-        },
-      };
-      // Create the upload task
-      const uploadTask = uploadBytesResumable(fileRef, blob, metadata);
 
-          // Return a promise that resolves with the download URL once the upload completes
-    return new Promise((resolve, reject) => {
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(progress);
-        },
-        (error) => {
-          console.error("Error during upload:", error);
-          reject(null);
-        },
-        async () => {
-          try {
-            const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-            resolve(downloadUrl);
-          } catch (error) {
-            console.error("Error getting download URL:", error);
-            reject(null);
-          }
-        }
-      );
-    });
-    }
+    const downloadUrl = await uploadFileToFirebase(fileRef, blob, metadata, setUploadProgress);
+    return downloadUrl;
 
   } catch (error) {
     console.error("Error uploading file:", error);

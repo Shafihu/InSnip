@@ -13,7 +13,7 @@ export const fetchSpotlights = async () => {
       const url = await getDownloadURL(itemRef);
       const metadata = await getMetadata(itemRef);
       if (metadata.customMetadata.type === 'video') {
-        stories.push({ id: itemRef.fullPath, url, userId: metadata.customMetadata.userId, type: metadata.customMetadata.type });
+        stories.push({ id: itemRef.fullPath, url, userId: metadata.customMetadata.userId, type: metadata.customMetadata.type, username: metadata.customMetadata.username, avatar: metadata.customMetadata.avatar });
       }
     }
   } catch (error) {

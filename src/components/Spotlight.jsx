@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, FlatList, Dimensions, SafeAreaView, RefreshControl, Text, StyleSheet} from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, FlatList, Dimensions, SafeAreaView, RefreshControl, Text, StyleSheet } from 'react-native';
 import { fetchSpotlights } from '../../utils/fetchSpotlights';
 import VideoCard from '../components/VideoCard';
 import Header from '../components/Header';
@@ -11,17 +11,17 @@ import Toast from 'react-native-toast-message';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const Spotlight = () => {
+const Spotlight = ({ reload }) => {
   const [data, setData] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [spotlightUrl, setSpotlightUrl] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
-
   const { userData } = useUser();
   const currentUserId = userData.id;
   const [error, setError] = useState(null);
+  const flatListRef = useRef(null);
 
   const showToast = (message) => {
     Toast.show({
@@ -29,6 +29,7 @@ const Spotlight = () => {
       text1: message,
     });
   };
+
   const showErrorToast = (message) => {
     Toast.show({
       type: "error",
@@ -41,8 +42,9 @@ const Spotlight = () => {
     await AsyncStorage.setItem('spotlights', JSON.stringify(spotlights));
     setData(spotlights);
   };
-  
+
   useEffect(() => {
+    console.log(reload);
     const loadSpotlights = async () => {
       try {
         setLoading(true);
@@ -60,10 +62,14 @@ const Spotlight = () => {
         setLoading(false);
       }
     };
-  
+
     loadSpotlights();
-  }, []);
-  
+
+    if (flatListRef.current) {
+      flatListRef.current.scrollToOffset({ animated: true, offset: 0 });
+    }
+  }, [reload]);
+
   const reloadSpotlights = async () => {
     try {
       setRefreshing(true);
@@ -71,13 +77,11 @@ const Spotlight = () => {
     } catch (error) {
       console.log('Failed to reload spotlights: ' + error);
       setError('Failed to reload spotlights.');
-      showErrorToast(error)
+      showErrorToast(error);
     } finally {
       setRefreshing(false);
     }
   };
-  
-  
 
   const handleEndReached = () => {
     console.log('No videos available');
@@ -99,28 +103,30 @@ const Spotlight = () => {
 
   const addSpotlight = async () => {
     try {
-        const downloadUrl = await storyPostUpload(null, currentUserId, setUploadProgress, 'spotlight');
+      const downloadUrl = await storyPostUpload(null, currentUserId, setUploadProgress, 'spotlight', userData);
+      if(downloadUrl){
+        showToast('Spotlight uploaded');
         setSpotlightUrl(downloadUrl);
-        showToast('Spotlight uploaded')
-        return downloadUrl;
+      }
+      return downloadUrl;
     } catch (error) {
-        setError('Failed to upload spotlight');
-        showErrorToast(error);
-        console.log(error);
+      setError('Failed to upload spotlight');
+      showErrorToast(error);
+      console.log(error);
     }
-}
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       {uploadProgress > 0 && uploadProgress < 100 && (
         <View style={styles.overlay}>
-            <CustomLoader />
-            <Text style={styles.loaderText}>{uploadProgress.toFixed(2)}%</Text>
+          <CustomLoader />
+          <Text style={styles.loaderText}>{uploadProgress.toFixed(2)}%</Text>
         </View>
       )}
       <View style={{ flex: 1, backgroundColor: 'transparent', position: 'relative', }}>
         <View style={{ position: 'absolute', left: 0, right: 0, top: 0, zIndex: 999 }}>
-          <Header header='Spotlight' addSpotlight={addSpotlight}/>
+          <Header header='Spotlight' addSpotlight={addSpotlight} />
         </View>
         {(loading || refreshing) && (
           <View style={{ position: 'absolute', left: 0, right: 0, top: 50, alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
@@ -128,6 +134,7 @@ const Spotlight = () => {
           </View>
         )}
         <FlatList
+          ref={flatListRef}  // Attach the ref to FlatList
           data={data}
           renderItem={renderItem}
           keyExtractor={item => item.id}
@@ -173,4 +180,3 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
-

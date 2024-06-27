@@ -17,8 +17,11 @@ const VideoCard = ({ video, isActive }) => {
   const [commentsModal, setCommentsModal] = useState(false);
 
   const userId = video?.userId;
+  const username = video?.username;
+  const avatar = video?.avatar;
 
   useEffect(() => {
+    console.log(video)
     const fetchUserDetails = async (userId) => {
       try {
         const docRef = doc(FIRESTORE_DB, 'users', userId);
@@ -34,10 +37,10 @@ const VideoCard = ({ video, isActive }) => {
       if (isActive) {
         videoRef.current.playAsync();
         setPlay(true);
-        const userDetails = await fetchUserDetails(userId);
-        setUserInfo(userDetails);
+        // const userDetails = await fetchUserDetails(userId);
+        // setUserInfo(userDetails);
       } else {
-        videoRef.current.pauseAsync();
+        videoRef.current.stopAsync();
         setPlay(false);
       }
     };
@@ -67,7 +70,7 @@ const VideoCard = ({ video, isActive }) => {
       <Video
         ref={videoRef}
         source={{ uri: video.url }}
-        style={styles.video}
+        style={styles.video}c
         resizeMode=""
         shouldPlay={play}
         isLooping
@@ -75,15 +78,17 @@ const VideoCard = ({ video, isActive }) => {
       <Pressable onPress={togglePlay} style={styles.overlay}>
         {!play && (
           <View style={styles.playIcon}>
-            <Entypo name="controller-play" size={70} color="white" />
+            <Entypo name="controller-play" size={70} color="rgba(255,255,255,.5)" />
           </View>
         )}
         <View style={styles.leftControls}>
           <View style={styles.userInfo}>
             <View style={styles.userAvatar}>
-              <Image source={processUserImage(userInfo?.avatar)} style={styles.avatarImage} />
+              {/* <Image source={processUserImage(userInfo?.avatar)} style={styles.avatarImage} /> */}
+              <Image source={processUserImage(avatar)} style={styles.avatarImage} />
             </View>
-            <Text numberOfLines={1} ellipsizeMode='tail' style={styles.username}>{userInfo?.Username || ''}</Text>
+            {/* <Text numberOfLines={1} ellipsizeMode='tail' style={styles.username}>{userInfo?.Username || ''}</Text> */}
+            <Text numberOfLines={1} ellipsizeMode='tail' style={styles.username}>{username || ''}</Text>
           </View>
         </View>
         <View style={styles.rightControls}>
@@ -95,14 +100,14 @@ const VideoCard = ({ video, isActive }) => {
           </Pressable>
           <Pressable onPress={toggleCommentsModal} style={styles.icon}>
             <MaterialIcons name="mode-comment" size={30} color="white" />
-            <Text style={styles.text}>80</Text>
+            {/* <Text style={styles.text}>80</Text> */}
           </Pressable>
           <Pressable style={styles.icon}>
-            <Fontisto name="share-a" size={30} color="white" />
-            <Text style={styles.text}>135</Text>
+            <Fontisto name="share-a" size={28} color="white" />
+            {/* <Text style={styles.text}>135</Text> */}
           </Pressable>
           <Pressable style={styles.moreIcon}>
-            <Fontisto name="more-v-a" size={22} color="white" style={{ transform: [{ rotate: '90deg' }] }} />
+            <Fontisto name="more-v-a" size={25} color="white" style={{ transform: [{ rotate: '90deg' }] }} />
           </Pressable>
         </View>
       </Pressable>
@@ -163,7 +168,7 @@ const styles = StyleSheet.create({
   rightControls: {
     flexDirection: 'column',
     alignItems: 'center',
-    gap: 10,
+    gap: 20,
   },
   icon: {
     marginBottom: 12,

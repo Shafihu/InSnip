@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, Pressable, Image, StyleSheet, View, Animated, Dimensions } from "react-native";
+import { Text, Pressable, Image, StyleSheet, View, Animated, Dimensions, FlatList, ScrollView } from "react-native";
 import { signOut } from "firebase/auth";
 import Toast from "react-native-toast-message";
 import { useUser } from "../../../../context/UserContext";
@@ -8,22 +8,35 @@ import { FIREBASE_AUTH } from "../../../../Firebase/config";
 import processUserImage from "../../../../utils/processUserImage";
 import { router } from "expo-router";
 import { FontAwesome6, MaterialCommunityIcons } from 'react-native-vector-icons';
+import { fetchStories } from "../../../../utils/fetchStories";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { doc, getDoc } from "firebase/firestore";
+import { FIRESTORE_DB } from "../../../../Firebase/config";
+import { Video } from "expo-av";
+import CustomLoader from "../../../components/CustomLoader";
+import { MaterialIcons} from 'react-native-vector-icons';
+
 
 const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 0;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
-const {width} = Dimensions.get('window');
-const CARD_WIDTH = width/3;
+const { width } = Dimensions.get('window');
+const CARD_WIDTH = width / 3;
 
 const UserProfile = () => {
   const { userData, loading, updateProfilePicture } = useUser();
   const [profilePic, setProfilePic] = useState(null);
+  const [stories, setStories] = useState([]);
   const [tab, setTab] = useState(true);
+  const [storiesLoading, setStoriesLoading] = useState(false);
   const scrollY = new Animated.Value(0);
+
+  const currentUserId = userData?.id;
 
   useEffect(() => {
     if (userData) {
       setProfilePic(userData.picture);
+      loadCurrentUserStories(currentUserId);
     }
   }, [userData]);
 
@@ -68,7 +81,7 @@ const UserProfile = () => {
 
   const toggleTab = () => {
     setTab(prev => !prev);
-}
+  }
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, HEADER_SCROLL_DISTANCE],
@@ -88,6 +101,49 @@ const UserProfile = () => {
     extrapolate: 'clamp',
   });
 
+  const loadCurrentUserStories = async (currentUserId) => {
+    try {
+      setStoriesLoading(true);
+      const fetchedStories = await fetchStories();
+      const storiesWithUserDetails = await Promise.all(fetchedStories.map(async (story) => {
+        const userDetails = await fetchUserDetails(story.userId);
+        return { ...story, userDetails };
+      }));
+
+      const currentUserStories = storiesWithUserDetails.filter((item) => item.userId === currentUserId);
+      setStories(currentUserStories);
+      await AsyncStorage.setItem('currentUserStories', JSON.stringify(currentUserStories));
+    } catch (error) {
+      console.error("Error loading stories:", error);
+    } finally {
+      setStoriesLoading(false);
+    }
+  };
+
+  const fetchUserDetails = async (userId) => {
+    try {
+      const docRef = doc(FIRESTORE_DB, 'users', userId);
+      const docSnap = await getDoc(docRef);
+      return docSnap.exists() ? docSnap.data() : null;
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+    return null;
+  };
+
+  const renderItem = ({ item }) => (
+    <View style={styles.storyContainer}>
+      {item.type.startsWith('image/') && (
+        <Image source={{ uri: item.url }} style={styles.storyImage} />
+      )}
+      {item.type.startsWith('video/') && (
+        <Video source={{ uri: item.url }} style={styles.storyVideo} resizeMode="cover" shouldPlay isLooping/>
+      )}
+      <View style={{position: 'absolute', top: 5, right: 5, zIndex: 50}}>
+        <MaterialIcons name= {item.type.startsWith('image/') ? 'photo' : 'video-collection'} size={15} color="#fff" />
+      </View>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -108,57 +164,59 @@ const UserProfile = () => {
           ]}
         />
       </Animated.View>
-
-      <Animated.ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={{ paddingTop: HEADER_MAX_HEIGHT }}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false }
-        )}
-        scrollEventThrottle={16}
-      >
+      <Animated.View style={{ flex: 1, paddingTop: HEADER_MAX_HEIGHT }}>
         <View style={styles.scrollViewInner}>
           {userData ? (
             <>
-              <View className="flex-1 flex-row items-center gap-4">
-                <Pressable style={{ borderWidth: 3, borderColor: '#2ecc71', borderRadius: '100%' }}>
+              <View style={styles.userContainer}>
+                <Pressable style={styles.userImageContainer}>
                   <Image source={processUserImage(userData.avatar)} style={styles.userImage} />
                 </Pressable>
-                <View className="w-full h-full items-start justify-center gap-2">
-                  <Text style={styles.userInfo} className="font-bold tracking-wide">{userData.FirstName} {userData.LastName}</Text>
-                  <Text style={{ fontSize: 12, fontWeight: 500, color: '#7f8c8d'}}>{userData.Username}</Text>
+                <View style={styles.userInfoContainer}>
+                  <Text style={styles.userInfo}>{userData.FirstName} {userData.LastName}</Text>
+                  <Text style={styles.userUsername}>{userData.Username}</Text>
                 </View>
               </View>
             </>
           ) : (
             <Text>No user data available</Text>
           )}
-          <Pressable onPress={handleSignOut} className="w-full">
+          <Pressable onPress={handleSignOut} style={styles.logoutButton}>
             <Text style={styles.logoutText}>Sign Out</Text>
           </Pressable>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'}}>
-                <Pressable onPress={toggleTab} style={{borderBottomWidth: tab && 3, borderColor: '#333333', width: '50%', padding: 10}}>
-                      <Text style={{color: tab ? '#333333' : '#7f8c8d', fontWeight: 'bold', fontSize: 15, textAlign: 'center'}}>Stories</Text>
-                </Pressable>
-                <Pressable onPress={toggleTab} style={{borderBottomWidth: !tab && 3, borderColor: '#333333', width: '50%', padding: 10}}>
-                      <Text style={{color: !tab ? '#333333' : '#7f8c8d', fontWeight: 'bold', fontSize: 15, textAlign: 'center'}}>Spotlight</Text>
-                </Pressable>
-            </View>
+          <View style={styles.tabContainer}>
+            <Pressable onPress={toggleTab} style={[styles.tabButton, tab && styles.activeTab]}>
+              <Text style={[styles.tabText, tab && styles.activeTabText]}>Stories</Text>
+            </Pressable>
+            <Pressable onPress={toggleTab} style={[styles.tabButton, !tab && styles.activeTab]}>
+              <Text style={[styles.tabText, !tab && styles.activeTabText]}>Spotlight</Text>
+            </Pressable>
+          </View>
         </View>
-        <View style={{ height: '100%', width: '100%', flexWrap: 'wrap', flexDirection: 'row'}}>
-              {tab && 
-                  <>
-                      <View style={{backgroundColor: 'red', width: CARD_WIDTH, height: 200}}></View>
-                  </>
-              }
-              {!tab && 
-                  <>
-                      <View style={{backgroundColor: 'blue', width: CARD_WIDTH, height: 200}}></View>
-                  </>
-              }
-                </View>
-      </Animated.ScrollView>
+        <View style={styles.contentContainer}>
+          {storiesLoading && (
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <CustomLoader />
+          </View>
+          )}
+          {tab ? (
+            <FlatList
+              data={stories}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.url}
+              showsHorizontalScrollIndicator={false}
+              numColumns={3}
+              contentContainerStyle={styles.storiesList}
+            />
+          ) : (
+            <ScrollView contentContainerStyle={styles.spotlightContainer}>
+              <View style={styles.spotlightContent}>
+                <Text style={styles.spotlightText}>Spotlight content here</Text>
+              </View>
+            </ScrollView>
+          )}
+        </View>
+      </Animated.View>
     </View>
   );
 };
@@ -169,7 +227,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    position: 'relative'
+    position: 'relative',
   },
   loadingContainer: {
     flex: 1,
@@ -189,29 +247,49 @@ const styles = StyleSheet.create({
     height: HEADER_MAX_HEIGHT,
     resizeMode: 'cover',
   },
-  scrollView: {
-    flex: 1,
-  },
   scrollViewInner: {
     paddingHorizontal: 20,
     paddingVertical: 20,
     backgroundColor: 'white',
+  },
+  userContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  userImageContainer: {
+    borderWidth: 3,
+    borderColor: '#2ecc71',
+    borderRadius: '100%',
   },
   userImage: {
     width: 90,
     height: 90,
     borderRadius: 50,
   },
+  userInfoContainer: {
+    justifyContent: 'center',
+    gap: 2,
+  },
   userInfo: {
     fontSize: 20,
-    color: '#333333'
+    color: '#333333',
+    fontWeight: 'bold',
+  },
+  userUsername: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#7f8c8d',
+  },
+  logoutButton: {
+    width: '100%',
+    marginTop: 20,
   },
   logoutText: {
     fontSize: 16,
     color: "red",
-    marginTop: 20,
     textAlign: 'center',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   buttonContainer: {
     position: 'absolute',
@@ -223,7 +301,6 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
-    display: 'flex',
     flexDirection: 'row',
   },
   button: {
@@ -231,9 +308,66 @@ const styles = StyleSheet.create({
     borderRadius: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    display: 'flex',
     height: 40,
     width: 40,
-    zIndex: 99999
-  }
+    zIndex: 99999,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  tabButton: {
+    width: '50%',
+    padding: 10,
+  },
+  activeTab: {
+    borderBottomWidth: 3,
+    borderColor: '#333333',
+  },
+  tabText: {
+    fontWeight: 'bold',
+    fontSize: 15,
+    textAlign: 'center',
+    color: '#7f8c8d',
+  },
+  activeTabText: {
+    color: '#333333',
+  },
+  contentContainer: {
+    flex: 1,
+  },
+  storiesList: {
+    justifyContent: 'space-between',
+  },
+  storyContainer: {
+    width: CARD_WIDTH,
+    height: 200,
+  },
+  storyImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  storyVideo: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  spotlightContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  spotlightContent: {
+    backgroundColor: 'blue',
+    width: '100%',
+    height: 200,
+  },
+  spotlightText: {
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
+    padding: 20,
+  },
 });

@@ -155,6 +155,24 @@ const SignUpScreen = () => {
               </TouchableOpacity>
             </View>
           </View>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.inputLabel}>CONFIRM PASSWORD</Text>
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={styles.input}
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+                selectionColor="#2ecc71"
+              />
+              <TouchableOpacity
+                style={styles.eyeIcon}
+                onPress={() => setShowPassword(!showPassword)}
+              >
+                <FontAwesome6 name={showPassword ? "eye" : "eye-slash"} size={18} color="#7f8c8d" />
+              </TouchableOpacity>
+            </View>
+          </View>
           <View>
             <Text style={styles.privacyText}>
               By tapping sign up, you acknowledge that you have read the Privacy Policy and agree to the Terms of Service.

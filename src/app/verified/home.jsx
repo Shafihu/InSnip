@@ -37,8 +37,8 @@ const HomeScreen = () => {
   const [stories, setStories] = useState(false);
   const [spotlight, setSpotlight] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [faces, setFaces] = useState([]);
-  const { userData } = useUser();
+  const [spotRefresh, setSpotRefreshing] = useState(false)
+  const { userData, loading } = useUser();
   const currentUserId = userData?.id;
 
 
@@ -97,6 +97,7 @@ const HomeScreen = () => {
     setCamera(false);
     setChat(false);
     setStories(false);
+    setSpotRefreshing(prev => !prev);
   };
 
   useEffect(() => {
@@ -164,7 +165,7 @@ const HomeScreen = () => {
   const handlePostStory = async () => {
     try {
       if (photo) {
-        const downloadUrl = await storyPostUpload(photo.uri, currentUserId, setUploadProgress, 'stories');
+        const downloadUrl = await storyPostUpload(photo.uri, currentUserId, setUploadProgress, 'stories', userData);
         if (downloadUrl) {
           const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
           // await updateDoc(docRef, {
@@ -173,7 +174,7 @@ const HomeScreen = () => {
           showToast("Story Sent!");
         }
       } else if (video) {
-        const downloadUrl = await storyPostUpload(video.uri, currentUserId, setUploadProgress, 'stories');
+        const downloadUrl = await storyPostUpload(video.uri, currentUserId, setUploadProgress, 'stories', userData);
         if (downloadUrl) {
           const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
           // await updateDoc(docRef, {
@@ -198,9 +199,13 @@ const HomeScreen = () => {
     } else {}
   };
 
-  const handleFacesDetected = ({ faces }) => {
-    console.log(faces);
-  };
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="small" color="#2ecc71" />
+      </View>
+    );
+  }
 
   return (
     <>
@@ -309,7 +314,7 @@ const HomeScreen = () => {
             {maps && <Map />}
             {chat && <Chat handleChatCam={handleChatCam} />}
             {stories && <Stories />}
-            {spotlight && <Spotlight />}
+            {spotlight && <Spotlight reload={spotRefresh}/>}
           </View>
         </SafeAreaView>
 
