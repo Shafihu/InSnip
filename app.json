@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Snapchat",
-    "slug": "snapchat",
-    "scheme": "snapchat",
+    "name": "InSnip",
+    "slug": "insnip",
+    "scheme": "insnip",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo_icon.png",

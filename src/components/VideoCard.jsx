@@ -6,6 +6,7 @@ import { FIRESTORE_DB } from '../../Firebase/config';
 import { doc, getDoc } from 'firebase/firestore';
 import { Image } from 'expo-image';
 import processUserImage from '../../utils/processUserImage';
+import { shareAsync } from 'expo-sharing';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -65,6 +66,19 @@ const VideoCard = ({ video, isActive }) => {
     setCommentsModal(prev => !prev);
   };
 
+  const handleShare = async () => {
+    try {
+      await shareAsync(video.url, {
+        dialogTitle: 'Share this video',
+        mimeType: 'video/mp4',
+        UTI: 'public.movie'
+      });
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
+  
+
   return (
     <View style={styles.itemContainer}>
       <Video
@@ -102,7 +116,7 @@ const VideoCard = ({ video, isActive }) => {
             <MaterialIcons name="mode-comment" size={30} color="white" />
             {/* <Text style={styles.text}>80</Text> */}
           </Pressable>
-          <Pressable style={styles.icon}>
+          <Pressable onPress={handleShare} style={styles.icon}>
             <Fontisto name="share-a" size={28} color="white" />
             {/* <Text style={styles.text}>135</Text> */}
           </Pressable>

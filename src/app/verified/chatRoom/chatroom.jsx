@@ -215,7 +215,7 @@ const ChatRoom = () => {
         >
           <ScrollView
             ref={scrollViewRef}
-            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', paddingVertical: 10, paddingHorizontal: 6 }}
+            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-start', paddingVertical: 10, paddingHorizontal: 6 }}
             onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
           >
             {chat &&

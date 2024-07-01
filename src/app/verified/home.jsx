@@ -22,6 +22,7 @@ import { storyPostUpload } from "../../../utils/storyPostUpload";
 import CustomLoader from "../../components/CustomLoader";
 
 
+
 const HomeScreen = () => {
   const [facing, setFacing] = useState("front");
   const [flash, setFlash] = useState("off");
@@ -112,11 +113,18 @@ const HomeScreen = () => {
 
   if (!cameraPermission.granted) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ textAlign: "center", color: "white" }}>
+      <View style={{backgroundColor: '#fff', flex: 1, justifyContent: "center", alignItems: "center", }}>
+        <View style={{maxHeight: '40%', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
+        <Image source={require('../../../assets/cameraPermission.png')} style={{width: '90%', height: '80%', objectFit: 'cover'}} />
+        </View>
+          <View style={{gap: 20, width: '100%', justifyContent: 'center', alignItems: 'center', }}>
+          <Text style={{ textAlign: "center", color: "gray" }}>
           We need your permission to access the camera
         </Text>
-        <Button onPress={requestCameraPermission} title="Grant Permission" />
+        <TouchableOpacity onPress={requestCameraPermission} style={{width: '90%', padding: 8, backgroundColor: '#2ecc71', justifyContent: 'center', alignItems: 'center', borderRadius: 5}}>
+          <Text style={{color: '#fff', fontWeight: '600', fontSize: 16}}>Grant Permission</Text>
+        </TouchableOpacity>
+          </View>
       </View>
     );
   }

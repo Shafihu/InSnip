@@ -9,6 +9,7 @@ import { FIRESTORE_DB } from '../../Firebase/config';
 import { router } from 'expo-router';
 import CustomLoader from './CustomLoader';
 import { Image } from 'expo-image';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Chat = () => {
   const [loading, setLoading] = useState(false);
@@ -16,10 +17,24 @@ const Chat = () => {
   const { userData } = useUser();
 
   useEffect(() => {
+    const fetchChatsFromStorage = async () => {
+      try {
+        const storedChats = await AsyncStorage.getItem(`chats_${userData?.id}`);
+        if (storedChats) {
+          console.log('Chats fetched from storage');
+          setChats(JSON.parse(storedChats));
+        }
+      } catch (error) {
+        console.error('Error fetching chats from storage:', error);
+      }
+    };
+
+    fetchChatsFromStorage();
+
     const userId = userData?.id;
     if (!userId) return;
 
-    setLoading(true);
+    // setLoading(true);
     const unSub = onSnapshot(doc(FIRESTORE_DB, "userchats", userId), async (res) => {
       try {
         if (!res.exists()) {
@@ -35,11 +50,13 @@ const Chat = () => {
           });
           const chatData = await Promise.all(promises);
           setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
+          await AsyncStorage.setItem(`chats_${userData?.id}`, JSON.stringify(chatData));
         }
       } catch (error) {
         console.error('Error fetching chat data:', error);
       } finally {
-        setLoading(false);
+        // setLoading(false);
+        
       }
     });
 
@@ -56,7 +73,7 @@ const Chat = () => {
     <SafeAreaView style={styles.container}>
       <Header header="Chat" />
       <View style={styles.content}>
-        <Pressable  onPress={handleNewMessagePress} style={styles.newMessageButton}>
+        <Pressable onPress={handleNewMessagePress} style={styles.newMessageButton}>
           <Entypo name="new-message" size={25} color="white" />
         </Pressable>
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -73,40 +90,37 @@ const Chat = () => {
             </View>
           </View>
 
-          {
-  loading ? (
-    <View style={styles.loaderContainer}>
-      <CustomLoader />
-    </View>
-  ) : (
-      chats.map((chat) => (
-        <MemoizedChatItem
-          key={chat.chatId}
-          id={chat.id}
-          isSeen={chat.isSeen}
-          chat={chat}
-          avatar={chat.user?.avatar}
-          firstName={chat.user?.FirstName}
-          lastName={chat.user?.LastName}
-          lastMessage={chat.lastMessage}
-        />
-      ))
-  )
-}
+          {loading ? (
+            <View style={styles.loaderContainer}>
+              <CustomLoader />
+            </View>
+          ) : (
+            chats.map((chat) => (
+              <MemoizedChatItem
+                key={chat.chatId}
+                id={chat.id}
+                isSeen={chat.isSeen}
+                chat={chat}
+                avatar={chat.user?.avatar}
+                firstName={chat.user?.FirstName}
+                lastName={chat.user?.LastName}
+                lastMessage={chat.lastMessage}
+              />
+            ))
+          )}
         </ScrollView>
-      <View style={{flex: 1, flexGrow: 4}}>
-      {!loading && chats.length < 1 && (
-                <View style={{flexGrow: 1,paddingBottom: 130, justifyContent: 'center', alignItems: 'center', gap: 10}}>
-                        <Image
-                          source={require('../../assets/chatlistImage.png')}
-                          style={{width: '80%', height: '40%'}}
-                          contentFit="cover"
-                        />
-                  <Text style={{color: 'rgba(0,0,0,0.3)', fontWeight: '500'}}>Add friends to start conversations</Text>
-                </View>
-              )
-            }
-      </View>
+        <View style={{ flex: 1, flexGrow: 4 }}>
+          {!loading && chats.length < 1 && (
+            <View style={{ flexGrow: 1, paddingBottom: 130, justifyContent: 'center', alignItems: 'center', gap: 10 }}>
+              <Image
+                source={require('../../assets/chatlistImage.png')}
+                style={{ width: '80%', height: '40%' }}
+                contentFit="cover"
+              />
+              <Text style={{ color: 'rgba(0,0,0,0.3)', fontWeight: '500' }}>Add friends to start conversations</Text>
+            </View>
+          )}
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -122,7 +136,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     backgroundColor: '#f3f4f6',
-    
   },
   newMessageButton: {
     backgroundColor: '#2ecc71',
@@ -147,7 +160,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   scrollContent: {
-    // flexGrow: 1,
     paddingBottom: 28,
   },
   archiveContainer: {
@@ -158,19 +170,18 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     marginHorizontal: 8,
     marginBottom: 8,
-    backgroundColor: 'white', 
+    backgroundColor: 'white',
     borderRadius: 24,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
-    gap: 10
+    gap: 10,
   },
   archiveIcon: {
     width: 60,
     height: 60,
-    // backgroundColor: '#ffd700',
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
