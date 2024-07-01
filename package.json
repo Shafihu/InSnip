@@ -39,6 +39,7 @@
     "react-native-elements": "^3.4.3",
     "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "~2.16.1",
+    "react-native-image-viewing": "^0.2.2",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-loader-kit": "^2.0.8",
     "react-native-maps": "1.14.0",

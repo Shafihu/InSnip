@@ -25,6 +25,8 @@ import { Video } from 'expo-av';
 import { Ionicons } from 'react-native-vector-icons';
 import Header from '../../../components/Chat/Header';
 import Bottom from '../../../components/Chat/Bottom';
+import ImageView from "react-native-image-viewing";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 
@@ -43,6 +45,9 @@ const ChatRoom = () => {
   const { isReceiverBlocked } = useChatStore();
   const scrollViewRef = useRef(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [visible, setIsVisible] = useState(false);
+  const [chatImages, setChatImages] = useState([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
   useEffect(() => {
@@ -168,6 +173,8 @@ const ChatRoom = () => {
 
   const handleDeleteMessage = async () => {
     try {
+      setIsModalVisible(false);
+      // setSelectedMessage(null);
       const chatRef = doc(FIRESTORE_DB, 'chats', chatId);
       const chatDoc = await getDoc(chatRef);
 
@@ -177,9 +184,6 @@ const ChatRoom = () => {
         await updateDoc(chatRef, {
           messages: updatedMessages,
         });
-
-        setIsModalVisible(false);
-        setSelectedMessage(null);
       }
     } catch (error) {
       console.log('Error deleting message: ', error);
@@ -190,7 +194,7 @@ const ChatRoom = () => {
     backgroundColor: '#333333',
     primaryColor: '#2ecc71',
     secondaryColor: 'red',
-    textColor: 'white',
+    textColor: '#333',
     modalBackgroundColor: 'white',
     modalTextColor: 'red',
     borderColor: '#00BFFF',
@@ -204,8 +208,26 @@ const ChatRoom = () => {
     deleteButtonColor: 'red',
   };
 
+  useEffect(() => {
+    let i = 0;
+    try {
+      const getChatImagesInit = async () => {
+        const images = chat?.messages?.filter(message => message.mediaType === 'image').map(message => ({
+          uri: message.mediaUrl,
+          id: i++,
+        })) || [];
+        await AsyncStorage.setItem(`chat_images_${chatId}`, JSON.stringify(images));
+        setChatImages(images);
+      }
+
+      getChatImagesInit();
+    } catch (error) {
+      console.log('Failed to get images from storage: ' + error);
+    }
+  }, [chat]);
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+<SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <Header title={`${firstname} ${lastname}`} avatar={avatar} firstname={firstname} lastname={lastname} id={userId} username={username} user={user} />
       <ImageBackground source={theme.chatBackgroundImage} style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         <KeyboardAvoidingView
@@ -215,12 +237,14 @@ const ChatRoom = () => {
         >
           <ScrollView
             ref={scrollViewRef}
-            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-start', paddingVertical: 10, paddingHorizontal: 6 }}
+            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', paddingVertical: 10, paddingHorizontal: 6 }}
             onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
           >
-            {chat &&
-              chat.messages &&
-              chat.messages.map((message, index) => (
+            {chat?.messages?.map((message, index) => {
+              const isSender = message.senderId === currentUserId;
+              const imageIndex = chatImages.find(img => img.uri === message.mediaUrl)?.id || 0;
+
+              return (
                 <TouchableOpacity
                   key={index}
                   activeOpacity={0.9}
@@ -228,12 +252,13 @@ const ChatRoom = () => {
                   style={{
                     alignSelf: message.senderId === currentUserId ? 'flex-end' : 'flex-start',
                     padding: 8,
-                    borderRadius: 15,
-                    borderLeftWidth: message.senderId === currentUserId ? 0 : 4,
-                    borderRightWidth: message.senderId === currentUserId ? 4 : 0,
+                    borderRadius: 8,
+                    borderLeftWidth: message.senderId === currentUserId ? 0 : 3,
+                    borderRightWidth: message.senderId === currentUserId ? 3 : 0,
                     borderColor: message.senderId === currentUserId ? theme.primaryColor : theme.secondaryColor,
                     marginBottom: 8,
-                    backgroundColor: message.senderId === currentUserId ?  'white' : theme.backgroundColor
+                    backgroundColor: isSender ? '#DCF8C5' : 'white',
+                    maxWidth: '80%',
                   }}
                 >
                   <View style={{ marginBottom: 4, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
@@ -248,19 +273,27 @@ const ChatRoom = () => {
                     {message.mediaUrl ? (
                       message.mediaType === 'image' ? (
                         <>
+                          <Pressable 
+                            onPress={() => { setIsVisible(true); setSelectedImageIndex(imageIndex)}}
+                            onLongPress={() => handleLongPress(message)}
+                          >
                           <ExpoImage
                             source={{ uri: message.mediaUrl }}
-                            style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
+                            style={{ width: width * 0.6, height: 150, borderRadius: 8, marginVertical: 5 }}
                             placeholder={{ blurhash }}
                             contentFit="cover"
                             transition={1000}
                           />
-                          <Text style={{ letterSpacing: 0.2, fontSize: 15,  color: message.senderId === currentUserId ? theme.backgroundColor : theme.textColor }}>
-                            {message.text}
-                          </Text>
+                          </Pressable>
+                          {message.text && (
+                              <Text style={{ letterSpacing: 0.2, fontSize: 15,  color: theme.textColor }}>
+                                  {message.text}
+                              </Text>
+                          )}
                         </>
                       ) : (
                         <View>
+                          <Pressable onLongPress={() => handleLongPress(message)}>
                           <Video
                             ref={videoRef}
                             source={{ uri: message.mediaUrl }}
@@ -270,6 +303,7 @@ const ChatRoom = () => {
                             isLooping
                             shouldPlay={play}
                           />
+                          </Pressable>
                           {!play && (
                             <Pressable
                               onPress={openFullScreen}
@@ -286,19 +320,19 @@ const ChatRoom = () => {
                               <Ionicons name="play-circle" size={60} color={theme.fullScreenPlayIconColor} />
                             </Pressable>
                           )}
-                          <Text style={{ letterSpacing: 0.2, fontSize: 15,  color: message.senderId === currentUserId ? theme.backgroundColor : theme.textColor }}>
+                          <Text style={{ letterSpacing: 0.2, fontSize: 15,  color: theme.textColor }}>
                             {message.text}
                           </Text>
                         </View>
                       )
                     ) : (
-                      <Text style={{ letterSpacing: 0.2, fontSize: 15,   color: message.senderId === currentUserId ? theme.backgroundColor : theme.textColor}}>
+                      <Text style={{ letterSpacing: 0.2, fontSize: 15,   color: theme.backgroundColor}}>
                         {message.text}
                       </Text>
                     )}
                   </View>
                 </TouchableOpacity>
-              ))}
+              )})}
             {localMediaUri && (
               <View style={{
                 alignSelf: 'center',
@@ -349,28 +383,35 @@ const ChatRoom = () => {
               </View>
             )}
           </ScrollView>
-          <Bottom handleSend={handleSend} handlePickImage={handlePickMedia} user={user} />
-          <Modal
-            isVisible={isModalVisible}
-            onBackdropPress={handleCloseModal}
-            style={{ justifyContent: 'flex-end', margin: 0 }}>
-            <View style={{
-              backgroundColor: theme.modalBackgroundColor,
-              padding: 20,
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-              paddingBottom: 50,
-              gap: 15
-            }}>
-              {selectedMessage && (
-                <Text style={{ textAlign: 'center', color: theme.modalTextColor }}>{selectedMessage.text}</Text>
-              )}
-              <Pressable onPress={handleDeleteMessage}>
-                <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: 'bold', color: theme.deleteButtonColor }}>Delete</Text>
-              </Pressable>
-            </View>
-          </Modal>
+          <Bottom handleSend={handleSend} handlePickMedia={handlePickMedia} user={user} />
         </KeyboardAvoidingView>
+         <Modal isVisible={isModalVisible} onBackdropPress={handleCloseModal} backdropOpacity={0.4}>
+<View style={{ backgroundColor: theme.modalBackgroundColor, borderRadius: 10, padding: 20 }}>
+  <View style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start', gap: 10}}>
+    {selectedMessage?.mediaUrl && (
+          <ExpoImage 
+            source={{ uri: selectedMessage.mediaUrl }}
+            style={{ width: 50, height: 50, borderRadius: 2 }}
+            placeholder={{ blurhash }}
+            contentFit="cover"
+            transition={100}
+    />
+      )}
+    {selectedMessage?.text && (
+                <Text style={{color: 'rgba(0,0,0,0.5)'}}>{selectedMessage.text}</Text>
+      )}
+  </View>
+  <TouchableOpacity onPress={handleDeleteMessage} style={{ paddingTop: 10}}>
+    <Text style={{ fontSize: 16, color: theme.deleteButtonColor }}>Delete Message</Text>
+  </TouchableOpacity>
+</View>
+</Modal>
+<ImageView
+images={chatImages.map(image => ({ uri: image.uri }))}
+imageIndex={selectedImageIndex}
+visible={visible}
+onRequestClose={() => setIsVisible(false)}
+/> 
       </ImageBackground>
     </SafeAreaView>
   );

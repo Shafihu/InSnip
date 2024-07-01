@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 import { Ionicons, Entypo, FontAwesome } from 'react-native-vector-icons';
 import { useChatStore } from '../../../context/ChatContext';
 
-const Bottom = ({ handleSend, handlePickImage, user }) => {
+const Bottom = ({ handleSend, handlePickMedia, user }) => {
   const [message, setMessage] = useState("");
 
   const {isCurrentUserBlocked, isReceiverBlocked} = useChatStore();
 
   const onSend = () => {
-    if (message.trim() || handlePickImage) {
+    if (message.trim() || handlePickMedia) {
       handleSend(message.trim());
       setMessage("");
     }
@@ -42,7 +42,7 @@ const Bottom = ({ handleSend, handlePickImage, user }) => {
         {/* <Pressable disabled={isCurrentUserBlocked || isReceiverBlocked} className="w-[40px] h-[40px] rounded-full items-center justify-center">
           <Entypo name="emoji-flirt" size={25} color={isReceiverBlocked ? 'gray' : "rgb(50,50,50)"}  />
         </Pressable> */}
-        <Pressable disabled={isCurrentUserBlocked || isReceiverBlocked} onPress={handlePickImage} className="w-[40px] h-[40px] rounded-full items-center justify-center">
+        <Pressable disabled={isCurrentUserBlocked || isReceiverBlocked} onPress={handlePickMedia} className="w-[40px] h-[40px] rounded-full items-center justify-center">
           <Ionicons name="images-outline" size={23} color={isReceiverBlocked ? 'gray' : "#3B2F2F"}  className="transform rotate-90" />
         </Pressable>
       </View>

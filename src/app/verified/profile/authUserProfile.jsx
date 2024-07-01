@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, Pressable, Image, StyleSheet, View, Animated, Dimensions, FlatList, ScrollView } from "react-native";
+import { Text, Pressable, StyleSheet, View, Animated, Dimensions, FlatList, ScrollView } from "react-native";
 import { signOut } from "firebase/auth";
 import Toast from "react-native-toast-message";
 import { useUser } from "../../../../context/UserContext";
@@ -15,7 +15,7 @@ import { FIRESTORE_DB } from "../../../../Firebase/config";
 import { Video } from "expo-av";
 import CustomLoader from "../../../components/CustomLoader";
 import { MaterialIcons} from 'react-native-vector-icons';
-
+import { Image } from "expo-image";
 
 const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 0;
@@ -32,6 +32,8 @@ const UserProfile = () => {
   const scrollY = new Animated.Value(0);
 
   const currentUserId = userData?.id;
+
+  const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
   useEffect(() => {
     if (userData) {
@@ -134,7 +136,7 @@ const UserProfile = () => {
   const renderItem = ({ item }) => (
     <View style={styles.storyContainer}>
       {item.type.startsWith('image/') && (
-        <Image source={{ uri: item.url }} style={styles.storyImage} />
+        <Image source={{ uri: item.url }} placeholder={blurhash} style={styles.storyImage} />
       )}
       {item.type.startsWith('video/') && (
         <Video source={{ uri: item.url }} style={styles.storyVideo} resizeMode="cover" shouldPlay isLooping/>
@@ -343,6 +345,7 @@ const styles = StyleSheet.create({
   storyContainer: {
     width: CARD_WIDTH,
     height: 200,
+    backgroundColor: 'rgba(0,0,0,0.3)'
   },
   storyImage: {
     width: '100%',
