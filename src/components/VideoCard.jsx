@@ -22,7 +22,6 @@ const VideoCard = ({ video, isActive }) => {
   const avatar = video?.avatar;
 
   useEffect(() => {
-    console.log(video)
     const fetchUserDetails = async (userId) => {
       try {
         const docRef = doc(FIRESTORE_DB, 'users', userId);

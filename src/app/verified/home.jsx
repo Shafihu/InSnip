@@ -26,7 +26,7 @@ import CustomLoader from "../../components/CustomLoader";
 const HomeScreen = () => {
   const [facing, setFacing] = useState("front");
   const [flash, setFlash] = useState("off");
-  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+  const [permission, requestPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
   const [photo, setPhoto] = useState();
   const [video, setVideo] = useState();
@@ -101,19 +101,24 @@ const HomeScreen = () => {
     setSpotRefreshing(prev => !prev);
   };
 
-  useEffect(() => {
-    if (!mediaPermission) {
-      requestMediaPermission();
-    }
-  }, [mediaPermission, requestMediaPermission]);
+  const getPermissions = async () => {
+    await requestPermission();
+    await requestMediaPermission();
+  }
 
-  if (!cameraPermission || !mediaPermission) {
+  // useEffect(() => {
+  //   if (!mediaPermission) {
+  //     requestMediaPermission();
+  //   }
+  // }, [mediaPermission, requestMediaPermission]);
+
+  if (!permission || !mediaPermission) {
     return <View />;
   }
 
-  if (!cameraPermission.granted) {
+  if (!permission.granted) {
     return (
-      <View style={{backgroundColor: '#fff', flex: 1, justifyContent: "center", alignItems: "center", }}>
+      <View style={{backgroundColor: '#fff', flex: 1, justifyContent: "center", alignItems: "center", gap: 20}}>
         <View style={{maxHeight: '40%', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
         <Image source={require('../../../assets/cameraPermission.png')} style={{width: '90%', height: '80%', objectFit: 'cover'}} />
         </View>
@@ -121,7 +126,7 @@ const HomeScreen = () => {
           <Text style={{ textAlign: "center", color: "gray" }}>
           We need your permission to access the camera
         </Text>
-        <TouchableOpacity onPress={requestCameraPermission} style={{width: '90%', padding: 8, backgroundColor: '#2ecc71', justifyContent: 'center', alignItems: 'center', borderRadius: 5}}>
+        <TouchableOpacity onPress={getPermissions} style={{width: '90%', padding: 8, backgroundColor: '#2ecc71', justifyContent: 'center', alignItems: 'center', borderRadius: 5}}>
           <Text style={{color: '#fff', fontWeight: '600', fontSize: 16}}>Grant Permission</Text>
         </TouchableOpacity>
           </View>

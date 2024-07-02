@@ -21,7 +21,6 @@ const Chat = () => {
       try {
         const storedChats = await AsyncStorage.getItem(`chats_${userData?.id}`);
         if (storedChats) {
-          console.log('Chats fetched from storage');
           setChats(JSON.parse(storedChats));
         }
       } catch (error) {
@@ -34,7 +33,6 @@ const Chat = () => {
     const userId = userData?.id;
     if (!userId) return;
 
-    // setLoading(true);
     const unSub = onSnapshot(doc(FIRESTORE_DB, "userchats", userId), async (res) => {
       try {
         if (!res.exists()) {
@@ -54,9 +52,6 @@ const Chat = () => {
         }
       } catch (error) {
         console.error('Error fetching chat data:', error);
-      } finally {
-        // setLoading(false);
-        
       }
     });
 
@@ -150,9 +145,9 @@ const styles = StyleSheet.create({
     marginBottom: 28,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 1,
     zIndex: 99,
   },
   scrollView: {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, SafeAreaView, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, Pressable, SafeAreaView, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
 import SearchBar from '../../../components/SearchBar';
 import { MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -20,26 +20,31 @@ const NewChat = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      const { status } = await Contacts.requestPermissionsAsync();
-      setPermissionGranted(status === 'granted');
-      if (status === 'granted') {
-        const { data } = await Contacts.getContactsAsync({
-          fields: [Contacts.Fields.Emails, Contacts.Fields.PhoneNumbers],
+    getContactsPermission();
+  }, []);
+
+  const getContactsPermission = async () => {
+    const { status } = await Contacts.requestPermissionsAsync();
+    if (status === 'granted') {
+      setPermissionGranted(true);
+
+      const { data } = await Contacts.getContactsAsync({
+        fields: [Contacts.Fields.Emails, Contacts.Fields.PhoneNumbers],
+      });
+
+      if (data.length > 0) {
+        const sortedContacts = data.sort((a, b) => {
+          if (a.name < b.name) return -1;
+          if (a.name > b.name) return 1;
+          return 0;
         });
 
-        if (data.length > 0) {
-          const sortedContacts = data.sort((a, b) => {
-            if (a.name < b.name) return -1;
-            if (a.name > b.name) return 1;
-            return 0;
-          });
-
-          setContacts(sortedContacts);
-        }
+        setContacts(sortedContacts);
       }
-    })();
-  }, []);
+    } else {
+      setPermissionGranted(false);
+    }
+  };
 
   const handleSearchQuery = async (text) => {
     setLoading(true);
@@ -144,8 +149,18 @@ const NewChat = () => {
 
   if (!permissionGranted) {
     return (
-      <View style={styles.container}>
-        <Text>Permission to access contacts was denied</Text>
+      <View style={{ backgroundColor: '#fff', flex: 1, justifyContent: "center", alignItems: "center", gap: 20 }}>
+        <View style={{ maxHeight: '40%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+          <Image source={require('../../../../assets/contactsPermission.png')} style={{ width: '90%', height: '100%', objectFit: 'cover' }} />
+        </View>
+        <View style={{ gap: 20, width: '100%', justifyContent: 'center', alignItems: 'center', }}>
+          <Text style={{ textAlign: "center", color: "gray" }}>
+            We need your permission to access your contacts
+          </Text>
+          <TouchableOpacity onPress={getContactsPermission} style={{ width: '90%', padding: 8, backgroundColor: '#2ecc71', justifyContent: 'center', alignItems: 'center', borderRadius: 5 }}>
+            <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Grant Permission</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -153,7 +168,7 @@ const NewChat = () => {
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
       <SearchBar onChangeText={handleSearchQuery} onActualChange={onActualChange} color='#f5f5f5' />
-      <View style={{ paddingHorizontal: 15, backgroundColor: '#f5f5f5', paddingBottom: 5}}>
+      <View style={{ paddingHorizontal: 15, backgroundColor: '#f5f5f5', paddingBottom: 5 }}>
         <View style={{ marginVertical: 0 }}>
           <Text style={styles.title}>Results</Text>
         </View>
@@ -210,6 +225,7 @@ const NewChat = () => {
 
 export default NewChat;
 
+
 const styles = StyleSheet.create({
   pressable: {
     borderRadius: 15,
@@ -247,6 +263,7 @@ const styles = StyleSheet.create({
   userInfo: {
     flex: 1,
     marginLeft: 10,
+    gap: 3
   },
   userName: {
     fontSize: 16,
@@ -255,6 +272,7 @@ const styles = StyleSheet.create({
   userDetails: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 5
   },
   userUsername: {
     fontSize: 12,

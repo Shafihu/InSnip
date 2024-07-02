@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     overflow: 'hidden',
-    backgroundColor: '#2F3E46', // Primary Color: Deep Sky Blue
+    backgroundColor: 'rgba(0,0,0,0.1)', // Primary Color: Deep Sky Blue
   },
   avatar: {
     width: '100%',

@@ -27,6 +27,7 @@ import Header from '../../../components/Chat/Header';
 import Bottom from '../../../components/Chat/Bottom';
 import ImageView from "react-native-image-viewing";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomLoader from '../../../components/CustomLoader';
 
 const { width } = Dimensions.get('window');
 
@@ -201,7 +202,7 @@ const ChatRoom = () => {
     placeholderColor: 'gray',
     activityIndicatorColor: 'gray',
     fullScreenPlayIconColor: 'rgba(255,255,255,0.7)',
-    chatBackgroundImage: require('../../../../assets/chatBackground.png'),
+    chatBackgroundImage: require('../../../../assets/chat_background.jpg'),
     crossIconColor: 'gray',
     blockUserTextColor: 'white',
     blockUserBackgroundColor: 'rgba(0,0,0,.3)',
@@ -299,7 +300,7 @@ const ChatRoom = () => {
                             source={{ uri: message.mediaUrl }}
                             style={{ width: width * 0.8, height: 200, borderRadius: 20, marginVertical: 5 }}
                             useNativeControls
-                            resizeMode="cover"
+                            contentFit="cover"
                             isLooping
                             shouldPlay={play}
                           />
@@ -338,22 +339,23 @@ const ChatRoom = () => {
                 alignSelf: 'center',
                 padding: 8,
                 paddingTop: 4,
-                borderRadius: 20,
-                borderWidth: 4,
+                borderRadius: 10,
+                borderWidth: 2,
                 borderColor: theme.primaryColor,
                 marginBottom: 8,
-                backgroundColor: 'white'
+                backgroundColor: 'rgba(0,0,0,0.6)',
               }}>
                 <TouchableOpacity onPress={() => {
                   setLocalMediaUri(null);
                   setMedia(null);
                 }}>
-                  <Entypo name='cross' size={20} color={theme.crossIconColor} style={{ textAlign: 'right' }} />
+                  <Entypo name='cross' size={20} color='#fff' style={{ textAlign: 'right' }} />
                 </TouchableOpacity>
+                <View style={{position: 'relative', overflow: 'hidden'}}>
                 {media && media.type === 'image' ? (
                   <ExpoImage
                     source={{ uri: localMediaUri }}
-                    style={{ width: width * 0.5, height: 100, borderRadius: 20 }}
+                    style={{ width: width * 0.5, height: 100, borderRadius: 8 }}
                     placeholder={{ blurhash }}
                     contentFit="cover"
                     transition={1000}
@@ -361,18 +363,19 @@ const ChatRoom = () => {
                 ) : (
                   <Video
                     source={{ uri: localMediaUri }}
-                    style={{ width: width * 0.5, height: 100, borderRadius: 20 }}
+                    style={{ width: width * 0.5, height: 100, borderRadius: 8 }}
                     useNativeControls
                     resizeMode="cover"
                     isLooping
                   />
                 )}
                 {uploadProgress > 0 && uploadProgress < 100 && (
-                  <View style={{ padding: 10, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <Text>Upload Progress: {uploadProgress.toFixed(2)}%</Text>
-                    <ActivityIndicator size="small" color={theme.activityIndicatorColor} />
+                  <View style={{position: 'absolute', alignSelf: 'center', padding: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.7)', borderRadius: 8}}>
+                    <CustomLoader />
+                    <Text style={{fontSize: 12, color: '#fff'}}>{uploadProgress.toFixed(2)}%</Text>
                   </View>
                 )}
+                </View>
               </View>
             )}
             {isReceiverBlocked && (
