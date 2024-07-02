@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SafeAreaView, StyleSheet, Image, Text, View } from 'react-native';
 import Header from '../components/Header';
 import MapView, { Callout, Marker } from 'react-native-maps';
@@ -9,41 +9,45 @@ import { useUser } from '../../context/UserContext';
 import { FIRESTORE_DB } from '../../Firebase/config';
 import processUserImage from '../../utils/processUserImage';
 import { router } from 'expo-router';
+import CustomLoader from '../components/CustomLoader'
 
 const Map = () => {
   const [location, setLocation] = useState(null);
   const [otherUsers, setOtherUsers] = useState([]);
+  const [loading, setLoading] = useState(false)
   const mapRef = useRef(null);
   const { userData } = useUser();
 
   useEffect(() => {
+    setLoading(true);
     const fetchUserLocation = async () => {
       const userDocRef = doc(FIRESTORE_DB, 'users', userData.id);
       const userDoc = await getDoc(userDocRef);
+
+      const currentLocation = await getCurrentLocation();
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
         if (userData.location) {
           const storedLocation = userData.location;
-          const currentLocation = await getCurrentLocation();
-
           if (isLocationDifferent(storedLocation, currentLocation)) {
             setLocation(currentLocation);
-            updateLocationInFirestore(userDocRef, currentLocation);
+            await updateLocationInFirestore(userDocRef, currentLocation);
           } else {
             setLocation(storedLocation);
           }
           animateMap(storedLocation);
         } else {
-          await fetchAndSetLocation(userDocRef);
-        }
-      } else {
-        await fetchAndSetLocation(userDocRef);
-      }
+          await setNewLocation(userDocRef, currentLocation);
+          }
+          } else {
+            await setNewLocation(userDocRef, currentLocation);
+          }
 
       const usersSnapshot = await getDocs(collection(FIRESTORE_DB, 'users'));
-      const usersData = usersSnapshot.docs.map(doc => doc.data());
-      setOtherUsers(usersData.filter(user => user.id !== userData.id));
+      const usersData = usersSnapshot.docs.map((doc) => doc.data());
+      setOtherUsers(usersData.filter((user) => user.id !== userData.id));
+      setLoading(false);
     };
 
     fetchUserLocation();
@@ -65,11 +69,10 @@ const Map = () => {
     return latDiff > threshold || lonDiff > threshold;
   };
 
-  const fetchAndSetLocation = async (userDocRef) => {
-    const currentLocation = await getCurrentLocation();
+  const setNewLocation = async (userDocRef, currentLocation) => {
     if (currentLocation) {
       setLocation(currentLocation);
-      updateLocationInFirestore(userDocRef, currentLocation);
+      await updateLocationInFirestore(userDocRef, currentLocation);
       animateMap(currentLocation);
     }
   };
@@ -86,12 +89,12 @@ const Map = () => {
     mapRef.current?.animateToRegion({
       latitude: coords.latitude,
       longitude: coords.longitude,
-      latitudeDelta: 0.005,
-      longitudeDelta: 0.005,
+      latitudeDelta: 0.0025,
+      longitudeDelta: 0.0025,
     });
   };
 
-  const calloutPressed = useCallback((user) => {
+  const calloutPressed = (user) => {
     router.push({
       pathname: '/verified/profile/[otherUserProfile]',
       params: {
@@ -102,13 +105,13 @@ const Map = () => {
         avatar: user.avatar,
       },
     });
-  }, []);
+  };
 
-  const renderUserMarker = useCallback((user) => (
+  const renderUserMarker = (user) =>
     user.location && (
       <Marker key={user.id} coordinate={user.location}>
         <Image source={processUserImage(user.avatar)} style={styles.markerImage} />
-        <Callout  onPress={() => calloutPressed(user)}>
+        <Callout onPress={() => calloutPressed(user)}>
           <View style={styles.calloutView}>
             <Text style={styles.calloutUsername}>{user.Username}</Text>
             <Image
@@ -118,13 +121,18 @@ const Map = () => {
           </View>
         </Callout>
       </Marker>
-    )
-  ), [calloutPressed]);
+    );
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['rgba(0,0,0,0.4)', 'transparent']} style={styles.background}>
-        <Header header='Map' />
+      {loading && (
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 999, position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}>
+                <CustomLoader />
+            </View>
+      )}
+        <>
+        <LinearGradient colors={['rgba(0,0,0,0.4)', 'transparent']} style={styles.background}>
+        <Header header="Map" />
       </LinearGradient>
 
       <MapView
@@ -135,7 +143,7 @@ const Map = () => {
         userLocationAnnotationTitle=""
       >
         {location && (
-          <Marker coordinate={location} >
+          <Marker coordinate={location}>
             <Text style={styles.youText}>Me</Text>
             <Image source={processUserImage(userData?.avatar)} style={styles.userImage} />
           </Marker>
@@ -143,6 +151,7 @@ const Map = () => {
 
         {otherUsers.map(renderUserMarker)}
       </MapView>
+        </>
     </SafeAreaView>
   );
 };
@@ -152,6 +161,7 @@ export default Map;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: 'relative'
   },
   background: {
     position: 'absolute',
@@ -179,8 +189,7 @@ const styles = StyleSheet.create({
     height: 100,
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
-    // gap: 5,
+    alignItems: 'center',
   },
   calloutUsername: {
     fontWeight: 'bold',
@@ -191,7 +200,6 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 10,
-    objectFit: 'cover',
   },
   map: {},
 });

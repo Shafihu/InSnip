@@ -97,7 +97,7 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
         </View>
       </View>
       <View style={styles.right}>
-      <View style={[styles.newIndicator, { backgroundColor: false ? 'transparent' : '#2ecc71' }]} />
+      <View style={[styles.newIndicator, { backgroundColor: isSeen ? 'transparent' : '#2ecc71' }]} />
       <Pressable onPress={handleChatCam}>
         <Feather name="camera" size={20} color="#B0B0B0" />
       </Pressable>
