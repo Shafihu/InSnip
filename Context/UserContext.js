@@ -3,8 +3,16 @@ import { FIREBASE_AUTH, FIRESTORE_DB } from "../Firebase/config";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 
 const UserContext = createContext();
+
+const showToast = (message) => {
+  Toast.show({
+    type: "error",
+    text1: message,
+  });
+};
 
 export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
@@ -33,6 +41,7 @@ export const UserProvider = ({ children }) => {
         }
       } catch (error) {
         console.error("Error fetching user data: ", error);
+        showToast("Check your connection and try again");
       }
     };
 
