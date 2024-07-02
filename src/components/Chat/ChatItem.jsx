@@ -68,7 +68,6 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
       onPress={handlePress}
       style={styles.chatItem}
     >
-      <View style={[styles.newIndicator, { backgroundColor: isSeen ? 'transparent' : '#2ecc71' }]} />
       <View style={styles.avatarContainer}>
         <Image
           source={userData?.blocked.includes(chat?.user?.id) ? require('../../../assets/placeholder.png') : processUserImage(avatar)}
@@ -97,9 +96,12 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
           </Text>
         </View>
       </View>
+      <View style={styles.right}>
+      <View style={[styles.newIndicator, { backgroundColor: false ? 'transparent' : '#2ecc71' }]} />
       <Pressable onPress={handleChatCam}>
         <Feather name="camera" size={20} color="#B0B0B0" />
       </Pressable>
+      </View>
     </Pressable>
   );
 };
@@ -112,13 +114,18 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f5f5f5', // Background Color: Light Gray
-    backgroundColor: '#fff', // Background Color: White
+    borderBottomColor: '#f5f5f5',
+    backgroundColor: '#fff',
+  },
+  right: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6
   },
   newIndicator: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     marginRight: 8,
   },
   avatarContainer: {
@@ -126,7 +133,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     overflow: 'hidden',
-    backgroundColor: 'rgba(0,0,0,0.1)', // Primary Color: Deep Sky Blue
+    backgroundColor: 'rgba(0,0,0,0.1)', 
   },
   avatar: {
     width: '100%',
@@ -139,7 +146,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#3B2F2F', // Text Color: Charcoal Black
+    color: '#3B2F2F', 
   },
   messageContainer: {
     flexDirection: 'row',
@@ -147,12 +154,12 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   iconFlip: {
-    transform: [{ scaleX: -1 }], // Flip icon horizontally
+    transform: [{ scaleX: -1 }], 
   },
   messageText: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#7f8c8d', // Subtext Color: Slate Gray
+    color: '#7f8c8d', 
     marginLeft: 4,
   },
 });
