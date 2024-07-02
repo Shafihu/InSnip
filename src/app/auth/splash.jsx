@@ -13,7 +13,7 @@ import { router } from "expo-router";
 
 export default function SplashScreen() {
   return (
-    <ImageBackground source={require('../../../assets/testing.jpg')} style={{flex: 1}}>
+    <ImageBackground blurRadius={0} source={require('../../../assets/testing.jpg')} style={{flex: 1}}>
       <SafeAreaView style={styles.container}>
       <View style={styles.logoContainer}>
         <Image

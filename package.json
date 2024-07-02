@@ -16,7 +16,7 @@
     "expo": "^51.0.17",
     "expo-asset": "^10.0.10",
     "expo-av": "^14.0.6",
-    "expo-blur": "^13.0.2",
+    "expo-blur": "~13.0.2",
     "expo-camera": "^15.0.12",
     "expo-constants": "^16.0.2",
     "expo-contacts": "~13.0.4",

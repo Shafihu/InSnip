@@ -71,7 +71,11 @@ const Chat = () => {
         <Pressable onPress={handleNewMessagePress} style={styles.newMessageButton}>
           <Entypo name="new-message" size={25} color="white" />
         </Pressable>
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView 
+          style={styles.scrollView} 
+          contentContainerStyle={styles.scrollContent} 
+          showsVerticalScrollIndicator={false}
+          >
           <View style={styles.archiveContainer}>
             <View style={styles.archiveIcon}>
               <Entypo name="archive" size={30} color="#2F3E46" />

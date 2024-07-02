@@ -4,10 +4,12 @@ import { FontAwesome5, FontAwesome } from 'react-native-vector-icons'
 import { router } from 'expo-router'
 import processUserImage from '../../../utils/processUserImage'
 import { useChatStore } from '../../../context/ChatContext'
+import { BlurView } from 'expo-blur'
 
 const Header = ({title, avatar, firstname, lastname, id, username, user}) => {
   const {isReceiverBlocked} = useChatStore()
   return (
+    
     <Pressable onPress={()=>router.push({
       pathname: '/verified/profile/[otherUserProfile]',
       params: {
@@ -18,7 +20,7 @@ const Header = ({title, avatar, firstname, lastname, id, username, user}) => {
         avatar: avatar,
         user: user,
       }
-    })} className="h-[60px] flex flex-row items-center justify-between gap-2 px-2 bg-white">
+    })} className="h-[60px] flex flex-row items-center justify-between gap-2 px-2 bg-transparent">
       <Pressable onPress={()=>router.back()} className="w-[40px] h-[40px] rounded-full items-center justify-center ">
         <FontAwesome5 name="chevron-left" size={25} color="#3B2F2F" />
       </Pressable>
