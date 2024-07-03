@@ -1,3 +1,5 @@
+// TODO: Reposition and style the sign out button
+
 import React, { useState, useEffect } from "react";
 import { Text, Pressable, StyleSheet, View, Animated, Dimensions, FlatList, ScrollView, Modal, SafeAreaView } from "react-native";
 import { signOut } from "firebase/auth";
