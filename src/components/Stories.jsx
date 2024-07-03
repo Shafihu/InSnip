@@ -77,7 +77,7 @@ const Stories = () => {
 
   const handlePressStory = (story) => {
     setSelectedStory(story);
-    storyTimer();
+    // storyTimer();
   };
 
   const handleClosePreview = () => {
@@ -112,13 +112,13 @@ const Stories = () => {
     setOptionsModal(prev => !prev);
   }
 
-  const storyTimer = () => {
-    setTimer(true);
-    setTimeout(()=>{
-      setTimer(false)
-      setSelectedStory(null)
-    },10000)
-  }
+  // const storyTimer = () => {
+  //   setTimer(true);
+  //   setTimeout(()=>{
+  //     setTimer(false)
+  //     setSelectedStory(null)
+  //   },10000)
+  // }
   return (
     <SafeAreaView style={styles.safeArea}>
       <Header header="Stories" />
@@ -205,7 +205,7 @@ const Stories = () => {
                   <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalTime}>5 days ago</Text>
                 </View>
             </Pressable>
-              {selectedStory && timer && selectedStory.type && selectedStory.type.startsWith('image/') ? (
+              {selectedStory && selectedStory.type && selectedStory.type.startsWith('image/') ? (
                 <Image source={{ uri: selectedStory.url }} style={styles.modalMedia} />
               ) : selectedStory && selectedStory.type && selectedStory.type.startsWith('video/') ? (
                 <Video source={{ uri: selectedStory.url }} style={styles.modalMedia} resizeMode="cover" shouldPlay isLooping/>

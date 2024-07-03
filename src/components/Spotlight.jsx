@@ -19,7 +19,7 @@ const Spotlight = ({ reload }) => {
   const [spotlightUrl, setSpotlightUrl] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const { userData } = useUser();
-  const currentUserId = userData.id;
+  const currentUserId = userData?.id;
   const [error, setError] = useState(null);
   const flatListRef = useRef(null);
 
@@ -137,7 +137,7 @@ const Spotlight = ({ reload }) => {
           ref={flatListRef}  // Attach the ref to FlatList
           data={data}
           renderItem={renderItem}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item?.id}
           snapToAlignment="start"
           snapToInterval={SCREEN_HEIGHT}
           decelerationRate="fast"

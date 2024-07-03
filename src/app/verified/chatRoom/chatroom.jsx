@@ -10,8 +10,6 @@ import {
   TouchableOpacity,
   ImageBackground,
   Pressable,
-  ActivityIndicator,
-  StyleSheet
 } from 'react-native';
 import { onSnapshot, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import { FIRESTORE_DB } from '../../../../Firebase/config';
@@ -29,6 +27,7 @@ import Bottom from '../../../components/Chat/Bottom';
 import ImageView from "react-native-image-viewing";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomLoader from '../../../components/CustomLoader';
+import { MaterialCommunityIcons } from 'react-native-vector-icons'
 
 
 
@@ -395,7 +394,7 @@ const ChatRoom = () => {
           </ScrollView>
           <Bottom handleSend={handleSend} handlePickMedia={handlePickMedia} user={user} />
           <Modal isVisible={isModalVisible} onBackdropPress={handleCloseModal} backdropOpacity={0.4}>
-            <View style={{ backgroundColor: theme.modalBackgroundColor, borderRadius: 10, padding: 20 }}>
+            <View style={{ backgroundColor: theme.modalBackgroundColor, borderRadius: 10, paddingVertical: 15, paddingHorizontal: 20}}>
               <View style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start', gap: 10}}>
                 {selectedMessage?.mediaUrl && (
                   <ExpoImage 
@@ -410,8 +409,8 @@ const ChatRoom = () => {
                   <Text style={{color: 'rgba(0,0,0,0.5)'}}>{selectedMessage.text}</Text>
                 )}
               </View>
-              <TouchableOpacity onPress={handleDeleteMessage} style={{ paddingTop: 10}}>
-                <Text style={{ fontSize: 16, color: theme.deleteButtonColor }}>Delete Message</Text>
+              <TouchableOpacity onPress={handleDeleteMessage} style={{ paddingTop: 0}}>
+                <Text style={{textAlign: 'right'}}><MaterialCommunityIcons name='delete-empty-outline' size={25} color={theme.deleteButtonColor} /> </Text>
               </TouchableOpacity>
             </View>
           </Modal>

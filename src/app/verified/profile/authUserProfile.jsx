@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, Pressable, StyleSheet, View, Animated, Dimensions, FlatList, ScrollView } from "react-native";
+import { Text, Pressable, StyleSheet, View, Animated, Dimensions, FlatList, ScrollView, Modal, SafeAreaView } from "react-native";
 import { signOut } from "firebase/auth";
 import Toast from "react-native-toast-message";
 import { useUser } from "../../../../context/UserContext";
@@ -7,14 +7,14 @@ import { pickAndUploadBanner } from "../../../../utils/pickAndUploadBanner";
 import { FIREBASE_AUTH } from "../../../../Firebase/config";
 import processUserImage from "../../../../utils/processUserImage";
 import { router } from "expo-router";
-import { FontAwesome6, MaterialCommunityIcons } from 'react-native-vector-icons';
+import { FontAwesome6,  MaterialCommunityIcons, Feather,  MaterialIcons,  Ionicons } from 'react-native-vector-icons';
 import { fetchStories } from "../../../../utils/fetchStories";
+import { fetchSpotlights } from "../../../../utils/fetchSpotlights";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { doc, getDoc } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../../../Firebase/config";
-import { Video } from "expo-av";
+import { Video, ResizeMode } from "expo-av";
 import CustomLoader from "../../../components/CustomLoader";
-import { MaterialIcons} from 'react-native-vector-icons';
 import { Image } from "expo-image";
 
 const HEADER_MAX_HEIGHT = 280;
@@ -27,9 +27,14 @@ const UserProfile = () => {
   const { userData, loading, updateProfilePicture } = useUser();
   const [profilePic, setProfilePic] = useState(null);
   const [stories, setStories] = useState([]);
+  const [spotlights, setSpotlights] = useState([]);
+  const [selected, setSelected] = useState(null);
   const [tab, setTab] = useState(true);
-  const [storiesLoading, setStoriesLoading] = useState(false);
+  const [tabLoading, setTabLoading] = useState(false);
+  const [spotlightLoading, setSpotlightsLoading] = useState(false);
   const scrollY = new Animated.Value(0);
+  const [optionsModal, setOptionsModal] = useState(false);
+  const [timer, setTimer] = useState(false);
 
   const currentUserId = userData?.id;
 
@@ -39,6 +44,7 @@ const UserProfile = () => {
     if (userData) {
       setProfilePic(userData.picture);
       loadCurrentUserStories(currentUserId);
+      loadCurrentUserSpotlights(currentUserId);
     }
   }, [userData]);
 
@@ -105,20 +111,41 @@ const UserProfile = () => {
 
   const loadCurrentUserStories = async (currentUserId) => {
     try {
-      setStoriesLoading(true);
+      setTabLoading(true);
       const fetchedStories = await fetchStories();
       const storiesWithUserDetails = await Promise.all(fetchedStories.map(async (story) => {
         const userDetails = await fetchUserDetails(story.userId);
-        return { ...story, userDetails };
+        return { ...story, userDetails};
       }));
 
       const currentUserStories = storiesWithUserDetails.filter((item) => item.userId === currentUserId);
       setStories(currentUserStories);
+      // console.log(currentUserStories);
       await AsyncStorage.setItem('currentUserStories', JSON.stringify(currentUserStories));
     } catch (error) {
       console.error("Error loading stories:", error);
     } finally {
-      setStoriesLoading(false);
+      setTabLoading(false);
+    }
+  };
+
+
+  const loadCurrentUserSpotlights = async (currentUserId) => {
+    try {
+      setSpotlightsLoading(true);
+      const fetchedSpotlights = await fetchSpotlights();
+      const spotlightsWithUserDetails = await Promise.all(fetchedSpotlights.map(async (spotlight) => {
+        const userDetails = await fetchUserDetails(spotlight.userId);
+        return { ...spotlight, userDetails};
+      }));
+
+      const currentUserSpotlights = spotlightsWithUserDetails.filter((item) => item.userId === currentUserId);
+      setSpotlights(currentUserSpotlights);
+      await AsyncStorage.setItem('currentUserSpotlights', JSON.stringify(currentUserSpotlights));
+    } catch (error) {
+      console.error("Error loading spotlights:", error);
+    } finally {
+      setSpotlightsLoading(false);
     }
   };
 
@@ -133,24 +160,36 @@ const UserProfile = () => {
     return null;
   };
 
+  const toggleOptionsModal = () => {
+    setOptionsModal(prev => !prev);
+  }
+
+  const handlePressStory = (story) => {
+    setSelected(story);
+  };
+
+  const handleClosePreview = () => {
+    setSelected(null);
+  };
+
   const renderItem = ({ item }) => (
-    <View style={styles.storyContainer}>
+    <Pressable onPress={() => handlePressStory(item)} style={styles.storyContainer}>
       {item.type.startsWith('image/') && (
         <Image source={{ uri: item.url }} placeholder={blurhash} style={styles.storyImage} />
       )}
-      {item.type.startsWith('video/') && (
-        <Video source={{ uri: item.url }} style={styles.storyVideo} resizeMode="cover" shouldPlay isLooping/>
+      {item.type.startsWith('video') && (
+        <Video source={{ uri: item.url }} style={styles.storyVideo} resizeMode="cover"  shouldPlay = {selected !== null ? false : true} isLooping isMuted/>
       )}
       <View style={{position: 'absolute', top: 5, right: 5, zIndex: 50}}>
         <MaterialIcons name= {item.type.startsWith('image/') ? 'photo' : 'video-collection'} size={15} color="#fff" />
       </View>
-    </View>
+    </Pressable>
   );
 
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
-        <Pressable onPress={() => router.back()} style={styles.button}>
+        <Pressable  onPress={() => router.back()} style={styles.button}>
           <FontAwesome6 name="chevron-left" color="#fff" size={20} />
         </Pressable>
         <Pressable onPress={handlePickImage} style={styles.button}>
@@ -196,7 +235,7 @@ const UserProfile = () => {
           </View>
         </View>
         <View style={styles.contentContainer}>
-          {storiesLoading && (
+          {tabLoading && (
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
             <CustomLoader />
           </View>
@@ -211,14 +250,75 @@ const UserProfile = () => {
               contentContainerStyle={styles.storiesList}
             />
           ) : (
-            <ScrollView contentContainerStyle={styles.spotlightContainer}>
-              <View style={styles.spotlightContent}>
-                <Text style={styles.spotlightText}>Spotlight content here</Text>
-              </View>
-            </ScrollView>
+            <FlatList
+              data={spotlights}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.url}
+              showsHorizontalScrollIndicator={false}
+              numColumns={3}
+              contentContainerStyle={styles.storiesList}
+            />
           )}
         </View>
       </Animated.View>
+      {(selected) && (
+        <Modal visible={true} transparent={true} animationType="fade">
+          <SafeAreaView style={styles.modalContainer}>
+            <Pressable onPress={handleClosePreview} style={styles.closeButton}>
+              <Ionicons name='close' size={25} color='white' />
+            </Pressable>
+            <View style={styles.modalContent}>
+            <Pressable onPress={() => handleProfile(selected)} style={styles.top}>
+                <Image source={processUserImage(selected.userDetails.avatar)} style={styles.modalAvatar} />
+                <View style={{gap: 4}}>
+                  <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalUsername}>{selected.userDetails ? selected.userDetails.Username : 'Unknown'}</Text>
+                  <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalTime}>5 days ago</Text>
+                </View>
+            </Pressable>
+              {selected && selected.type && selected.type.startsWith('image/') ? (
+                <Image source={{ uri: selected.url }} style={styles.modalMedia} />
+              ) : selected && selected.type && selected.type.startsWith('video') ? (
+                <Video source={{ uri: selected.url }} style={styles.modalMedia} resizeMode={ResizeMode.CONTAIN} shouldPlay isLooping/>
+              ) : (
+                <Text style={styles.errorText}>Oops! Something went wrong.</Text>
+              )}
+            </View>
+            <View style={styles.bottom}>
+              <Pressable  style={[styles.pressable, styles.miniButtons]}>
+                <MaterialCommunityIcons name='camera-wireless' size={25} color="white" />
+              </Pressable>
+              <Pressable onPress={handleClosePreview} style={[styles.pressable, styles.profileButton]}>
+                <Text style={styles.buttonText}>View Profile</Text>
+              </Pressable>
+              <Pressable onPress={toggleOptionsModal} style={[styles.pressable, styles.miniButtons]}>
+                <Image source={processUserImage(selected.userDetails.avatar)} style={[styles.modalAvatar, {width: 30, height: 30}]} />
+              </Pressable>
+              <Pressable style={[styles.pressable, styles.miniButtons]}>
+                <Feather name='more-horizontal' size={30} color="white" />
+              </Pressable>
+            </View>
+            <Modal
+              animationType='slide'
+              visible={optionsModal} 
+              onBackdropPressed={toggleOptionsModal}
+              transparent={true}>
+              <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 16}}>
+                <ScrollView contentContainerStyle={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'transparent', paddingHorizontal: 10, paddingBottom: 25, gap: 15}}>
+                  <View style={{backgroundColor: 'white', minHeight: '30%', borderRadius: 16, padding: 10}}>
+                      <Text>Options</Text>
+                  </View>
+                  <View style={{backgroundColor: 'pink', minHeight: '10%', borderRadius: 16, padding: 10}}>
+                      <Text>More options go dey here</Text>
+                  </View>
+                  <Pressable onPress={toggleOptionsModal} style={{backgroundColor: 'white', minHeight: '5%', borderRadius: 16, padding: 10, justifyContent: 'center', alignItems: 'center'}}>
+                      <Text style={{fontWeight: 'bold', fontSize: 17, color: '#333333'}}>Done</Text>
+                  </Pressable>
+                </ScrollView>
+              </View>
+            </Modal>
+          </SafeAreaView>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -372,5 +472,112 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: 'center',
     padding: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'black',
+    borderRadius: 30,
+    overflow: 'hidden',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    zIndex: 10,
+    paddingVertical: 16,
+    paddingHorizontal: 8,
+  },
+  top: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    gap: 8,
+    position: 'absolute',
+    top: 0, 
+    left: 0,
+    zIndex: 99,
+    
+  },
+  closeButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  modalContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 15,
+    overflow: 'hidden',
+    position: 'relative'
+  },
+  modalMedia: {
+    width: '100%',
+    height: '100%',
+  },
+  errorText: {
+    color: 'red',
+  },
+  bottom: {
+    height: 70,
+    backgroundColor: 'black',
+    paddingTop: 8,
+    paddingRight: 16,
+    paddingLeft: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  pressable: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50,
+    // paddingHorizontal: 12,
+    minHeight: 50,
+    maxHeight: 50,
+    backgroundColor: '#333333',
+  },
+  miniButtons: {
+    width: '15%',
+  },
+  profileButton: {
+    flexDirection: 'row',
+    width: '50%',
+    gap: 8,
+  },
+  buttonText: {
+    fontWeight: 'bold',
+    color: 'white',
+    fontSize: 16,
+    letterSpacing: .5
+  },
+  iconFlip: {
+    transform: [{ scaleX: -1 }],
+  },
+  modalAvatar: {
+    width: 35,
+    height: 35,
+    borderRadius: 17.5,
+  },
+  modalUsername: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  modalTime: {
+    color: '#f5f5f5',
+    fontSize: 12,
+    fontWeight: '500',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });
