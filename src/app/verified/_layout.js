@@ -8,6 +8,10 @@ const HomeLayout = () => {
         name="home"
         options={{ headerShown: false, gestureEnabled: false }}
       />
+      <Stack.Screen
+        name="album"
+        options={{ headerShown: false, presentation: "fullScreenModal" }}
+      />
       <Stack.Screen name="profile" options={{ headerShown: false }} />
       <Stack.Screen
         name="chatRoom"

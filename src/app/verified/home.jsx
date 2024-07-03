@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { CameraView, useCameraPermissions, Camera } from "expo-camera";
 import { shareAsync } from "expo-sharing";
 import * as MediaLibrary from "expo-media-library";
-import { Button, Image, Pressable, SafeAreaView, Text, TouchableOpacity, View, StyleSheet, ActivityIndicator } from "react-native";
+import { Button, Image, Pressable, SafeAreaView, Text, TouchableOpacity, View, StyleSheet, ActivityIndicator, ScrollView } from "react-native";
 import { Ionicons, Foundation } from "react-native-vector-icons";
 import Toast from "react-native-toast-message";
 
@@ -20,14 +20,13 @@ import { useUser } from "../../../context/UserContext";
 import { arrayUnion, updateDoc, doc } from "firebase/firestore";
 import { storyPostUpload } from "../../../utils/storyPostUpload";
 import CustomLoader from "../../components/CustomLoader";
-
-
+import { router } from "expo-router";
 
 const HomeScreen = () => {
   const [facing, setFacing] = useState("front");
   const [flash, setFlash] = useState("off");
   const [permission, requestPermission] = useCameraPermissions();
-  const [mediaPermission, requestMediaPermission] = MediaLibrary.usePermissions();
+  const [permissionResponse, requestMediaPermission] = MediaLibrary.usePermissions();
   const [photo, setPhoto] = useState();
   const [video, setVideo] = useState();
   const [isRecording, setIsRecording] = useState(false);
@@ -39,10 +38,9 @@ const HomeScreen = () => {
   const [spotlight, setSpotlight] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [spotRefresh, setSpotRefreshing] = useState(false)
+  const [albums, setAlbums] = useState(null);
   const { userData, loading } = useUser();
   const currentUserId = userData?.id;
-
-
 
   const showToast = (message) => {
     Toast.show({
@@ -101,18 +99,21 @@ const HomeScreen = () => {
     setSpotRefreshing(prev => !prev);
   };
 
-  const getPermissions = async () => {
+  const getCameraPermission = async () => {
     await requestPermission();
-    await requestMediaPermission();
   }
 
-  // useEffect(() => {
-  //   if (!mediaPermission) {
-  //     requestMediaPermission();
-  //   }
-  // }, [mediaPermission, requestMediaPermission]);
+  const getAlbums = async () => {
+    if (permissionResponse.status !== 'granted') {
+      await requestMediaPermission();
+    }
+    const fetchedAlbums = await MediaLibrary.getAlbumsAsync({
+      includeSmartAlbums: true,
+    });
+    setAlbums(fetchedAlbums);
+  }
 
-  if (!permission || !mediaPermission) {
+  if (!permission) {
     return <View />;
   }
 
@@ -126,7 +127,7 @@ const HomeScreen = () => {
           <Text style={{ textAlign: "center", color: "gray" }}>
           We need your permission to access the camera
         </Text>
-        <TouchableOpacity onPress={getPermissions} style={{width: '90%', padding: 8, backgroundColor: '#2ecc71', justifyContent: 'center', alignItems: 'center', borderRadius: 5}}>
+        <TouchableOpacity onPress={getCameraPermission} style={{width: '90%', padding: 8, backgroundColor: '#2ecc71', justifyContent: 'center', alignItems: 'center', borderRadius: 5}}>
           <Text style={{color: '#fff', fontWeight: '600', fontSize: 16}}>Grant Permission</Text>
         </TouchableOpacity>
           </View>
@@ -294,7 +295,7 @@ const HomeScreen = () => {
                         {/* BOTTOM CAMERA ICONS */}
                         <View style={{}}>
                           <View style={styles.iconRow}>
-                            <Pressable style={styles.iconButton}>
+                            <Pressable onPress={() => router.push('/verified/album')} style={styles.iconButton}>
                               <Ionicons
                                 name="images-outline"
                                 size={23}
