@@ -9,7 +9,7 @@ import { pickAndUploadBanner } from "../../../../utils/pickAndUploadBanner";
 import { FIREBASE_AUTH } from "../../../../Firebase/config";
 import processUserImage from "../../../../utils/processUserImage";
 import { router } from "expo-router";
-import { FontAwesome6,  MaterialCommunityIcons, Feather,  MaterialIcons,  Ionicons } from 'react-native-vector-icons';
+import { FontAwesome, FontAwesome6,  MaterialCommunityIcons, Feather,  MaterialIcons,  Ionicons } from 'react-native-vector-icons';
 import { fetchStories } from "../../../../utils/fetchStories";
 import { fetchSpotlights } from "../../../../utils/fetchSpotlights";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -175,7 +175,7 @@ const UserProfile = () => {
   };
 
   const renderItem = ({ item }) => (
-    <Pressable onPress={() => handlePressStory(item)} style={styles.storyContainer}>
+      <Pressable onPress={() => handlePressStory(item)} style={styles.storyContainer}>
       {item.type.startsWith('image/') && (
         <Image source={{ uri: item.url }} placeholder={blurhash} style={styles.storyImage} />
       )}
@@ -186,7 +186,7 @@ const UserProfile = () => {
         <MaterialIcons name= {item.type.startsWith('image/') ? 'photo' : 'video-collection'} size={15} color="#fff" />
       </View>
     </Pressable>
-  );
+    )
 
   return (
     <View style={styles.container}>
@@ -212,6 +212,7 @@ const UserProfile = () => {
           {userData ? (
             <>
               <View style={styles.userContainer}>
+                <View style={styles.userContainer}>
                 <Pressable style={styles.userImageContainer}>
                   <Image source={processUserImage(userData.avatar)} style={styles.userImage} />
                 </Pressable>
@@ -219,14 +220,17 @@ const UserProfile = () => {
                   <Text style={styles.userInfo}>{userData.FirstName} {userData.LastName}</Text>
                   <Text style={styles.userUsername}>{userData.Username}</Text>
                 </View>
+                </View>
+                <View style={{height: '100%', justifyContent: 'flex-start', alignItems: 'flex-start'}}>
+                <Pressable onPress={handleSignOut} style={styles.logoutButton}>
+                  <FontAwesome name='sign-out' size={25} color='red' />
+                </Pressable>
+                </View>
               </View>
             </>
           ) : (
             <Text>No user data available</Text>
           )}
-          <Pressable onPress={handleSignOut} style={styles.logoutButton}>
-            <Text style={styles.logoutText}>Sign Out</Text>
-          </Pressable>
           <View style={styles.tabContainer}>
             <Pressable onPress={toggleTab} style={[styles.tabButton, tab && styles.activeTab]}>
               <Text style={[styles.tabText, tab && styles.activeTabText]}>Stories</Text>
@@ -237,21 +241,28 @@ const UserProfile = () => {
           </View>
         </View>
         <View style={styles.contentContainer}>
-          {tabLoading && (
-          <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <CustomLoader />
-          </View>
-          )}
-          {tab ? (
-            <FlatList
-              data={stories}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.url}
-              showsHorizontalScrollIndicator={false}
-              numColumns={3}
-              contentContainerStyle={styles.storiesList}
-            />
+        {tabLoading && (
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <CustomLoader />
+        </View>
+      )}
+      {tab ? (
+        stories && stories.length > 0 ? (
+          <FlatList
+            data={stories}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.url}
+            showsHorizontalScrollIndicator={false}
+            numColumns={3}
+            contentContainerStyle={styles.storiesList}
+          />
           ) : (
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+              <Text style={{textAlign: 'center', color: 'gray'}}>Stories you post will appear here.</Text>
+            </View>
+          )
+        ) : (
+          spotlights && spotlights.length > 0 ? (
             <FlatList
               data={spotlights}
               renderItem={renderItem}
@@ -260,6 +271,11 @@ const UserProfile = () => {
               numColumns={3}
               contentContainerStyle={styles.storiesList}
             />
+              ) : (
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                  <Text style={{textAlign: 'center', color: 'gray'}}>Spotlights you post will appear here.</Text>
+                </View>
+              )
           )}
         </View>
       </Animated.View>
@@ -359,6 +375,7 @@ const styles = StyleSheet.create({
   userContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     gap: 4,
   },
   userImageContainer: {
@@ -387,7 +404,7 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     width: '100%',
-    marginTop: 20,
+    paddingHorizontal: 10
   },
   logoutText: {
     fontSize: 16,

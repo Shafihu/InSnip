@@ -10,6 +10,7 @@ import { router } from 'expo-router';
 import CustomLoader from './CustomLoader';
 import { Image } from 'expo-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BotItem from './Bot/BotItem';
 
 const Chat = () => {
   const [loading, setLoading] = useState(false);
@@ -94,18 +95,23 @@ const Chat = () => {
               <CustomLoader />
             </View>
           ) : (
-            chats.map((chat) => (
-              <MemoizedChatItem
-                key={chat.chatId}
-                id={chat.id}
-                isSeen={chat.isSeen}
-                chat={chat}
-                avatar={chat.user?.avatar}
-                firstName={chat.user?.FirstName}
-                lastName={chat.user?.LastName}
-                lastMessage={chat.lastMessage}
-              />
-            ))
+            <View style={{}}>
+              <BotItem />
+              {
+                            chats.map((chat) => (
+                              <MemoizedChatItem
+                                key={chat.chatId}
+                                id={chat.id}
+                                isSeen={chat.isSeen}
+                                chat={chat}
+                                avatar={chat.user?.avatar}
+                                firstName={chat.user?.FirstName}
+                                lastName={chat.user?.LastName}
+                                lastMessage={chat.lastMessage}
+                              />
+                            ))
+              }
+            </View>
           )}
         </ScrollView>
         <View style={{ flex: 1, flexGrow: 4 }}>
