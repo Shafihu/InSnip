@@ -85,7 +85,6 @@ const UserProfile = () => {
       }
     } catch (error) {
       console.error("Error handling image:", error);
-      showErrorToast("Error handling image");
     }
   };
 
@@ -212,7 +211,7 @@ const UserProfile = () => {
           {userData ? (
             <>
               <View style={styles.userContainer}>
-                <View style={styles.userContainer}>
+                <View style={[styles.userContainer, {gap: 8}]}>
                 <Pressable style={styles.userImageContainer}>
                   <Image source={processUserImage(userData.avatar)} style={styles.userImage} />
                 </Pressable>
@@ -384,8 +383,8 @@ const styles = StyleSheet.create({
     borderRadius: '100%',
   },
   userImage: {
-    width: 90,
-    height: 90,
+    width: 75,
+    height: 75,
     borderRadius: 50,
   },
   userInfoContainer: {
@@ -501,7 +500,7 @@ const styles = StyleSheet.create({
   closeButton: {
     position: 'absolute',
     top: 40,
-    right: 20,
+    right: 8,
     zIndex: 10,
     paddingVertical: 16,
     paddingHorizontal: 8,
