@@ -2,7 +2,8 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
 
-const ChatBubble = ({ role, text, image, onSpeech }) => {
+const ChatBubble = ({ role, text, imageUrl, onSpeech }) => {
+
   return (
     <View
       style={[
@@ -10,12 +11,17 @@ const ChatBubble = ({ role, text, image, onSpeech }) => {
         role === "user" ? styles.userChatItem : styles.modelChatItem,
       ]}
     >
-      {image && <Image source={image} style={styles.chatImage} />}
+      <Text style={role === 'user' ? styles.userName : styles.botName}>{role === 'user' ? 'Me' : 'My AI'}</Text>
+      {imageUrl && role === 'user' && (
+        <Image source={{ uri: imageUrl }} style={styles.chatImage} />
+      )}
       <Text style={styles.chatText}>{text}</Text>
       {role === "model" && (
-        <TouchableOpacity onPress={onSpeech} style={styles.speakerIcon}>
-          <Ionicons name="volume-high-outline" size={24} color="#fff" />
-        </TouchableOpacity>
+        <View style={styles.speakerIcon}>
+          <TouchableOpacity onPress={onSpeech}>
+            <Ionicons name="volume-high-outline" size={24} color="#333" />
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
@@ -31,27 +37,36 @@ const styles = StyleSheet.create({
   },
   userChatItem: {
     alignSelf: "flex-end",
-    backgroundColor: "#0074FF",
+    backgroundColor: "#DCF8C5",
   },
   modelChatItem: {
     alignSelf: "flex-start",
-    backgroundColor: "#000",
+    backgroundColor: "#fff",
   },
   chatText: {
     fontSize: 16,
-    color: "#fff",
+    color: "#333",
   },
   speakerIcon: {
-    position: "absolute",
-    bottom: 5,
-    right: 5,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
   },
   chatImage: {
-    width: 50,
-    height: 50,
+    width: 200,
+    height: 200,
     borderRadius: 10,
-    marginBottom: 5, 
+    marginBottom: 5,
   },
+  userName: {
+    color: '#2ecc71',
+    fontSize: 13,
+    marginBottom: 4
+  },
+  botName: {
+    color: 'red',
+    fontSize: 13,
+    marginBottom: 4
+  }
 });
 
 export default ChatBubble;

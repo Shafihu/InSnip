@@ -11,7 +11,7 @@ export const pickAndUploadBanner = async () => {
       quality: 1,
     });
 
-    if (result.cancelled) {
+    if (result.canceled) {
       return;
     }
 

@@ -26,7 +26,7 @@ const Header = ({title, avatar, firstname, lastname, id, username, user}) => {
       </Pressable>
       <View className="flex-1 flex-row items-center gap-3">
         <View className="bg-red-500 w-[30px] h-[30px] rounded-full">
-          <Image source={isReceiverBlocked ? require('../../../assets/placeholder.png') : processUserImage(avatar)}  style={{objectFit: 'cover', width: '100%', height: '100%', borderRadius: '100%'}} />
+          <Image source={title === 'My AI' ? require('../../../assets/aiChatPic.png') : isReceiverBlocked ? require('../../../assets/placeholder.png') : processUserImage(avatar)}  style={{objectFit: 'cover', width: '100%', height: '100%', borderRadius: '100%'}} />
         </View>
         <Text className="font-bold tracking-wider text-[18px] text-[#3B2F2F]" numberOfLines={1} ellipsizeMode='tail'>{title}</Text>
       </View>

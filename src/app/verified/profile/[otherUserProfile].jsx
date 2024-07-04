@@ -28,6 +28,7 @@ const UserProfile = () => {
     const currentUserId = currentUser.id;
 
     useEffect(() => {
+        console.log(id)
         if (id) {
             getUserPic();
         }
@@ -101,7 +102,7 @@ const UserProfile = () => {
             </View>
             <Animated.View style={[styles.header, { height: headerHeight }]}>
                 <Animated.Image
-                    source={isReceiverBlocked ? require('../../../../assets/placeholder.png') : profilePic ? { uri: profilePic } : processUserImage(avatar)} 
+                    source={id === undefined ? require('../../../../assets/aiBannerPic.png') : isReceiverBlocked ? require('../../../../assets/placeholder.png') : profilePic ? { uri: profilePic } : processUserImage(avatar)} 
                     style={[
                         styles.headerImage,
                         { opacity: imageOpacity, transform: [{ translateY: imageTranslate }] },
@@ -127,24 +128,26 @@ const UserProfile = () => {
                     <>
                         <View className="flex-1 flex-row items-center gap-4">
                             <Pressable style={{ borderWidth: 3, borderColor: '#2ecc71', borderRadius: '100%', padding: 3 }}>
-                                <Image source={isReceiverBlocked ? require('../../../../assets/placeholder.png') : processUserImage(avatar)} style={styles.userImage} contentFit="cover" transition={500} />
+                                <Image source={id === undefined ? require('../../../../assets/aiChatPic.png') : isReceiverBlocked ? require('../../../../assets/placeholder.png') : processUserImage(avatar)} style={styles.userImage} contentFit="cover" transition={500} />
                             </Pressable>
                             <View className="w-full h-full items-start justify-center gap-2">
-                                <Text style={styles.userInfo} className="font-bold tracking-wide text-[#333333]">{firstname} {lastname}</Text>
-                                <Text style={{ fontSize: 12, fontWeight: 500, color: 'gray' }}>{username}</Text>
+                                <Text style={styles.userInfo} className="font-bold tracking-wide text-[#333333]">{id === undefined ? 'My AI' : `${firstname} ${lastname}`}</Text>
+                                <Text style={{ fontSize: 12, fontWeight: 500, color: 'gray' }}>{id === undefined ? 'myai' : `${username}`}</Text>
                             </View>
                         </View>
                     </>
+                        {id === undefined ? <View /> : 
                     <View>
-                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'}}>
-                            <Pressable onPress={toggleTab} style={{borderBottomWidth: tab && 3, borderColor: '#333333', width: '50%', padding: 10}}>
-                                <Text style={{color: tab ? '#333333' : '#7f8c8d', fontWeight: 'bold', fontSize: 15, textAlign: 'center'}}>Stories</Text>
-                            </Pressable>
-                            <Pressable onPress={toggleTab} style={{borderBottomWidth: !tab && 3, borderColor: '#333333', width: '50%', padding: 10}}>
-                                <Text style={{color: !tab ? '#333333' : '#7f8c8d', fontWeight: 'bold', fontSize: 15, textAlign: 'center'}}>Spotlight</Text>
-                            </Pressable>
-                        </View>
+                                                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'}}>
+                                                    <Pressable onPress={toggleTab} style={{borderBottomWidth: tab && 3, borderColor: '#333333', width: '50%', padding: 10}}>
+                                                        <Text style={{color: tab ? '#333333' : '#7f8c8d', fontWeight: 'bold', fontSize: 15, textAlign: 'center'}}>Stories</Text>
+                                                    </Pressable>
+                                                    <Pressable onPress={toggleTab} style={{borderBottomWidth: !tab && 3, borderColor: '#333333', width: '50%', padding: 10}}>
+                                                        <Text style={{color: !tab ? '#333333' : '#7f8c8d', fontWeight: 'bold', fontSize: 15, textAlign: 'center'}}>Spotlight</Text>
+                                                    </Pressable>
+                                                </View>
                     </View>
+                        }
 
                         {/* <View style={{gap: 10}}>
                             <Pressable onPress={handleBlock} style={{backgroundColor: 'red', padding: 10, borderRadius: 8}}>
@@ -152,18 +155,20 @@ const UserProfile = () => {
                             </Pressable>
                         </View> */}
                 </View>
-                <View style={{ height: '100%', width: '100%', flexWrap: 'wrap', flexDirection: 'row'}}>
-                    {tab && 
-                        <>
-                            <View style={{backgroundColor: 'red', width: CARD_WIDTH, height: 200}}></View>
-                        </>
-                    }
-                    {!tab && 
-                        <>
-                            <View style={{backgroundColor: 'blue', width: CARD_WIDTH, height: 200}}></View>
-                        </>
-                    }
-                </View>
+                {id === undefined ? <View /> : 
+                                    <View style={{ height: '100%', width: '100%', flexWrap: 'wrap', flexDirection: 'row'}}>
+                                    {tab && 
+                                        <>
+                                            <View style={{backgroundColor: 'red', width: CARD_WIDTH, height: 200}}></View>
+                                        </>
+                                    }
+                                    {!tab && 
+                                        <>
+                                            <View style={{backgroundColor: 'blue', width: CARD_WIDTH, height: 200}}></View>
+                                        </>
+                                    }
+                                </View>
+                }
             </Animated.ScrollView>
         </View>
     );

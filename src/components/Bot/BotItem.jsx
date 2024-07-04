@@ -4,7 +4,7 @@ import { MaterialIcons, Feather } from 'react-native-vector-icons';
 import { router } from 'expo-router';
 
 const BotItem = ({}) => {
-
+//TODO: add the little robot icon beside its profile pic
   return (
     <Pressable
       onPress={() => router.push('/verified/chatRoom/botChatRoom')}
@@ -27,6 +27,7 @@ const BotItem = ({}) => {
             />
           <Text style={styles.messageText}>
             {/* {lastMessage ? (isImageMessage(lastMessage) ? 'Media' : lastMessage) : 'Tap to chat'} */}
+            Ask me anything!
           </Text>
         </View>
       </View>

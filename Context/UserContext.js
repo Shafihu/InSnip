@@ -93,6 +93,7 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   const updateProfilePicture = async (userId, downloadURL) => {
+    if (!userId || !downloadURL) return;
     try {
       const userDocRef = doc(FIRESTORE_DB, "users", userId);
       await updateDoc(userDocRef, { picture: downloadURL });
