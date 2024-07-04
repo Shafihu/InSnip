@@ -15,12 +15,11 @@ import { speak, isSpeakingAsync, stop } from "expo-speech";
 import Bottom from "../Chat/Bottom";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Chatbot = () => {
-  const [chat, setChat] = useState([]);
+const Chatbot = ({ chats, setChats }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const flatListRef = useRef(null)
+  const flatListRef = useRef(null);
 
   const API_KEY = process.env.EXPO_PUBLIC_GENERATIVE_AI_KEY;
 
@@ -29,8 +28,8 @@ const Chatbot = () => {
       try {
         const storageChats = await AsyncStorage.getItem('BotChats');
         if (storageChats) {
-          setChat(JSON.parse(storageChats));
-          flatListRef.current.scrollToEnd({ animated: true })
+          setChats(JSON.parse(storageChats));
+          flatListRef.current.scrollToEnd({ animated: true });
         }
       } catch (error) {
         console.error('Error fetching chats from storage:', error);
@@ -43,48 +42,43 @@ const Chatbot = () => {
     if (message === '') return;
 
     let updatedChat = [
-      ...chat,
+      ...chats,
       {
         role: "user",
         parts: [{ text: message }],
       },
     ];
 
-    setChat(updatedChat);
+    setChats(updatedChat);
     setLoading(true);
 
-    if (message) {
-      try {
-        const response = await axios.post(
-          `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`,
-          {
-            contents: updatedChat,
-          }
-        );
-
-        const modelResponse =
-          response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-
-        if (modelResponse) {
-          const updatedChatWithModel = [
-            ...updatedChat,
-            {
-              role: "model",
-              parts: [{ text: modelResponse }],
-            },
-          ];
-
-          setChat(updatedChatWithModel);
-          await AsyncStorage.setItem('BotChats', JSON.stringify(updatedChatWithModel));
+    try {
+      const response = await axios.post(
+        `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`,
+        {
+          contents: updatedChat,
         }
-      } catch (error) {
-        console.error("Error calling Gemini Pro API:", error);
-        console.error("Error response:", error.response);
-        setError("An error occurred. Please try again.");
-      } finally {
-        setLoading(false);
+      );
+
+      const modelResponse =
+        response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+      if (modelResponse) {
+        const updatedChatWithModel = [
+          ...updatedChat,
+          {
+            role: "model",
+            parts: [{ text: modelResponse }],
+          },
+        ];
+
+        setChats(updatedChatWithModel);
+        await AsyncStorage.setItem('BotChats', JSON.stringify(updatedChatWithModel));
       }
-    } else {
+    } catch (error) {
+      console.error("Error calling Gemini Pro API:", error);
+      setError("An error occurred. Please try again.");
+    } finally {
       setLoading(false);
     }
   };
@@ -119,7 +113,7 @@ const Chatbot = () => {
         <View style={styles.container}>
           <FlatList
             ref={flatListRef}
-            data={chat}
+            data={chats}
             renderItem={renderChatItem}
             keyExtractor={(item, index) => index.toString()}
             contentContainerStyle={styles.chatContainer}
@@ -128,7 +122,7 @@ const Chatbot = () => {
           />
         </View>
         {loading && 
-          <View style={{paddingHorizontal: 6, backgroundColor: 'transparent'}}>
+          <View style={{paddingHorizontal: 10, backgroundColor: 'transparent'}}>
             <Image source={require('../../../assets/aiPic.png')} style={{width: 50, height: 50, objectFit: 'cover'}} />
           </View>
         }

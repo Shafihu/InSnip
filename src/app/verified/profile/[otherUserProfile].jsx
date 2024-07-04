@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, Pressable, StyleSheet, View, Animated, Dimensions} from "react-native";
+import { Text, Pressable, StyleSheet, View, Animated, Dimensions, Alert } from "react-native";
 import Toast from "react-native-toast-message";
 import processUserImage from "../../../../utils/processUserImage";
 import { router, useLocalSearchParams } from "expo-router";
@@ -9,6 +9,7 @@ import { FIRESTORE_DB } from "../../../../Firebase/config";
 import { Image } from "expo-image";
 import { useUser } from "../../../../context/UserContext";
 import { useChatStore } from "../../../../context/ChatContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 0;
@@ -71,6 +72,7 @@ const UserProfile = () => {
     const toggleTab = () => {
         setTab(prev => !prev);
     }
+
 
     const headerHeight = scrollY.interpolate({
         inputRange: [0, HEADER_SCROLL_DISTANCE],
