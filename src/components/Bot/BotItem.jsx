@@ -1,10 +1,9 @@
 import React from 'react';
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
-import { MaterialIcons, Feather } from 'react-native-vector-icons';
+import { MaterialIcons, Feather, Entypo } from 'react-native-vector-icons';
 import { router } from 'expo-router';
 
 const BotItem = ({}) => {
-//TODO: add the little robot icon beside its profile pic
   return (
     <Pressable
       onPress={() => router.push('/verified/chatRoom/botChatRoom')}
@@ -15,12 +14,15 @@ const BotItem = ({}) => {
           source={require('../../../assets/aiChatPic.png')}
           style={styles.avatar}
         />
+        <View style={{position: 'absolute', left: 0, bottom: -5, width: 20, height: 20, backgroundColor: 'transparent', borderRadius: '10', overflow: 'hidden'}}>
+          <Image source={require('../../../assets/subBot.png')} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+        </View>
       </View>
       <View style={styles.content}>
         <Text style={styles.name}>My AI</Text>
         <View style={styles.messageContainer}>
-            <MaterialIcons
-              name="chat-bubble-outline"
+            <Entypo
+              name="chat"
               size={12}
               color='#2ecc71'
               style={styles.iconFlip}
@@ -67,12 +69,14 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    overflow: 'hidden',
+    // overflow: 'hidden',
     backgroundColor: 'rgba(0,0,0,0.1)', 
+    position: 'relative'
   },
   avatar: {
     width: '100%',
     height: '100%',
+    borderRadius: '50%'
   },
   content: {
     flex: 1,
@@ -87,6 +91,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 4,
+    gap: 2.5
   },
   iconFlip: {
     transform: [{ scaleX: -1 }], 
@@ -94,7 +99,7 @@ const styles = StyleSheet.create({
   messageText: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#7f8c8d', 
+    color: '#2ecc71', 
     marginLeft: 4,
   },
 });

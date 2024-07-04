@@ -38,10 +38,14 @@ const styles = StyleSheet.create({
   userChatItem: {
     alignSelf: "flex-end",
     backgroundColor: "#DCF8C5",
+    borderRightWidth: 3,
+    borderColor: '#2ecc71'
   },
   modelChatItem: {
     alignSelf: "flex-start",
     backgroundColor: "#fff",
+    borderLeftWidth: 3,
+    borderColor: 'red'
   },
   chatText: {
     fontSize: 16,

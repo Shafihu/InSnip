@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
-import { MaterialIcons, Feather } from 'react-native-vector-icons';
+import { MaterialIcons, Feather, FontAwesome, FontAwesome6 } from 'react-native-vector-icons';
 import { useRouter } from 'expo-router';
 import processUserImage from '../../../utils/processUserImage';
 import { useChatStore } from '../../../context/ChatContext';
@@ -45,6 +45,7 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
     return message && message.startsWith('https');
   };
 
+
   const handlePress = async () => {
     if (!chat?.chatId || !chat?.user?.id) return;
     
@@ -77,27 +78,35 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
       <View style={styles.content}>
         <Text style={styles.name}>{firstName} {lastName}</Text>
         <View style={styles.messageContainer}>
-          {isImageMessage(lastMessage) ? (
-            <MaterialIcons
-              name="photo"
-              size={12}
-              color="#2ecc71"
-            />
-          ) : (
+          {!lastMessage ? (
             <MaterialIcons
               name="chat-bubble-outline"
-              size={12}
-              color='#2ecc71'
+              size={13}
+              color="gray"
               style={styles.iconFlip}
             />
+          ) :
+          isImageMessage(lastMessage) ? 
+          (
+            <FontAwesome
+              name= {isSeen ? 'square-o' : 'square'}
+              size={13}
+              color='#E84855'
+            />
+          ) : (
+            <FontAwesome6
+              name= 'caret-right'
+              size={16}
+              color='#9381FF'
+            />
           )}
-          <Text style={styles.messageText}>
-            {lastMessage ? (isImageMessage(lastMessage) ? 'Media' : lastMessage) : 'Tap to chat'}
+          <Text style={[styles.messageText, {color: !lastMessage ? 'gray' : isImageMessage(lastMessage) ? '#E84855' : '#9381FF' }]}>
+            {!lastMessage ? 'Tap to chat' : isSeen ? 'Delivered' :  'New Chat'}
           </Text>
         </View>
-      </View>
+      </View> 
       <View style={styles.right}>
-      <View style={[styles.newIndicator, { backgroundColor: isSeen ? 'transparent' : '#2ecc71' }]} />
+      <View style={[styles.newIndicator, { backgroundColor: !isSeen ? (isImageMessage(lastMessage) ? '#E84855' : '#9381FF') : 'transparent'}]} />
       <Pressable onPress={handleChatCam}>
         <Feather name="camera" size={20} color="#B0B0B0" />
       </Pressable>
@@ -152,6 +161,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 4,
+    gap: 2.5
   },
   iconFlip: {
     transform: [{ scaleX: -1 }], 
