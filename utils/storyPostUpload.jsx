@@ -33,7 +33,7 @@ export const storyPostUpload = async (fileUri, userId, setUploadProgress, sRef, 
   try {
     let uri, type, blob;
 
-    if (sRef === 'spotlight') {
+    if (sRef === 'spotlight' || sRef === 'stories') {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
@@ -48,12 +48,14 @@ export const storyPostUpload = async (fileUri, userId, setUploadProgress, sRef, 
       uri = result.assets[0].uri;
       type = result.assets[0].type;
     } else {
-      uri = fileUri;
+        uri = fileUri;
     }
 
     const response = await fetch(uri);
     blob = await response.blob();
     type = type || blob.type;
+
+    console.log(type)
 
     const fileRef = ref(FIREBASE_STORAGE, `${sRef}/${Date.now()}`);
     const metadata = {
@@ -73,5 +75,6 @@ export const storyPostUpload = async (fileUri, userId, setUploadProgress, sRef, 
   } catch (error) {
     console.error("Error uploading file:", error);
     return null;
+  } finally {
   }
 };

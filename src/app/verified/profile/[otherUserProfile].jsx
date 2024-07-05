@@ -169,7 +169,7 @@ const UserProfile = () => {
 
     const renderItem = ({ item }) => (
         <Pressable onPress={() => handlePressStory(item)} style={styles.storyContainer}>
-        {item.type.startsWith('image/') && (
+        {item.type.startsWith('image') && (
           <Image source={{ uri: item.url }} placeholder={blurhash} style={styles.storyImage} />
         )}
         {item.type.startsWith('video') && (
@@ -299,7 +299,7 @@ const UserProfile = () => {
                       <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalTime}>5 days ago</Text>
                     </View>
                 </Pressable>
-                  {selected && selected.type && selected.type.startsWith('image/') ? (
+                  {selected && selected.type && selected.type.startsWith('image') ? (
                     <Image source={{ uri: selected.url }} style={styles.modalMedia} />
                   ) : selected && selected.type && selected.type.startsWith('video') ? (
                     <Video source={{ uri: selected.url }} style={styles.modalMedia} resizeMode={ResizeMode.CONTAIN} shouldPlay isLooping/>

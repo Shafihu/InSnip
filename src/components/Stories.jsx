@@ -171,16 +171,16 @@ const Stories = () => {
                 {stories.map((story, index) => (
                   <Pressable onPress={() => handlePressStory(story)} key={index} style={styles.storyItem}>
                     <View style={{position: 'absolute', top: 5, right: 5, zIndex: 50}}>
-                      <MaterialIcons name= {story.type.startsWith('image/') ? 'photo' : 'video-collection'} size={15} color="#fff" />
+                      <MaterialIcons name= {story.type.startsWith('image') ? 'photo' : 'video-collection'} size={15} color="#fff" />
                     </View>
-                    {story && story.type && story.type.startsWith('image/') ? (
+                    {story && story.type && story.type.startsWith('image') ? (
                       <Image source={{ uri: story.url }} style={styles.storyMedia} />
-                    ) : story && story.type && story.type.startsWith('video/') ? (
+                    ) : story && story.type && story.type.startsWith('video') ? (
                       <Video source={{ uri: story.url }} style={styles.storyMedia} resizeMode="cover" />
                     ) : (
                       <Text>Unsupported media type</Text>
                     )}
-                    <LinearGradient colors={['rgba(0,0,0,0.01)', 'rgba(0,0,0,0.3)']} style={styles.storyOverlay}>
+                    <LinearGradient colors={['rgba(0,0,0,0.01)', 'rgba(0,0,0,1)']} style={styles.storyOverlay}>
                       <Text numberOfLines={1} ellipsizeMode='trail' style={styles.storyUsername}>{story.userDetails ? story.userDetails.Username : 'Unknown'}</Text>
                     </LinearGradient>
                   </Pressable>
@@ -205,9 +205,9 @@ const Stories = () => {
                   <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalTime}>5 days ago</Text>
                 </View>
             </Pressable>
-              {selectedStory && selectedStory.type && selectedStory.type.startsWith('image/') ? (
+              {selectedStory && selectedStory.type && selectedStory.type.startsWith('image') ? (
                 <Image source={{ uri: selectedStory.url }} style={styles.modalMedia} />
-              ) : selectedStory && selectedStory.type && selectedStory.type.startsWith('video/') ? (
+              ) : selectedStory && selectedStory.type && selectedStory.type.startsWith('video') ? (
                 <Video source={{ uri: selectedStory.url }} style={styles.modalMedia} resizeMode="cover" shouldPlay isLooping/>
               ) : (
                 <Text style={styles.errorText}>Oops! Something went wrong.</Text>
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
   closeButton: {
     position: 'absolute',
     top: 40,
-    right: 20,
+    right: 5,
     zIndex: 10,
     paddingVertical: 16,
     paddingHorizontal: 8,
@@ -416,6 +416,7 @@ const styles = StyleSheet.create({
   modalMedia: {
     width: '100%',
     height: '100%',
+    objectFit: 'cover'
   },
   errorText: {
     color: 'red',

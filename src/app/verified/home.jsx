@@ -38,7 +38,8 @@ const HomeScreen = () => {
   const [spotlight, setSpotlight] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [spotRefresh, setSpotRefreshing] = useState(false)
-  const [albums, setAlbums] = useState(null);
+  const [storyUrl, setStoryUrl] = useState(null);
+  const [error, setError] = useState(null);
   const { userData, loading } = useUser();
   const currentUserId = userData?.id;
 
@@ -201,7 +202,23 @@ const HomeScreen = () => {
       console.log('Error getting url and storing it: ' + error);
     }
   };
+
+
+  //Post a strory through gallery ie. select media from gallery then upload rather than through the app camera
   
+  const handlePostStoryByGallery = async () => {
+    try {
+      const downloadUrl = await storyPostUpload(null, currentUserId, setUploadProgress, 'stories', userData);
+      if(downloadUrl){
+        showToast('Story uploaded');
+        setStoryUrl(downloadUrl);
+      }
+      return downloadUrl;
+    } catch (error) {
+      setError('Failed to upload story');
+      console.log(error);
+    }
+  };
 
   const handleShare = async () => {
     if(photo){
@@ -295,7 +312,7 @@ const HomeScreen = () => {
                         {/* BOTTOM CAMERA ICONS */}
                         <View style={{}}>
                           <View style={styles.iconRow}>
-                            <Pressable onPress={() => router.push('/verified/album')} style={styles.iconButton}>
+                            <Pressable onPress={handlePostStoryByGallery} style={styles.iconButton}>
                               <Ionicons
                                 name="images-outline"
                                 size={23}
