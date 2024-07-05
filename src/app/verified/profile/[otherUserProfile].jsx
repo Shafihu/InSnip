@@ -194,7 +194,7 @@ const UserProfile = () => {
           </View>
           <Animated.View style={[styles.header, { height: headerHeight }]}>
             <Animated.Image
-              source={profilePic ? { uri: profilePic } : processUserImage(avatar)}
+              source={id === undefined ? require('../../../../assets/aiBannerPic.png') : isReceiverBlocked ? require('../../../../assets/placeholder.png') : profilePic ? { uri: profilePic } : processUserImage(avatar)}
               style={[
                 styles.headerImage,
                 { opacity: imageOpacity, transform: [{ translateY: imageTranslate }] },
@@ -216,10 +216,7 @@ const UserProfile = () => {
                     </View>
                     </View>
                   </View>
-                </>
-              ) : (
-                <Text>No data available</Text>
-              )}
+                
               <View style={styles.tabContainer}>
                 <Pressable onPress={toggleTab} style={[styles.tabButton, tab && styles.activeTab]}>
                   <Text style={[styles.tabText, tab && styles.activeTabText]}>Stories</Text>
@@ -228,6 +225,20 @@ const UserProfile = () => {
                   <Text style={[styles.tabText, !tab && styles.activeTabText]}>Spotlight</Text>
                 </Pressable>
               </View>
+              </>
+              ) : (
+                <View style={styles.userContainer}>
+                <View style={[styles.userContainer, {gap: 8}]}>
+                <Pressable style={styles.userImageContainer}>
+                  <Image source={require('../../../../assets/aiChatPic.png')} style={styles.userImage} />
+                </Pressable>
+                <View style={styles.userInfoContainer}>
+                  <Text style={styles.userInfo}>My AI</Text>
+                  <Text style={styles.userUsername}>myai</Text>
+                </View>
+                </View>
+              </View>
+              )}
             </View>
             <View style={styles.contentContainer}>
             {tabLoading && (
@@ -235,7 +246,9 @@ const UserProfile = () => {
               <CustomLoader />
             </View>
           )}
-          {tab ? (
+            {!id ? <View /> : (
+                <>
+                              {tab ? (
             stories && stories.length > 0 ? (
               <FlatList
                 data={stories}
@@ -266,6 +279,8 @@ const UserProfile = () => {
                     </View>
                   )
               )}
+                </>
+            )}
             </View>
           </Animated.View>
           {(selected) && (
