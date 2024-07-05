@@ -10,7 +10,7 @@ import { shareAsync } from 'expo-sharing';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-const VideoCard = ({ video, isActive }) => {
+const VideoCard = ({ video, isActive, handleOpenPress }) => {
   const videoRef = useRef(null);
   const [play, setPlay] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
@@ -111,7 +111,7 @@ const VideoCard = ({ video, isActive }) => {
           <Pressable onPress={toggleLike} style={styles.icon}>
             <AntDesign name="heart" size={32} color={like ? 'red' : 'white'} />
           </Pressable>
-          <Pressable onPress={toggleCommentsModal} style={styles.icon}>
+          <Pressable onPress={handleOpenPress} style={styles.icon}>
             <MaterialIcons name="mode-comment" size={30} color="white" />
             {/* <Text style={styles.text}>80</Text> */}
           </Pressable>

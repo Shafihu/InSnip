@@ -40,6 +40,10 @@ const Spotlight = ({ reload }) => {
     });
   };
 
+  useEffect(() => {
+    bottomSheetRef.current?.close();
+  }, [])
+
   const fetchAndSetSpotlights = async () => {
     const spotlights = await fetchSpotlights();
     await AsyncStorage.setItem('spotlights', JSON.stringify(spotlights));
@@ -47,7 +51,6 @@ const Spotlight = ({ reload }) => {
   };
 
   useEffect(() => {
-    console.log(reload);
     const loadSpotlights = async () => {
       try {
         setLoading(true);
@@ -90,9 +93,6 @@ const Spotlight = ({ reload }) => {
     console.log('No videos available');
   };
 
-  const renderItem = ({ item, index }) => (
-    <VideoCard video={item} isActive={index === activeIndex} />
-  );
 
   const onViewableItemsChanged = ({ viewableItems }) => {
     if (viewableItems.length > 0) {
@@ -123,7 +123,14 @@ const Spotlight = ({ reload }) => {
     console.log('handleSheetChanges', index);
   }, []);
 
-  const snapPoints = useMemo(() => ['75%', '100%'], [])
+  const snapPoints = useMemo(() => ['75%', '100%'], []);
+
+  const handleClosePress = () => bottomSheetRef.current?.close();
+  const handleOpenPress = () => bottomSheetRef.current?.expand();
+
+  const renderItem = ({ item, index, handleOpenPress}) => (
+    <VideoCard video={item} isActive={index === activeIndex} />
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -161,18 +168,17 @@ const Spotlight = ({ reload }) => {
           }
         />
       </View>
-      <View style={styles.sheetContainer}>
       <BottomSheet
         ref={bottomSheetRef}
         onChange={handleSheetChanges}
         snapPoints={snapPoints}
-        index={0}
+        index={-1}
+        enablePanDownToClose={true}
       >
         <BottomSheetView style={styles.contentContainer}>
           <Text>Awesome 🎉</Text>
         </BottomSheetView>
       </BottomSheet>
-    </View>
     </SafeAreaView>
   );
 };
@@ -198,16 +204,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 0.5,
     textAlign: 'center',
-    width: '100%',
-  },
-  sheetContainer: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    height: '100%',
     width: '100%',
   },
   contentContainer: {
