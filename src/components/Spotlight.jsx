@@ -8,7 +8,7 @@ import { useUser } from '../../context/UserContext';
 import { storyPostUpload } from '../../utils/storyPostUpload';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -121,6 +121,25 @@ const Spotlight = ({ reload }) => {
   const handleOpenPress = () => snapToIndex(0);
   const handleClosePress = () => snapToIndex(-1);
 
+  const renderBackdrop = useCallback(
+		(props) => (
+			<BottomSheetBackdrop
+				{...props}
+				disappearsOnIndex={-1}
+				appearsOnIndex={0}
+			/>
+		),
+		[]
+	);
+
+  const testData = useMemo(
+    () =>
+      Array(50)
+        .fill(0)
+        .map((_, index) => `index-${index}`),
+    []
+  );
+
   const renderItem = ({ item, index}) => (
     <VideoCard video={item} isActive={index === activeIndex} handleOpenPress={handleOpenPress}/>
   );
@@ -167,9 +186,10 @@ const Spotlight = ({ reload }) => {
         snapPoints={snapPoints}
         index={-1}
         enablePanDownToClose={true}
+        backdropComponent={renderBackdrop}
       >
         <BottomSheetView style={styles.contentContainer}>
-          <Text>Awesome 🎉</Text>
+          <Text>The creator has turned off comments</Text>
         </BottomSheetView>
       </BottomSheet>
     </SafeAreaView>
