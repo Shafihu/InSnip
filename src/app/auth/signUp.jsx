@@ -1,3 +1,6 @@
+//TODO: auto generate username
+
+
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList, Platform , ActivityIndicator} from 'react-native';
 import { ProgressBar } from 'react-native-paper';
@@ -54,6 +57,8 @@ const SignUpScreen = () => {
               value={firstName}
               onChangeText={setFirstName}
               selectionColor="#2ecc71"
+              placeholder="eg: Afia"
+              placeholderTextColor='rgba(0,0,0,0.3)'
             />
           </View>
           <View style={styles.inputWrapper}>
@@ -63,6 +68,8 @@ const SignUpScreen = () => {
               value={lastName}
               onChangeText={setLastName}
               selectionColor="#2ecc71"
+              placeholder="eg: Frimpong"
+              placeholderTextColor='rgba(0,0,0,0.3)'
             />
           </View>
         </>
@@ -95,6 +102,8 @@ const SignUpScreen = () => {
             value={username}
             onChangeText={setUsername}
             selectionColor="#2ecc71"
+            placeholder="eg: afia_frimpong123"
+            placeholderTextColor='rgba(0,0,0,0.3)'
           />
         </View>
       )
@@ -135,6 +144,8 @@ const SignUpScreen = () => {
               onChangeText={setEmail}
               keyboardType="email-address"
               selectionColor="#2ecc71"
+              placeholder="eg: afiafrimpong123@gmail.com"
+              placeholderTextColor='rgba(0,0,0,0.3)'
             />
           </View>
           <View style={styles.inputWrapper}>
@@ -182,6 +193,7 @@ const SignUpScreen = () => {
       )
     },
   ];
+  
 
   const progress = (step + 1) / steps.length;
 

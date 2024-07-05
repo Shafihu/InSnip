@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const botChatRoom = () => {
   const [chats, setChats] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false)
 
   const handleClearBotChats = async () => {
     try {
@@ -34,10 +35,14 @@ const botChatRoom = () => {
     );
   };
 
+  const chooseVoice = () => {
+    setModalVisible(true);
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <Header title="My AI" handleClearChats={confirmClearBotChats} />
-      <Chatbot chats={chats} setChats={setChats} />
+      <Header title="My AI" handleClearChats={confirmClearBotChats} chooseVoice={chooseVoice} />
+      <Chatbot chats={chats} setChats={setChats} modalVisible={modalVisible} setModalVisible={setModalVisible}/>
     </SafeAreaView>
   );
 }

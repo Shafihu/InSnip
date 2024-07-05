@@ -7,18 +7,23 @@ import {
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
-  Image
+  Image,
+  TouchableOpacity,
+  Modal,
+  Button,
 } from "react-native";
 import axios from "axios";
 import ChatBubble from "./ChatBubble";
-import { speak, isSpeakingAsync, stop } from "expo-speech";
+import { speak, isSpeakingAsync, stop, getAvailableVoicesAsync, VoiceQuality } from "expo-speech";
 import Bottom from "../Chat/Bottom";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Chatbot = ({ chats, setChats }) => {
+const Chatbot = ({ chats, setChats, modalVisible, setModalVisible }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [selectedVoice, setSelectedVoice] = useState(null);
+  const [voices, setVoices] = useState([]);
   const flatListRef = useRef(null);
 
   const API_KEY = process.env.EXPO_PUBLIC_GENERATIVE_AI_KEY;
@@ -35,7 +40,14 @@ const Chatbot = ({ chats, setChats }) => {
         console.error('Error fetching chats from storage:', error);
       }
     };
+
+    const fetchVoices = async () => {
+      const availableVoices = await getAvailableVoicesAsync();
+      setVoices(availableVoices);
+    };
+
     fetchBotChatsFromStorage();
+    fetchVoices();
   }, []);
 
   const handleSend = async (message) => {
@@ -89,7 +101,10 @@ const Chatbot = ({ chats, setChats }) => {
       setIsSpeaking(false);
     } else {
       if (!(await isSpeakingAsync())) {
-        speak(text);
+        speak(text, {
+          voice: selectedVoice?.identifier,
+          quality: VoiceQuality.Enhanced
+        });
         setIsSpeaking(true);
       }
     }
@@ -101,6 +116,18 @@ const Chatbot = ({ chats, setChats }) => {
       text={item.parts[0].text}
       onSpeech={() => handleSpeech(item.parts[0].text)}
     />
+  );
+
+  const renderVoiceItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.voiceItem}
+      onPress={() => {
+        setSelectedVoice(item);
+        setModalVisible(false);
+      }}
+    >
+      <Text style={styles.voiceText}>{item.name || item.identifier}</Text>
+    </TouchableOpacity>
   );
 
   return (
@@ -127,6 +154,23 @@ const Chatbot = ({ chats, setChats }) => {
           </View>
         }
         <Bottom handleSend={handleSend} from='bot' />
+        <Modal
+          visible={modalVisible}
+          animationType="slide"
+          transparent={true}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <FlatList
+                data={voices}
+                renderItem={renderVoiceItem}
+                keyExtractor={(item, index) => index.toString()}
+                contentContainerStyle={{backgroundColor: 'red', flexGrow: 1}}
+              />
+                <TouchableOpacity onPress={() => setModalVisible(false)}  style={{width: 50, height: 50, borderRadius: 25, backgroundColor: 'rgba(0,0,0,0.2)'}}></TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </ImageBackground>
     </KeyboardAvoidingView>
   );
@@ -181,6 +225,49 @@ const styles = StyleSheet.create({
   error: {
     color: "red",
     marginTop: 10,
+  },
+  voiceButton: {
+    padding: 10,
+    backgroundColor: "#0074FF",
+    borderRadius: 25,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+  voiceButtonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    // alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    width: '100%'
+  },
+  modalContent: {
+    width: "80%",
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: "100%",
+    paddingVertical: 70,
+    gap: 20,
+  },
+  voiceItem: {
+    padding: 10,
+    borderBottomColor: "#ccc",
+    borderBottomWidth: 1,
+    width: "100%",
+    
+  },
+  voiceText: {
+    fontSize: 16,
+    color: "#333",
+    textAlign: 'center',
+    width: '100%'
   },
 });
 

@@ -1,11 +1,11 @@
 import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
 import React from 'react';
-import { FontAwesome5, FontAwesome, AntDesign } from 'react-native-vector-icons';
+import { FontAwesome5, FontAwesome, AntDesign, MaterialIcons } from 'react-native-vector-icons';
 import { router } from 'expo-router';
 import processUserImage from '../../../utils/processUserImage';
 import { useChatStore } from '../../../context/ChatContext';
 
-const Header = ({ title, avatar, firstname, lastname, id, username, user, handleClearChats }) => {
+const Header = ({ title, avatar, firstname, lastname, id, username, user, handleClearChats, chooseVoice }) => {
   const { isReceiverBlocked } = useChatStore();
   return (
     <Pressable
@@ -46,9 +46,14 @@ const Header = ({ title, avatar, firstname, lastname, id, username, user, handle
       </View>
       <View style={styles.actionsContainer}>
         {title === 'My AI' ? (
-          <Pressable onPress={handleClearChats} style={styles.actionButton}>
-            <AntDesign name="delete" size={21} color="red" />
-          </Pressable>
+          <>
+            <Pressable onPress={chooseVoice} style={styles.actionButton}>
+              <MaterialIcons name="keyboard-voice" size={21} color="#3B2F2F" />
+            </Pressable>
+            <Pressable onPress={handleClearChats} style={styles.actionButton}>
+              <AntDesign name="delete" size={21} color="red" />
+            </Pressable>
+          </>
         ) : (
           <>
             <Pressable style={styles.actionButton}>
@@ -72,15 +77,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 2,
-    paddingHorizontal: 2,
+    paddingHorizontal: 5,
     backgroundColor: 'transparent',
   },
   backButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 40,
-    height: 40,
+    width: 35,
+    height: 35,
     borderRadius: 20,
+    // backgroundColor: 'red'
   },
   titleContainer: {
     flex: 1,
@@ -93,7 +99,7 @@ const styles = StyleSheet.create({
     height: 30,
     borderRadius: 15,
     overflow: 'hidden',
-    backgroundColor: 'red',
+    backgroundColor: 'orange',
   },
   avatarImage: {
     width: '100%',
@@ -109,7 +115,7 @@ const styles = StyleSheet.create({
   },
   actionsContainer: {
     flexDirection: 'row',
-    gap: 2,
+    gap: 5,
   },
   actionButton: {
     width: 40,
