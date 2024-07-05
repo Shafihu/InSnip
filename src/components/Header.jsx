@@ -84,7 +84,9 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash, addSpotlight}) 
 
             <View style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
                 {header !== 'Spotlight' && header !== 'Map' && (
-                    <Pressable style={{
+                    <Pressable 
+                    onPress={() => router.push('/verified/addChat')}
+                    style={{
                         backgroundColor: 'rgba(0, 0, 0, 0.05)',
                         borderRadius: 20,
                         width: 40,

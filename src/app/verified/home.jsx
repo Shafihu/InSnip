@@ -321,7 +321,7 @@ const HomeScreen = () => {
                               />
                             </Pressable>
 
-                            <Pressable style={styles.iconButton}>
+                            <Pressable onPress={() => router.push('/verified/searchUsers')} style={styles.iconButton}>
                               <Foundation
                                 name="magnifying-glass"
                                 size={25}

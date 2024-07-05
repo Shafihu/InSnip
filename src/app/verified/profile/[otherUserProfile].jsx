@@ -385,6 +385,7 @@ const styles = StyleSheet.create({
         borderWidth: 3,
         borderColor: '#2ecc71',
         borderRadius: '100%',
+        backgroundColor: 'orange'
       },
       userImage: {
         width: 75,

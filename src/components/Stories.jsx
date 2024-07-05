@@ -1,3 +1,5 @@
+//TODO: Check whether users are firends or not and display add button off the outcome
+
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Text, StyleSheet, ActivityIndicator, SafeAreaView, Pressable, Modal, RefreshControl, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
