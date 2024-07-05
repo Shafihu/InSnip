@@ -40,10 +40,6 @@ const Spotlight = ({ reload }) => {
     });
   };
 
-  useEffect(() => {
-    bottomSheetRef.current?.close();
-  }, [])
-
   const fetchAndSetSpotlights = async () => {
     const spotlights = await fetchSpotlights();
     await AsyncStorage.setItem('spotlights', JSON.stringify(spotlights));
@@ -119,18 +115,16 @@ const Spotlight = ({ reload }) => {
     }
   };
 
-  const handleSheetChanges = useCallback((index) => {
-    console.log('handleSheetChanges', index);
-  }, []);
-
   const snapPoints = useMemo(() => ['75%', '100%'], []);
 
-  const handleClosePress = () => bottomSheetRef.current?.close();
-  const handleOpenPress = () => bottomSheetRef.current?.expand();
+  const snapToIndex = (index) => bottomSheetRef.current?.snapToIndex(index);
+  const handleOpenPress = () => snapToIndex(0);
+  const handleClosePress = () => snapToIndex(-1);
 
-  const renderItem = ({ item, index, handleOpenPress}) => (
-    <VideoCard video={item} isActive={index === activeIndex} />
+  const renderItem = ({ item, index}) => (
+    <VideoCard video={item} isActive={index === activeIndex} handleOpenPress={handleOpenPress}/>
   );
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -170,7 +164,6 @@ const Spotlight = ({ reload }) => {
       </View>
       <BottomSheet
         ref={bottomSheetRef}
-        onChange={handleSheetChanges}
         snapPoints={snapPoints}
         index={-1}
         enablePanDownToClose={true}

@@ -7,15 +7,17 @@ import { doc, getDoc } from 'firebase/firestore';
 import { Image } from 'expo-image';
 import processUserImage from '../../utils/processUserImage';
 import { shareAsync } from 'expo-sharing';
+import Heart from './Heart';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-const VideoCard = ({ video, isActive, handleOpenPress }) => {
+const VideoCard = ({ video, isActive, handleOpenPress}) => {
   const videoRef = useRef(null);
   const [play, setPlay] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
   const [like, setLike] = useState(false);
   const [commentsModal, setCommentsModal] = useState(false);
+  const [showLikeAnimation, setShowLikeAnimation] = useState(false);
 
   const userId = video?.userId;
   const username = video?.username;
@@ -57,8 +59,14 @@ const VideoCard = ({ video, isActive, handleOpenPress }) => {
     setPlay(!play);
   };
 
-  const toggleLike = () => {
+  const toggleLikeIcon = () => {
     setLike(prev => !prev);
+    {!like && 
+      setShowLikeAnimation(true);
+        setTimeout(() => {
+        setShowLikeAnimation(false);
+      }, 1000);
+    }
   };
 
   const toggleCommentsModal = () => {
@@ -80,6 +88,11 @@ const VideoCard = ({ video, isActive, handleOpenPress }) => {
 
   return (
     <View style={styles.itemContainer}>
+      {showLikeAnimation && 
+          <View style={{position: 'absolute', top: '20%', zIndex: 9999}}>
+              <Heart />
+          </View>
+      }
       <Video
         ref={videoRef}
         source={{ uri: video.url }}
@@ -108,8 +121,8 @@ const VideoCard = ({ video, isActive, handleOpenPress }) => {
           <Pressable style={styles.icon}>
             <MaterialIcons name="bookmark-add" size={36} color="white" />
           </Pressable>
-          <Pressable onPress={toggleLike} style={styles.icon}>
-            <AntDesign name="heart" size={32} color={like ? 'red' : 'white'} />
+          <Pressable onPress={toggleLikeIcon} style={styles.icon}>
+            <AntDesign name="heart" size={32} color={like ? '#E84855' : 'white'} />
           </Pressable>
           <Pressable onPress={handleOpenPress} style={styles.icon}>
             <MaterialIcons name="mode-comment" size={30} color="white" />
@@ -181,11 +194,12 @@ const styles = StyleSheet.create({
   rightControls: {
     flexDirection: 'column',
     alignItems: 'center',
-    gap: 20,
+    gap: 10,
   },
   icon: {
     marginBottom: 12,
     alignItems: 'center',
+    padding: 5
   },
   moreIcon: {
     alignItems: 'center',
