@@ -17,6 +17,7 @@ import ChatBubble from "./ChatBubble";
 import { speak, isSpeakingAsync, stop, getAvailableVoicesAsync, VoiceQuality } from "expo-speech";
 import Bottom from "../Chat/Bottom";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from 'react-native-vector-icons'
 
 const Chatbot = ({ chats, setChats, modalVisible, setModalVisible }) => {
   const [loading, setLoading] = useState(false);
@@ -165,9 +166,11 @@ const Chatbot = ({ chats, setChats, modalVisible, setModalVisible }) => {
                 data={voices}
                 renderItem={renderVoiceItem}
                 keyExtractor={(item, index) => index.toString()}
-                contentContainerStyle={{backgroundColor: 'red', flexGrow: 1}}
+                contentContainerStyle={{ flexGrow: 1}}
               />
-                <TouchableOpacity onPress={() => setModalVisible(false)}  style={{width: 50, height: 50, borderRadius: 25, backgroundColor: 'rgba(0,0,0,0.2)'}}></TouchableOpacity>
+                <TouchableOpacity onPress={() => setModalVisible(false)}  style={{width: 50, height: 50, borderRadius: 25, backgroundColor: 'rgba(0,0,0,0.2)', alignItems: 'center', justifyContent: 'center'}}>
+                  <Ionicons name='close' size={30} color='rgba(0,0,0,0.8)' />
+                </TouchableOpacity>
             </View>
           </View>
         </Modal>
