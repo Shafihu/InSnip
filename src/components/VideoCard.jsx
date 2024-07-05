@@ -260,6 +260,7 @@ const styles = StyleSheet.create({
   modalBody: {
     paddingTop: 10,
   },
+
 });
 
 export default VideoCard;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { View, FlatList, Dimensions, SafeAreaView, RefreshControl, Text, StyleSheet } from 'react-native';
 import { fetchSpotlights } from '../../utils/fetchSpotlights';
 import VideoCard from '../components/VideoCard';
@@ -8,6 +8,7 @@ import { useUser } from '../../context/UserContext';
 import { storyPostUpload } from '../../utils/storyPostUpload';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -22,6 +23,8 @@ const Spotlight = ({ reload }) => {
   const currentUserId = userData?.id;
   const [error, setError] = useState(null);
   const flatListRef = useRef(null);
+
+  const bottomSheetRef = useRef(null);
 
   const showToast = (message) => {
     Toast.show({
@@ -116,6 +119,12 @@ const Spotlight = ({ reload }) => {
     }
   };
 
+  const handleSheetChanges = useCallback((index) => {
+    console.log('handleSheetChanges', index);
+  }, []);
+
+  const snapPoints = useMemo(() => ['75%', '100%'], [])
+
   return (
     <SafeAreaView style={styles.container}>
       {uploadProgress > 0 && uploadProgress < 100 && (
@@ -152,6 +161,18 @@ const Spotlight = ({ reload }) => {
           }
         />
       </View>
+      <View style={styles.sheetContainer}>
+      <BottomSheet
+        ref={bottomSheetRef}
+        onChange={handleSheetChanges}
+        snapPoints={snapPoints}
+        index={0}
+      >
+        <BottomSheetView style={styles.contentContainer}>
+          <Text>Awesome 🎉</Text>
+        </BottomSheetView>
+      </BottomSheet>
+    </View>
     </SafeAreaView>
   );
 };
@@ -178,5 +199,19 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     textAlign: 'center',
     width: '100%',
+  },
+  sheetContainer: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    height: '100%',
+    width: '100%',
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: 'center',
   },
 });

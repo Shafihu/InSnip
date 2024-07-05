@@ -4,7 +4,7 @@ import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { UserProvider } from "../../context/UserContext";
 import { UsersProvider } from "../../context/UsersContext";
 import { ChatProvider } from "../../context/ChatContext";
-import "../../global.css";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const RootLayout = () => {
   const toastConfig = {
@@ -52,24 +52,26 @@ const RootLayout = () => {
 
   return (
     <>
-      <UserProvider>
-        <UsersProvider>
-          <ChatProvider>
-            <Stack>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="auth"
-                options={{ headerShown: false, gestureEnabled: false }}
-              />
-              <Stack.Screen
-                name="verified"
-                options={{ headerShown: false, gestureEnabled: false }}
-              />
-            </Stack>
-            <Toast config={toastConfig} />
-          </ChatProvider>
-        </UsersProvider>
-      </UserProvider>
+      <GestureHandlerRootView>
+        <UserProvider>
+          <UsersProvider>
+            <ChatProvider>
+              <Stack>
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="auth"
+                  options={{ headerShown: false, gestureEnabled: false }}
+                />
+                <Stack.Screen
+                  name="verified"
+                  options={{ headerShown: false, gestureEnabled: false }}
+                />
+              </Stack>
+              <Toast config={toastConfig} />
+            </ChatProvider>
+          </UsersProvider>
+        </UserProvider>
+      </GestureHandlerRootView>
     </>
   );
 };
