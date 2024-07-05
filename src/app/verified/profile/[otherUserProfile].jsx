@@ -14,8 +14,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 0;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
-const {width} = Dimensions.get('window');
-const CARD_WIDTH = width/3;
+const { width } = Dimensions.get('window');
+const CARD_WIDTH = width / 3;
 
 const UserProfile = () => {
     const { id, firstname, lastname, username, avatar } = useLocalSearchParams();
@@ -29,7 +29,6 @@ const UserProfile = () => {
     const currentUserId = currentUser.id;
 
     useEffect(() => {
-        console.log(id)
         if (id) {
             getUserPic();
         }
@@ -40,7 +39,6 @@ const UserProfile = () => {
             const userDoc = await getDoc(doc(FIRESTORE_DB, 'users', id));
             if (userDoc.exists()) {
                 const userData = userDoc.data();
-                console.log(userData);
                 if (userData.picture) {
                     setProfilePic(userData.picture);
                 } else {
@@ -53,14 +51,14 @@ const UserProfile = () => {
             console.error('Error fetching user document:', error);
         }
     };
-    
+
     const handleBlock = async () => {
         changeBlock();
         const userDocRef = doc(FIRESTORE_DB, 'users', currentUserId);
         await updateDoc(userDocRef, {
             blocked: isReceiverBlocked ? arrayRemove(id) : arrayUnion(id)
         });
-    }
+    };
 
     const showErrorToast = (message) => {
         Toast.show({
@@ -71,8 +69,7 @@ const UserProfile = () => {
 
     const toggleTab = () => {
         setTab(prev => !prev);
-    }
-
+    };
 
     const headerHeight = scrollY.interpolate({
         inputRange: [0, HEADER_SCROLL_DISTANCE],
@@ -104,7 +101,7 @@ const UserProfile = () => {
             </View>
             <Animated.View style={[styles.header, { height: headerHeight }]}>
                 <Animated.Image
-                    source={id === undefined ? require('../../../../assets/aiBannerPic.png') : isReceiverBlocked ? require('../../../../assets/placeholder.png') : profilePic ? { uri: profilePic } : processUserImage(avatar)} 
+                    source={id === undefined ? require('../../../../assets/aiBannerPic.png') : isReceiverBlocked ? require('../../../../assets/placeholder.png') : profilePic ? { uri: profilePic } : processUserImage(avatar)}
                     style={[
                         styles.headerImage,
                         { opacity: imageOpacity, transform: [{ translateY: imageTranslate }] },
@@ -124,66 +121,55 @@ const UserProfile = () => {
                     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                     { useNativeDriver: false }
                 )}
-                scrollEventThrottle={16} 
+                scrollEventThrottle={16}
             >
                 <View style={styles.scrollViewInner}>
-                    <>
-                        <View className="flex-1 flex-row items-center gap-4">
-                            <Pressable style={{ borderWidth: 3, borderColor: '#2ecc71', borderRadius: '100%', padding: 3 }}>
-                                <Image source={id === undefined ? require('../../../../assets/aiChatPic.png') : isReceiverBlocked ? require('../../../../assets/placeholder.png') : processUserImage(avatar)} style={styles.userImage} contentFit="cover" transition={500} />
-                            </Pressable>
-                            <View className="w-full h-full items-start justify-center gap-2">
-                                <Text style={styles.userInfo} className="font-bold tracking-wide text-[#333333]">{id === undefined ? 'My AI' : `${firstname} ${lastname}`}</Text>
-                                <Text style={{ fontSize: 12, fontWeight: 500, color: 'gray' }}>{id === undefined ? 'myai' : `${username}`}</Text>
-                            </View>
+                    <View style={styles.profileContainer}>
+                        <Pressable style={styles.avatarWrapper}>
+                            <Image source={id === undefined ? require('../../../../assets/aiChatPic.png') : isReceiverBlocked ? require('../../../../assets/placeholder.png') : processUserImage(avatar)} style={styles.userImage} contentFit="cover" transition={500} />
+                        </Pressable>
+                        <View style={styles.userInfoContainer}>
+                            <Text style={styles.userInfo}>
+                                {id === undefined ? 'My AI' : `${firstname} ${lastname}`}
+                            </Text>
+                            <Text style={styles.usernameText}>
+                                {id === undefined ? 'myai' : `${username}`}
+                            </Text>
                         </View>
-                    </>
-                        {id === undefined ? <View /> : 
-                    <View>
-                                                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'}}>
-                                                    <Pressable onPress={toggleTab} style={{borderBottomWidth: tab && 3, borderColor: '#333333', width: '50%', padding: 10}}>
-                                                        <Text style={{color: tab ? '#333333' : '#7f8c8d', fontWeight: 'bold', fontSize: 15, textAlign: 'center'}}>Stories</Text>
-                                                    </Pressable>
-                                                    <Pressable onPress={toggleTab} style={{borderBottomWidth: !tab && 3, borderColor: '#333333', width: '50%', padding: 10}}>
-                                                        <Text style={{color: !tab ? '#333333' : '#7f8c8d', fontWeight: 'bold', fontSize: 15, textAlign: 'center'}}>Spotlight</Text>
-                                                    </Pressable>
-                                                </View>
                     </View>
-                        }
 
-                        {/* <View style={{gap: 10}}>
-                            <Pressable onPress={handleBlock} style={{backgroundColor: 'red', padding: 10, borderRadius: 8}}>
-                                <Text style={styles.logoutText}>{isCurrentUserBlocked ? 'Block' : isReceiverBlocked ? 'Unblock' : 'Block' }</Text>
+                    {id !== undefined && (
+                        <View style={styles.tabContainer}>
+                            <Pressable onPress={toggleTab} style={[styles.tabButton, tab && styles.activeTab]}>
+                                <Text style={[styles.tabText, tab && styles.activeTabText]}>Stories</Text>
                             </Pressable>
-                        </View> */}
+                            <Pressable onPress={toggleTab} style={[styles.tabButton, !tab && styles.activeTab]}>
+                                <Text style={[styles.tabText, !tab && styles.activeTabText]}>Spotlight</Text>
+                            </Pressable>
+                        </View>
+                    )}
+
+                    {id !== undefined && (
+                        <View style={styles.cardsContainer}>
+                            {tab ? (
+                                    <View style={styles.card} />
+                            ) : (
+                                <View style={[styles.card, styles.blueCard]} />
+                            )}
+                        </View>
+                    )}
                 </View>
-                {id === undefined ? <View /> : 
-                                    <View style={{ height: '100%', width: '100%', flexWrap: 'wrap', flexDirection: 'row'}}>
-                                    {tab && 
-                                        <>
-                                            <View style={{backgroundColor: 'red', width: CARD_WIDTH, height: 200}}></View>
-                                        </>
-                                    }
-                                    {!tab && 
-                                        <>
-                                            <View style={{backgroundColor: 'blue', width: CARD_WIDTH, height: 200}}></View>
-                                        </>
-                                    }
-                                </View>
-                }
             </Animated.ScrollView>
         </View>
     );
 };
-
-export default UserProfile;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'white',
         position: 'relative',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     loadingContainer: {
         flex: 1,
@@ -207,25 +193,81 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollViewInner: {
-        paddingHorizontal: 20,
         paddingVertical: 20,
         flex: 1,
         justifyContent: 'space-between',
-        gap: 20
+        gap: 20,
+    },
+    profileContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        paddingHorizontal: 20,
+    },
+    avatarWrapper: {
+        borderWidth: 3,
+        borderColor: '#2ecc71',
+        borderRadius: 50,
+        padding: 3,
     },
     userImage: {
         width: 90,
         height: 90,
         borderRadius: 50,
     },
+    userInfoContainer: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        gap: 2,
+    },
     userInfo: {
         fontSize: 20,
+        fontWeight: 'bold',
+        letterSpacing: 1.1,
+        color: '#333333',
     },
-    logoutText: {
-        fontSize: 16,
-        color: "white",
+    usernameText: {
+        fontSize: 12,
+        fontWeight: '500',
+        color: 'gray',
+    },
+    tabContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+    },
+    tabButton: {
+        width: '50%',
+        padding: 10,
+    },
+    activeTab: {
+        borderBottomWidth: 3,
+        borderColor: '#333333',
+    },
+    tabText: {
+        fontWeight: 'bold',
+        fontSize: 15,
         textAlign: 'center',
-        fontWeight: 'bold'
+        color: '#7f8c8d',
+    },
+    activeTabText: {
+        color: '#333333',
+    },
+    cardsContainer: {
+        height: '100%',
+        width: '100%',
+        flexWrap: 'wrap',
+        flexDirection: 'row',
+    },
+    card: {
+        backgroundColor: 'red',
+        width: CARD_WIDTH,
+        height: 200,
+    },
+    blueCard: {
+        backgroundColor: 'blue',
     },
     buttonContainer: {
         position: 'absolute',
@@ -242,12 +284,20 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: 'rgba(0,0,0,.35)',
-        borderRadius: '100%',
+        borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center',
         display: 'flex',
         height: 40,
         width: 40,
-        zIndex: 99999
-    }
+        zIndex: 99999,
+    },
+    logoutText: {
+        fontSize: 16,
+        color: "white",
+        textAlign: 'center',
+        fontWeight: 'bold',
+    },
 });
+
+export default UserProfile;
