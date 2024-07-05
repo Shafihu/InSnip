@@ -75,16 +75,15 @@ const Search = () => {
     const renderItem = ({ item }) => (
         <Pressable 
             onPress={() => handleUserProfile(item)} 
-            style={[styles.pressable, styles.shadow]}
-            className="flex flex-row items-center justify-between gap-4 bg-white py-2 px-3 pr-5"
+            style={[styles.pressable, styles.shadow, styles.flexRow, styles.alignCenter, styles.justifyBetween, styles.gap4, styles.bgWhite, styles.py2, styles.px3, styles.pr5]}
         >
-            <View className="w-[50px] h-[50px] bg-gray-100 rounded-full overflow-hidden">
+            <View style={[styles.avatarContainer]}>
                 <Image source={processUserImage(item.avatar)} style={{ width: '100%', height: '100%' }} />
             </View>
-            <View className="flex-1 gap-1">
-                <Text className="font-medium text-medium tracking-wider capitalize" style={{color: '#333333'}}>{item.FirstName} {item.LastName}</Text>
-                <View className="flex flex-row items-center gap-2">
-                    <Text className="text-[11px] font-semibold text-gray-500" style={{color: '#7f8c8d'}}>{item.Username}</Text>
+            <View style={[styles.flex1, styles.gap1]}>
+                <Text style={[styles.fontMedium, styles.textMedium, styles.trackingWider, styles.capitalize, {color: '#333333'}]}>{item.FirstName} {item.LastName}</Text>
+                <View style={[styles.flexRow, styles.alignCenter, styles.gap2]}>
+                    <Text style={[styles.text11, styles.fontSemibold, {color: '#7f8c8d'}]}>{item.Username}</Text>
                 </View>
             </View>
         </Pressable>
@@ -95,9 +94,9 @@ const Search = () => {
             <SearchBar onActualChange={onActualChange} color='white'/>
             <View style={{ paddingVertical: 0, backgroundColor: '#fff', }}>
                 <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
-                    <Text className="font-semibold tracking-wider text-[16px] " style={{color: '#3B2F2F'}}>Results</Text>
+                    <Text style={[styles.fontSemibold, styles.trackingWider, styles.text16, {color: '#3B2F2F'}]}>Results</Text>
                 </View>
-                <View style={[styles.shadow,{backgroundColor: '#fff',  padding: 0,  borderRadius: 0, overflow:'hidden', }]}>
+                <View style={[styles.shadow, {backgroundColor: '#fff', padding: 0, borderRadius: 0, overflow:'hidden'}]}>
                     <FlatList
                         data={shuffledFilteredUsers}
                         renderItem={renderItem}
@@ -106,7 +105,7 @@ const Search = () => {
                     />
                 </View>
                 <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
-                    <Text className="font-semibold tracking-wider text-[16px] " style={{color: '#3B2F2F'}}>People you may know</Text>
+                    <Text style={[styles.fontSemibold, styles.trackingWider, styles.text16, {color: '#3B2F2F'}]}>People you may know</Text>
                 </View>
                 <FlatList
                     data={shuffledUsers}
@@ -121,7 +120,6 @@ const Search = () => {
 
 const styles = StyleSheet.create({
     pressable: {
-        // borderRadius: 15,
         backgroundColor: 'white',
         borderBottomWidth: 1,
         borderColor: 'rgba(0,0,0,0.2)'  
@@ -132,6 +130,76 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.15,
         shadowRadius: 10,
         elevation: 5,
+    },
+    flexRow: {
+        flexDirection: 'row',
+    },
+    alignCenter: {
+        alignItems: 'center',
+    },
+    justifyBetween: {
+        justifyContent: 'space-between',
+    },
+    gap4: {
+        gap: 16, // 4 * 4 (assuming 1 unit is 4px)
+    },
+    bgWhite: {
+        backgroundColor: 'white',
+    },
+    py2: {
+        paddingVertical: 8, // 2 * 4 (assuming 1 unit is 4px)
+    },
+    px3: {
+        paddingHorizontal: 12, // 3 * 4 (assuming 1 unit is 4px)
+    },
+    pr5: {
+        paddingRight: 20, // 5 * 4 (assuming 1 unit is 4px)
+    },
+    avatarContainer: {
+        width: 50,
+        height: 50,
+        backgroundColor: '#f5f5f5',
+        borderRadius: 25,
+        overflow: 'hidden',
+    },
+    flex1: {
+        flex: 1,
+    },
+    gap1: {
+        gap: 4, // 1 * 4 (assuming 1 unit is 4px)
+    },
+    fontMedium: {
+        fontWeight: '500',
+    },
+    textMedium: {
+        fontSize: 16, // equivalent to medium text size
+    },
+    trackingWider: {
+        letterSpacing: 1.25, // example for wider tracking
+    },
+    capitalize: {
+        textTransform: 'capitalize',
+    },
+    flexRow: {
+        flexDirection: 'row',
+    },
+    alignCenter: {
+        alignItems: 'center',
+    },
+    gap2: {
+        gap: 8, // 2 * 4 (assuming 1 unit is 4px)
+    },
+    text11: {
+        fontSize: 11,
+    },
+    fontSemibold: {
+        fontWeight: '600',
+    },
+    fontSemibold: {
+        fontWeight: '600',
+    },
+    text16: {
+        fontSize: 16,
     },
 });
 

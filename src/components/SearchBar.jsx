@@ -23,8 +23,8 @@ const SearchBar = ({ onChangeText, onActualChange, color }) => {
           placeholder="Search"
           placeholderTextColor="#555c57"
           value={searchText}
-          onChangeText={handleChangeText}
-          onSubmitEditing={handleSearch}
+          // onChangeText={handleChangeText}
+          // onSubmitEditing={handleSearch}
           returnKeyType='search'
           style={{ paddingVertical: 10, paddingLeft: 40, paddingRight: 15, borderRadius: 100, fontSize: 15, fontWeight: '500', color: '#555c57' }}
         />

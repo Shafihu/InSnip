@@ -1,5 +1,3 @@
-// TODO: Reposition and style the sign out button
-
 import React, { useState, useEffect } from "react";
 import { Text, Pressable, StyleSheet, View, Animated, Dimensions, FlatList, ScrollView, Modal, SafeAreaView } from "react-native";
 import { signOut } from "firebase/auth";
@@ -286,7 +284,9 @@ const UserProfile = () => {
             </Pressable>
             <View style={styles.modalContent}>
             <Pressable onPress={() => handleProfile(selected)} style={styles.top}>
-                <Image source={processUserImage(selected.userDetails.avatar)} style={styles.modalAvatar} />
+                <View style={{backgroundColor: 'orange', borderRadius: '100%'}}>
+                    <Image source={processUserImage(selected.userDetails.avatar)} style={styles.modalAvatar} />
+                </View>
                 <View style={{gap: 4}}>
                   <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalUsername}>{selected.userDetails ? selected.userDetails.Username : 'Unknown'}</Text>
                   <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalTime}>5 days ago</Text>
@@ -367,8 +367,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   scrollViewInner: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
+    padding: 20,
     backgroundColor: 'white',
   },
   userContainer: {
@@ -385,11 +384,11 @@ const styles = StyleSheet.create({
   userImage: {
     width: 75,
     height: 75,
-    borderRadius: 50,
+    borderRadius: 37.5,
   },
   userInfoContainer: {
     justifyContent: 'center',
-    gap: 2,
+    gap: 8,
   },
   userInfo: {
     fontSize: 20,
@@ -580,7 +579,7 @@ const styles = StyleSheet.create({
   },
   modalUsername: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 16,     
     fontWeight: '500',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
