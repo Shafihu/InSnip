@@ -230,10 +230,10 @@ const UserProfile = () => {
           )}
           <View style={styles.tabContainer}>
             <Pressable onPress={toggleTab} style={[styles.tabButton, tab && styles.activeTab]}>
-              <Text style={[styles.tabText, tab && styles.activeTabText]}>Stories</Text>
+              <Text style={[styles.tabText, tab && styles.activeTabText]}>Stories({!tabLoading ? stories.length : '-'})</Text>
             </Pressable>
             <Pressable onPress={toggleTab} style={[styles.tabButton, !tab && styles.activeTab]}>
-              <Text style={[styles.tabText, !tab && styles.activeTabText]}>Spotlight</Text>
+              <Text style={[styles.tabText, !tab && styles.activeTabText]}>Spotlight({!tabLoading ? spotlights.length : '-'})</Text>
             </Pressable>
           </View>
         </View>
