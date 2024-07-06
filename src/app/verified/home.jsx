@@ -43,6 +43,7 @@ const HomeScreen = () => {
   const { userData, loading } = useUser();
   const currentUserId = userData?.id;
 
+
   const showToast = (message) => {
     Toast.show({
       type: "success",
@@ -179,14 +180,14 @@ const HomeScreen = () => {
 
   const updateUserPosts = async (url) => {
       const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
-      console.log('Updating Firestore document:', docRef.path);
 
-      await updateDoc(docRef, {
-        posts: arrayUnion(url),
-      });
+      // await updateDoc(docRef, {
+      //   posts: arrayUnion({
+      //     url: url,
+      //   })
+      // });
 
-      console.log('Document updated successfully:', docRef.path);
-      showToast("Story Sent!");
+      showToast("Story sent!");
     }
 
   const handlePostStory = async () => {

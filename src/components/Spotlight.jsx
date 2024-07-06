@@ -8,7 +8,9 @@ import { useUser } from '../../context/UserContext';
 import { storyPostUpload } from '../../utils/storyPostUpload';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import { FIRESTORE_DB } from '../../Firebase/config';
+import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import BottomSheetModals from './BottomSheetModal';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -19,12 +21,13 @@ const Spotlight = ({ reload }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [spotlightUrl, setSpotlightUrl] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [comments, setComments] = useState(null);
+  const [commentLoading, setCommentLoading] = useState(false);
+  const [toggleBackSheetModal, setToggleBackSheetModal] = useState(false);
   const { userData } = useUser();
   const currentUserId = userData?.id;
   const [error, setError] = useState(null);
   const flatListRef = useRef(null);
-
-  const bottomSheetRef = useRef(null);
 
   const showToast = (message) => {
     Toast.show({
@@ -100,12 +103,24 @@ const Spotlight = ({ reload }) => {
     itemVisiblePercentThreshold: 50,
   };
 
+  const updateUserPosts = async (url) => {
+    const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
+
+    await updateDoc(docRef, {
+      posts: arrayUnion({
+        url: url,
+      })
+    });
+  }
+
   const addSpotlight = async () => {
     try {
       const downloadUrl = await storyPostUpload(null, currentUserId, setUploadProgress, 'spotlight', userData);
       if(downloadUrl){
         showToast('Spotlight uploaded');
         setSpotlightUrl(downloadUrl);
+        updateUserPosts(downloadUrl);
+        
       }
       return downloadUrl;
     } catch (error) {
@@ -115,30 +130,38 @@ const Spotlight = ({ reload }) => {
     }
   };
 
-  const snapPoints = useMemo(() => ['75%', '100%'], []);
 
-  const snapToIndex = (index) => bottomSheetRef.current?.snapToIndex(index);
-  const handleOpenPress = () => snapToIndex(0);
-  const handleClosePress = () => snapToIndex(-1);
+  const handleOpenPress = (url, userId) => {
+     setToggleBackSheetModal(prev => !prev);
+     fetchComments(url, userId);
+  }
 
-  const renderBackdrop = useCallback(
-		(props) => (
-			<BottomSheetBackdrop
-				{...props}
-				disappearsOnIndex={-1}
-				appearsOnIndex={0}
-			/>
-		),
-		[]
-	);
+  const fetchComments = async (url, userId) => {
+    setCommentLoading(true);
+    try {
+      const docRef = doc(FIRESTORE_DB, 'users', userId);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const post = data.posts.find((item) => item?.url === url);
+        
+        if (post) {
+          console.log(post.comments);
+          setComments(post.comments)
+        } else {
+          console.log('No such post!');
+        }
+      } else {
+        console.log('No such document!');
+      }
+    } catch (error) {
+      console.error('Error fetching document: ', error);
+    } finally {
+      setCommentLoading(false);
+    }
+  };
 
-  const testData = useMemo(
-    () =>
-      Array(50)
-        .fill(0)
-        .map((_, index) => `index-${index}`),
-    []
-  );
 
   const renderItem = ({ item, index}) => (
     <VideoCard video={item} isActive={index === activeIndex} handleOpenPress={handleOpenPress}/>
@@ -163,7 +186,7 @@ const Spotlight = ({ reload }) => {
           </View>
         )}
         <FlatList
-          ref={flatListRef}  // Attach the ref to FlatList
+          ref={flatListRef}  
           data={data}
           renderItem={renderItem}
           keyExtractor={item => item?.id}
@@ -181,17 +204,10 @@ const Spotlight = ({ reload }) => {
           }
         />
       </View>
-      <BottomSheet
-        ref={bottomSheetRef}
-        snapPoints={snapPoints}
-        index={-1}
-        enablePanDownToClose={true}
-        backdropComponent={renderBackdrop}
-      >
-        <BottomSheetView style={styles.contentContainer}>
-          <Text>The creator has turned off comments</Text>
-        </BottomSheetView>
-      </BottomSheet>
+
+      {toggleBackSheetModal && (
+                    <BottomSheetModals comments={comments} toggleBackSheetModal={toggleBackSheetModal} setToggleBackSheetModal={setToggleBackSheetModal}  commentLoading={commentLoading}/>
+          )}
     </SafeAreaView>
   );
 };
@@ -219,8 +235,20 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     width: '100%',
   },
+  mainContentContainer: {
+    flex: 1,
+    paddingHorizontal: 15
+  },
   contentContainer: {
     flex: 1,
-    alignItems: 'center',
+  },
+  input: {
+    margin: 8,
+    marginBottom: 100,
+    borderRadius: 10,
+    fontSize: 16,
+    lineHeight: 20,
+    padding: 8,
+    backgroundColor: 'rgba(151, 151, 151, 0.25)',
   },
 });

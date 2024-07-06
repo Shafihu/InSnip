@@ -69,10 +69,6 @@ const VideoCard = ({ video, isActive, handleOpenPress}) => {
     }
   };
 
-  const toggleCommentsModal = () => {
-    setCommentsModal(prev => !prev);
-  };
-
   const handleShare = async () => {
     try {
       await shareAsync(video.url, {
@@ -124,7 +120,7 @@ const VideoCard = ({ video, isActive, handleOpenPress}) => {
           <Pressable onPress={toggleLikeIcon} style={styles.icon}>
             <AntDesign name="heart" size={32} color={like ? '#E84855' : 'white'} />
           </Pressable>
-          <Pressable onPress={handleOpenPress} style={styles.icon}>
+          <Pressable onPress={() => handleOpenPress(video?.url, userId)} style={styles.icon}>
             <MaterialIcons name="mode-comment" size={30} color="white" />
             {/* <Text style={styles.text}>80</Text> */}
           </Pressable>
@@ -137,7 +133,7 @@ const VideoCard = ({ video, isActive, handleOpenPress}) => {
           </Pressable>
         </View>
       </Pressable>
-      {commentsModal && (
+      {/* {commentsModal && (
         <Modal
           animationType="slide"
           transparent={true}
@@ -160,7 +156,7 @@ const VideoCard = ({ video, isActive, handleOpenPress}) => {
             </View>
           </Pressable>
         </Modal>
-      )}
+      )} */}
     </View>
   );
 };
