@@ -177,40 +177,45 @@ const HomeScreen = () => {
     }
   };
 
+  const updateUserPosts = async (url) => {
+      const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
+      console.log('Updating Firestore document:', docRef.path);
+
+      await updateDoc(docRef, {
+        posts: arrayUnion(url),
+      });
+
+      console.log('Document updated successfully:', docRef.path);
+      showToast("Story Sent!");
+    }
+
   const handlePostStory = async () => {
     try {
+      let downloadUrl;
+  
       if (photo) {
-        const downloadUrl = await storyPostUpload(photo.uri, currentUserId, setUploadProgress, 'stories', userData);
-        if (downloadUrl) {
-          const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
-          // await updateDoc(docRef, {
-          //   posts: arrayUnion(downloadUrl),
-          // });
-          showToast("Story Sent!");
-        }
+        downloadUrl = await storyPostUpload(photo.uri, currentUserId, setUploadProgress, 'stories', userData);
       } else if (video) {
-        const downloadUrl = await storyPostUpload(video.uri, currentUserId, setUploadProgress, 'stories', userData);
-        if (downloadUrl) {
-          const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
-          // await updateDoc(docRef, {
-          //   posts: arrayUnion(downloadUrl),
-          // });
-          showToast("Story Sent!");
-        }
+        downloadUrl = await storyPostUpload(video.uri, currentUserId, setUploadProgress, 'stories', userData);
+      }
+  
+      if (downloadUrl) {
+        updateUserPosts(downloadUrl);
+      } else {
+        console.log('No download URL returned');
       }
     } catch (error) {
-      console.log('Error getting url and storing it: ' + error);
+      console.error('Error getting url and storing it:', error);
     }
   };
 
+  //Post a story through gallery ie. select media from gallery then upload rather than through the app camera
 
-  //Post a strory through gallery ie. select media from gallery then upload rather than through the app camera
-  
   const handlePostStoryByGallery = async () => {
     try {
       const downloadUrl = await storyPostUpload(null, currentUserId, setUploadProgress, 'stories', userData);
       if(downloadUrl){
-        showToast('Story uploaded');
+        updateUserPosts(downloadUrl);
         setStoryUrl(downloadUrl);
       }
       return downloadUrl;
