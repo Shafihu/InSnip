@@ -164,7 +164,7 @@ const Spotlight = ({ reload }) => {
 
 
   const renderItem = ({ item, index}) => (
-    <VideoCard video={item} isActive={index === activeIndex} handleOpenPress={handleOpenPress}/>
+    <VideoCard video={item} isActive={index === activeIndex} handleOpenPress={handleOpenPress} totalComments={comments?.length}/>
   );
 
 

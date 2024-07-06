@@ -11,7 +11,7 @@ import Heart from './Heart';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-const VideoCard = ({ video, isActive, handleOpenPress}) => {
+const VideoCard = ({ video, isActive, handleOpenPress, totalComments}) => {
   const videoRef = useRef(null);
   const [play, setPlay] = useState(true);
   const [userInfo, setUserInfo] = useState(null);
@@ -122,7 +122,7 @@ const VideoCard = ({ video, isActive, handleOpenPress}) => {
           </Pressable>
           <Pressable onPress={() => handleOpenPress(video?.url, userId)} style={styles.icon}>
             <MaterialIcons name="mode-comment" size={30} color="white" />
-            {/* <Text style={styles.text}>80</Text> */}
+            <Text style={styles.text}>{totalComments}</Text>
           </Pressable>
           <Pressable onPress={handleShare} style={styles.icon}>
             <Fontisto name="share-a" size={28} color="white" />

@@ -14,7 +14,6 @@ const BottomSheetModals = ({ toggleBackSheetModal, setToggleBackSheetModal , com
   }, [])
 
   const handleSheetChanges = useCallback((index) => {
-    console.log('handleSheetChanges', index);
     if (index === -1) {
         setToggleBackSheetModal(prev => !prev);
     }

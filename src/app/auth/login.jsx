@@ -13,7 +13,7 @@ import {
 import { FontAwesome6 } from "react-native-vector-icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../../Firebase/config";
-import { Image } from "expo-image";
+import { Image, ImageBackground } from "expo-image";
 import { router, useNavigation } from "expo-router";
 
 const LoginScreen = () => {
