@@ -1,8 +1,6 @@
 import { View, Text, Pressable, Image, SafeAreaView, StyleSheet, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import SearchBar from '../../../components/SearchBar';
-import { MaterialIcons } from 'react-native-vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { FIRESTORE_DB } from '../../../../Firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
@@ -69,7 +67,7 @@ const Search = () => {
         setSearchText(text);
         const filteredList = users.filter(user => user.FirstName.toLowerCase().includes(text.toLowerCase()));
         setFilteredUsers(filteredList);
-        setShuffledFilteredUsers(shuffleArray(filteredList)); // Shuffle filtered users
+        setShuffledFilteredUsers(shuffleArray(filteredList));
     };
 
     const renderItem = ({ item }) => (

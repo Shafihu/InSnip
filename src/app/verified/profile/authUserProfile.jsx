@@ -173,14 +173,14 @@ const UserProfile = () => {
 
   const renderItem = ({ item }) => (
       <Pressable onPress={() => handlePressStory(item)} style={styles.storyContainer}>
-      {item.type.startsWith('image/') && (
+      {item.type.startsWith('image') && (
         <Image source={{ uri: item.url }} placeholder={blurhash} style={styles.storyImage} />
       )}
       {item.type.startsWith('video') && (
-        <Video source={{ uri: item.url }} style={styles.storyVideo} resizeMode="cover"  shouldPlay = {selected !== null ? false : true} isLooping isMuted/>
+        <Video source={{ uri: item.url }} style={styles.storyVideo} resizeMode="cover"  shouldPlay = {selected !== null ? false : true} isMuted/>
       )}
       <View style={{position: 'absolute', top: 5, right: 5, zIndex: 50}}>
-        <MaterialIcons name= {item.type.startsWith('image/') ? 'photo' : 'video-collection'} size={15} color="#fff" />
+        <MaterialIcons name= {item.type.startsWith('image') ? 'photo' : 'video-collection'} size={15} color="#fff" />
       </View>
     </Pressable>
     )
@@ -292,7 +292,7 @@ const UserProfile = () => {
                   <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalTime}>5 days ago</Text>
                 </View>
             </Pressable>
-              {selected && selected.type && selected.type.startsWith('image/') ? (
+              {selected && selected.type && selected.type.startsWith('image') ? (
                 <Image source={{ uri: selected.url }} style={styles.modalMedia} />
               ) : selected && selected.type && selected.type.startsWith('video') ? (
                 <Video source={{ uri: selected.url }} style={styles.modalMedia} resizeMode={ResizeMode.CONTAIN} shouldPlay isLooping/>
