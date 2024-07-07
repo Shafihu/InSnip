@@ -5,6 +5,7 @@ import { UserProvider } from "../../context/UserContext";
 import { UsersProvider } from "../../context/UsersContext";
 import { ChatProvider } from "../../context/ChatContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { ThemeProvider } from "../../context/ThemeContext";
 
 const RootLayout = () => {
   const toastConfig = {
@@ -51,8 +52,8 @@ const RootLayout = () => {
   };
 
   return (
-    <>
-      <GestureHandlerRootView>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider>
         <UserProvider>
           <UsersProvider>
             <ChatProvider>
@@ -71,8 +72,8 @@ const RootLayout = () => {
             </ChatProvider>
           </UsersProvider>
         </UserProvider>
-      </GestureHandlerRootView>
-    </>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 };
 

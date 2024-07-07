@@ -14,6 +14,7 @@ import { fetchStories } from '../../utils/fetchStories';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomLoader from './CustomLoader';
 import { MaterialIcons, MaterialCommunityIcons, Feather, Ionicons } from 'react-native-vector-icons';
+import { useTheme } from '../../context/ThemeContext';
 import { router } from 'expo-router';
 const { width } = Dimensions.get('window');
 
@@ -26,6 +27,7 @@ const Stories = () => {
   const [showLoader, setShowLoader] = useState(false);
   const [optionsModal, setOptionsModal] = useState(false);
   const [timer, setTimer] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     loadStories();
@@ -122,7 +124,7 @@ const Stories = () => {
   //   },10000)
   // }
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, {backgroundColor: theme.backgroundColor}]}>
       <Header header="Stories" />
       <View>
         {showLoader &&
@@ -138,12 +140,12 @@ const Stories = () => {
           }
         >
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Friends</Text>
+            <Text style={[styles.sectionTitle, {color: theme.textColor}]}>Friends</Text>
             <ScrollView style={styles.horizontalScrollView} horizontal showsHorizontalScrollIndicator={false}>
               {users && users.length > 0 ? (
                 users.map((item) => (
                   <View key={item.id} style={styles.userContainer}>
-                    <View style={styles.avatarContainer}>
+                    <View style={[styles.avatarContainer, {backgroundColor: theme.backgroundColor}]}>
                       <View style={styles.accountIconContainer}>
                         <MaterialCommunityIcons name="account" size={18} color="white" />
                       </View>
@@ -152,7 +154,7 @@ const Stories = () => {
                       </View>
                     </View>
                     <View style={styles.userDetailsContainer}>
-                      <Text style={styles.userFirstName} numberOfLines={1} ellipsizeMode="tail">{item.FirstName}</Text>
+                      <Text style={[styles.userFirstName, {color: theme.textColor}]} numberOfLines={1} ellipsizeMode="tail">{item.FirstName}</Text>
                       <Text style={styles.userUsername} numberOfLines={1}>{item.Username}</Text>
                     </View>
                   </View>
@@ -163,7 +165,7 @@ const Stories = () => {
             </ScrollView>
           </View>
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Discover</Text>
+            <Text style={[styles.sectionTitle, {color: theme.textColor}]}>Discover</Text>
             {storiesLoading ? (
               <View style={styles.loadingContainer}>
                 <ActivityIndicator color="gray" size="small" />
@@ -260,7 +262,6 @@ export default Stories;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff', 
   },
   loaderContainer: {
     justifyContent: 'center',
@@ -288,13 +289,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,
+    marginRight: 6,
     width: 80,
-    gap: 3
+    gap: 4
   },
   avatarContainer: {
-    width: 80,
-    height: 80,
+    width: 75,
+    height: 75,
     borderRadius: 40,
     backgroundColor: '#fff',
     borderWidth: 2,
@@ -318,7 +319,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#000000',
     borderRadius: 40,
     borderWidth: 2,
     borderColor: '#fff',

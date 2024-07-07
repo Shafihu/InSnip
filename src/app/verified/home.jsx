@@ -21,6 +21,7 @@ import { arrayUnion, updateDoc, doc } from "firebase/firestore";
 import { storyPostUpload } from "../../../utils/storyPostUpload";
 import CustomLoader from "../../components/CustomLoader";
 import { router } from "expo-router";
+import { useTheme } from "../../../context/ThemeContext";
 
 const HomeScreen = () => {
   const [facing, setFacing] = useState("front");
@@ -42,6 +43,7 @@ const HomeScreen = () => {
   const [error, setError] = useState(null);
   const { userData, loading } = useUser();
   const currentUserId = userData?.id;
+  const { theme, toggleTheme } = useTheme();
 
 
   const showToast = (message) => {
@@ -246,7 +248,7 @@ const HomeScreen = () => {
 
   return (
     <>
-      <View style={[styles.container, (stories || chat) && styles.whiteBg]}>
+      <View style={[styles.container, (stories || chat) && {backgroundColor: theme.backgroundColor}]}>
         <SafeAreaView style={{ flex: 1, justifyContent: "center" }}>
           <View style={styles.cameraContainer}>
             {camera && (
@@ -327,7 +329,7 @@ const HomeScreen = () => {
                               />
                             </Pressable>
 
-                            <Pressable onPress={() => router.push('/verified/searchUsers')} style={styles.iconButton}>
+                            <Pressable onPress={toggleTheme} style={styles.iconButton}>
                               <Foundation
                                 name="magnifying-glass"
                                 size={25}
@@ -383,9 +385,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     position: "relative",
   },
-  whiteBg: {
-    backgroundColor: "white",
-  },
+
   cameraContainer: {
     flex: 1,
     justifyContent: "center",

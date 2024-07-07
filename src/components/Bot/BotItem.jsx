@@ -2,12 +2,14 @@ import React from 'react';
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { MaterialIcons, Feather, Entypo } from 'react-native-vector-icons';
 import { router } from 'expo-router';
+import { useTheme } from '../../../context/ThemeContext';
 
-const BotItem = ({}) => {
+const BotItem = () => {
+  const { theme } = useTheme();
   return (
     <Pressable
       onPress={() => router.push('/verified/chatRoom/botChatRoom')}
-      style={styles.chatItem}
+      style={[styles.chatItem, {borderBottomColor: theme.innerTabContainerColor, backgroundColor: theme.backgroundColor}]}
     >
       <View style={styles.avatarContainer}>
         <Image
@@ -19,7 +21,7 @@ const BotItem = ({}) => {
         </View>
       </View>
       <View style={styles.content}>
-        <Text style={styles.name}>My AI</Text>
+        <Text style={[styles.name, {color: theme.textColor}]}>My AI</Text>
         <View style={styles.messageContainer}>
             <Entypo
               name="chat"
@@ -51,8 +53,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f5f5f5',
-    backgroundColor: '#fff',
   },
   right: {
     flexDirection: 'row',
@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#3B2F2F', 
   },
   messageContainer: {
     flexDirection: 'row',

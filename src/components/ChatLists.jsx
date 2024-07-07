@@ -11,11 +11,13 @@ import CustomLoader from './CustomLoader';
 import { Image } from 'expo-image';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BotItem from './Bot/BotItem';
+import { useTheme } from '../../context/ThemeContext';
 
 const Chat = () => {
   const [loading, setLoading] = useState(false);
   const [chats, setChats] = useState([]);
   const { userData } = useUser();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchChatsFromStorage = async () => {
@@ -68,7 +70,7 @@ const Chat = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Header header="Chat" />
-      <View style={styles.content}>
+      <View style={[styles.content, {backgroundColor: theme.chatListBackgroundColor}]}>
         <Pressable onPress={handleNewMessagePress} style={styles.newMessageButton}>
           <Entypo name="new-message" size={25} color="white" />
         </Pressable>
@@ -140,7 +142,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    backgroundColor: '#f3f4f6',
   },
   newMessageButton: {
     backgroundColor: '#2ecc71',

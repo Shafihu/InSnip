@@ -13,11 +13,13 @@ import {
 } from 'react-native-vector-icons';
 import processUserImage from "../../utils/processUserImage";
 import { useUser } from "../../context/UserContext";
+import { useTheme } from "../../context/ThemeContext";
 
 
 const Header = ({ header, toggleCameraFacing, toggleCameraFlash, addSpotlight}) => {
     const [isFlash, setIsFlash] = useState(false);
     const { userData } = useUser();
+    const { theme } = useTheme();
 
     const FlashMode = () => {
         setIsFlash((prev) => !prev);
@@ -31,7 +33,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash, addSpotlight}) 
                 justifyContent: 'space-between',
                 paddingHorizontal: 8,
                 paddingVertical: 10,
-                backgroundColor: header === 'Map' || 'Spotlight' ? 'transparent' : '#f5f5f5',
+                backgroundColor: (header === 'Map' || header === 'Spotlight' || header === '') ? 'transparent' : theme.backgroundColor,
                 alignItems: header === '' ? 'flex-start' : 'center',
                 borderBottomWidth: header === 'Stories' ? 1 : 0,
                 borderColor: 'rgba(0,0,0,0.1)'
@@ -66,17 +68,17 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash, addSpotlight}) 
                         alignItems: 'center',
                         overflow: 'hidden',
                         transform: [{ scaleX: -1 }],
-                        backgroundColor: header === 'Map' ? 'rgba(0, 0, 0, 0.15)' : 'rgba(0, 0, 0, 0.05)'
+                        backgroundColor: header === 'Map' ? 'rgba(0, 0, 0, 0.15)' : theme.innerTabContainerColor
                     }}
                 >
-                    <Foundation name="magnifying-glass" size={20} color={header === 'Spotlight' || header === '' || header === 'Map' ? 'white' : '#333333'} />
+                    <Foundation name="magnifying-glass" size={20} color={( header === 'Spotlight' || header === '' || header === 'Map' ) ? 'white' : theme.textColor} />
                 </Pressable>
             </View>
             <Text style={{
                 fontSize: 21,
                 fontWeight: '600',
                 textAlign: 'center',
-                color: header === 'Spotlight' || header === '' || header === 'Map' ? 'white' : '#333333',
+                color: header === ('Spotlight' || header === '' || header === 'Map') ? 'white' : theme.textColor,
                 marginRight: header === 'Spotlight' || header === '' || header === 'Map' ? 40 : 0
             }}>
                 {header}
@@ -87,7 +89,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash, addSpotlight}) 
                     <Pressable 
                     onPress={() => router.push('/verified/addChat')}
                     style={{
-                        backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                        backgroundColor: theme.innerTabContainerColor,
                         borderRadius: 20,
                         width: 40,
                         height: 40,
@@ -97,13 +99,13 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash, addSpotlight}) 
                         <MaterialCommunityIcons
                             name="account-plus"
                             size={20}
-                            color={header === '' ? 'white' : '#333333'}
+                            color={header === '' ? 'white' : theme.textColor}
                         />
                         <View style={{
                             position: 'absolute',
                             top: -4,
                             right: 0,
-                            backgroundColor: '#2ecc71',
+                            backgroundColor: theme.primaryColor,
                             paddingVertical: 1,
                             paddingHorizontal: 2,
                             borderRadius: 8
@@ -134,7 +136,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash, addSpotlight}) 
                                         marginTop: 0,
                                         width: 40,
                                         height: 'auto',
-                                        backgroundColor: 'rgba(0, 0, 0, 0.15)',
+                                        backgroundColor: theme.innerTabContainerColor,
                                         borderRadius: 20,
                                         flexDirection: 'column',
                                         paddingVertical: 8,
@@ -187,7 +189,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash, addSpotlight}) 
                                     <Pressable
                                     onPress={addSpotlight}
                                     style={{
-                                        backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                                        backgroundColor: theme.innerTabContainerColor,
                                         borderRadius: 20,
                                         width: 40,
                                         height: 40,
@@ -199,7 +201,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash, addSpotlight}) 
                                     </Pressable>
                                 ) : (
                                     <Pressable style={{
-                                        backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                                        backgroundColor: theme.innerTabContainerColor,
                                         borderRadius: 20,
                                         width: 40,
                                         height: 40,
@@ -207,7 +209,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash, addSpotlight}) 
                                         alignItems: 'center',
                                         overflow: 'hidden'
                                     }}>
-                                        <Fontisto name="more-v-a" size={20} color={header === '' ? 'white' : '#333333'} style={{ transform: [{ rotate: '90deg' }] }} />
+                                        <Fontisto name="more-v-a" size={20} color={header === '' ? 'white' : theme.textColor} style={{ transform: [{ rotate: '90deg' }] }} />
                                     </Pressable>
                                 )}
                             </View>

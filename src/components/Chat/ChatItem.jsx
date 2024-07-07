@@ -7,10 +7,12 @@ import { useChatStore } from '../../../context/ChatContext';
 import { FIRESTORE_DB } from '../../../Firebase/config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useUser } from '../../../context/UserContext';
+import { useTheme } from '../../../context/ThemeContext';
 
 const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, lastMessage }) => {
   const { userData } = useUser();
   const { changeChat, isReceiverBlocked } = useChatStore();
+  const { theme } = useTheme();
   const router = useRouter(); 
 
   const currentUserId = userData?.id;
@@ -67,7 +69,7 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
   return (
     <Pressable
       onPress={handlePress}
-      style={styles.chatItem}
+      style={[styles.chatItem, {borderBottomColor: theme.innerTabContainerColor, backgroundColor: theme.backgroundColor}]}
     >
       <View style={styles.avatarContainer}>
         <Image
@@ -76,7 +78,7 @@ const ChatItem = ({ handleChatCam, chat, isSeen, avatar, firstName, lastName, la
         />
       </View>
       <View style={styles.content}>
-        <Text style={styles.name}>{firstName} {lastName}</Text>
+        <Text style={[styles.name, {color: theme.textColor}]}>{firstName} {lastName}</Text>
         <View style={styles.messageContainer}>
           {!lastMessage ? (
             <MaterialIcons
@@ -123,8 +125,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f5f5f5',
-    backgroundColor: '#fff',
   },
   right: {
     flexDirection: 'row',
@@ -155,7 +155,6 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#3B2F2F', 
   },
   messageContainer: {
     flexDirection: 'row',

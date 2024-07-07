@@ -1,10 +1,13 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Ionicons, MaterialCommunityIcons, Feather } from 'react-native-vector-icons';
+import { useTheme } from '../../context/ThemeContext';
 
 const TabBarPreview = ({ handleDownload, handlePostStory, handleShare }) => {
+  const { theme } = useTheme();
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
       <Pressable onPress={handleDownload} style={[styles.pressable, styles.downloadButton]}>
         <Feather name='download' size={22} color="white" />
       </Pressable>
