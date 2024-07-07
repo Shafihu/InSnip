@@ -176,7 +176,7 @@ const UserProfile = () => {
           <Video source={{ uri: item.url }} style={styles.storyVideo} resizeMode="cover"  shouldPlay = {selected !== null ? false : true} isLooping={false} isMuted/>
         )}
         <View style={{position: 'absolute', top: 5, right: 5, zIndex: 50}}>
-          <MaterialIcons name= {item.type.startsWith('image/') ? 'photo' : 'video-collection'} size={15} color="#fff" />
+          <MaterialIcons name= {item.type.startsWith('image') ? 'photo' : 'video-collection'} size={15} color="#fff" />
         </View>
       </Pressable>
       )
