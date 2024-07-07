@@ -24,6 +24,8 @@ const Spotlight = ({ reload }) => {
   const [comments, setComments] = useState(null);
   const [commentLoading, setCommentLoading] = useState(false);
   const [toggleBackSheetModal, setToggleBackSheetModal] = useState(false);
+  const [postUrl, setPostUrl] = useState(null);
+  const [postOwnerId, setPostOwnerId] = useState(null);
   const { userData } = useUser();
   const currentUserId = userData?.id;
   const [error, setError] = useState(null);
@@ -132,6 +134,8 @@ const Spotlight = ({ reload }) => {
 
 
   const handleOpenPress = (url, userId) => {
+     setPostOwnerId(userId);
+     setPostUrl(url);
      setToggleBackSheetModal(prev => !prev);
      fetchComments(url, userId);
   }
@@ -147,7 +151,7 @@ const Spotlight = ({ reload }) => {
         const post = data.posts.find((item) => item?.url === url);
         
         if (post) {
-          console.log(post.comments);
+          console.log(post);
           setComments(post.comments)
         } else {
           console.log('No such post!');
@@ -206,7 +210,7 @@ const Spotlight = ({ reload }) => {
       </View>
 
       {toggleBackSheetModal && (
-                    <BottomSheetModals comments={comments} toggleBackSheetModal={toggleBackSheetModal} setToggleBackSheetModal={setToggleBackSheetModal}  commentLoading={commentLoading}/>
+                    <BottomSheetModals comments={comments} toggleBackSheetModal={toggleBackSheetModal} setToggleBackSheetModal={setToggleBackSheetModal}  commentLoading={commentLoading} postUrl={postUrl} postOwnerId={postOwnerId}/>
           )}
     </SafeAreaView>
   );
