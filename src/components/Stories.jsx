@@ -145,8 +145,8 @@ const Stories = () => {
               {users && users.length > 0 ? (
                 users.map((item) => (
                   <View key={item.id} style={styles.userContainer}>
-                    <View style={[styles.avatarContainer, {backgroundColor: theme.backgroundColor}]}>
-                      <View style={styles.accountIconContainer}>
+                    <View style={[styles.avatarContainer, {backgroundColor: theme.backgroundColor, borderColor: theme.primaryColor}]}>
+                      <View style={[styles.accountIconContainer, {backgroundColor: theme.primaryColor}]}>
                         <MaterialCommunityIcons name="account" size={18} color="white" />
                       </View>
                       <View style={styles.avatar}>
