@@ -99,6 +99,7 @@ const Spotlight = ({ reload }) => {
     if (viewableItems.length > 0) {
       setActiveIndex(viewableItems[0].index);
     }
+    setComments(null)
   };
 
   const viewabilityConfig = {
@@ -111,6 +112,7 @@ const Spotlight = ({ reload }) => {
     await updateDoc(docRef, {
       posts: arrayUnion({
         url: url,
+        comments: []
       })
     });
   }
@@ -119,10 +121,9 @@ const Spotlight = ({ reload }) => {
     try {
       const downloadUrl = await storyPostUpload(null, currentUserId, setUploadProgress, 'spotlight', userData);
       if(downloadUrl){
+        updateUserPosts(downloadUrl);
         showToast('Spotlight uploaded');
         setSpotlightUrl(downloadUrl);
-        updateUserPosts(downloadUrl);
-        
       }
       return downloadUrl;
     } catch (error) {

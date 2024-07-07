@@ -73,19 +73,20 @@ const BottomSheetModals = ({ toggleBackSheetModal, setToggleBackSheetModal, comm
                 });
 
                 console.log('Comment sent!');
+                setUserComment('');
+
             } else {
                 console.log('No such document!');
             }
 
         } catch (error) {
             console.log('Failed to send comment: ' + error);
-        } finally {
-            setUserComment('');
         }
     } else {
         console.log('No owner id found');
     }
 }
+
 
 
   return (
@@ -110,7 +111,7 @@ const BottomSheetModals = ({ toggleBackSheetModal, setToggleBackSheetModal, comm
             : 
             <View style={{ flex: 1 }}>
               {comments ? comments.map((comment) => (
-                <View key={comment.username} style={styles.commentContainer}>
+                <View key={comment.text} style={styles.commentContainer}>
                   <Image source={processUserImage(comment.avatar)} style={styles.avatar} />
                   <View style={styles.commentTextContainer}>
                     <Text style={styles.username}>{comment.username}</Text>
@@ -126,7 +127,7 @@ const BottomSheetModals = ({ toggleBackSheetModal, setToggleBackSheetModal, comm
           }
         </View>
       </BottomSheetScrollView>
-      <View style={{backgroundColor: 'rgba(0,0,0,0.05)', paddingBottom: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 15}}>
+      <View style={{backgroundColor: 'rgba(0,0,0,0.05)', paddingBottom: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 15}}>
           <View>
             <Image source={processUserImage(userData.avatar)} style={styles.avatar} />
           </View>
@@ -137,6 +138,7 @@ const BottomSheetModals = ({ toggleBackSheetModal, setToggleBackSheetModal, comm
           selectionColor="#2ecc71"
           placeholder='Add comment...'
           returnKeyType='send'
+          value={userComment}
           onChangeText={setUserComment}
           onSubmitEditing={handleSendComment}
         />
