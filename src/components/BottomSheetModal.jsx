@@ -5,10 +5,10 @@ import CustomLoader from './CustomLoader';
 import { Image } from 'expo-image';
 import processUserImage from '../../utils/processUserImage';
 import { useUser } from '../../context/UserContext';
-import { doc, updateDoc, arrayUnion, getDoc} from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import { FIRESTORE_DB } from '../../Firebase/config';
 
-const BottomSheetModals = ({ toggleBackSheetModal, setToggleBackSheetModal, comments, commentLoading, postUrl, postOwnerId }) => {
+const BottomSheetModals = ({ toggleBackSheetModal, setToggleBackSheetModal, comments, setComments, commentLoading, postUrl, postOwnerId }) => {
   const bottomSheetModalRef = useRef(null);
   const snapPoints = useMemo(() => ['50%', '75%'], []);
   const [currentIndex, setCurrentIndex] = useState(1);
@@ -73,6 +73,17 @@ const BottomSheetModals = ({ toggleBackSheetModal, setToggleBackSheetModal, comm
                 });
 
                 console.log('Comment sent!');
+                
+                // Update local comments state
+                setComments(prevComments => [
+                    ...prevComments,
+                    {
+                        avatar: userData?.avatar,
+                        username: userData?.Username,
+                        text: userComment
+                    }
+                ]);
+
                 setUserComment('');
 
             } else {
@@ -86,8 +97,6 @@ const BottomSheetModals = ({ toggleBackSheetModal, setToggleBackSheetModal, comm
         console.log('No owner id found');
     }
 }
-
-
 
   return (
     <BottomSheetModal

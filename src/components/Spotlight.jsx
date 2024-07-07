@@ -152,7 +152,7 @@ const Spotlight = ({ reload }) => {
         const post = data.posts.find((item) => item?.url === url);
         
         if (post) {
-          console.log(post);
+          // console.log(post);
           setComments(post.comments)
         } else {
           console.log('No such post!');
@@ -211,8 +211,16 @@ const Spotlight = ({ reload }) => {
       </View>
 
       {toggleBackSheetModal && (
-                    <BottomSheetModals comments={comments} toggleBackSheetModal={toggleBackSheetModal} setToggleBackSheetModal={setToggleBackSheetModal}  commentLoading={commentLoading} postUrl={postUrl} postOwnerId={postOwnerId}/>
-          )}
+        <BottomSheetModals 
+          comments={comments} 
+          setComments={setComments} 
+          toggleBackSheetModal={toggleBackSheetModal} 
+          setToggleBackSheetModal={setToggleBackSheetModal}  
+          commentLoading={commentLoading} 
+          postUrl={postUrl} 
+          postOwnerId={postOwnerId}
+        />
+      )}
     </SafeAreaView>
   );
 };
