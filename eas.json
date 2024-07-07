@@ -1,0 +1,40 @@
+{
+  "cli": {
+    "version": ">= 10.1.1"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_FIREBASE_API_KEY":"AIzaSyDkA2Mi3uBLw-9FF1EN2euR3PDG68MxDIc",
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN":"snapchat-clone-643f2.firebaseapp.com",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID":"snapchat-clone-643f2",
+        "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET":"snapchat-clone-643f2.appspot.com",
+        "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID":"351048470095",
+        "EXPO_PUBLIC_FIREBASE_APP_ID":"1:351048470095:web:907f0ae0ebf7080b15e43a",
+        "EXPO_PUBLIC_GENERATIVE_AI_KEY":"AIzaSyB71cHEYg7dPQJlQ4WAM60s-LzJ0lLHFJA"
+      }
+    },
+    "test": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_FIREBASE_API_KEY":"AIzaSyDkA2Mi3uBLw-9FF1EN2euR3PDG68MxDIc",
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN":"snapchat-clone-643f2.firebaseapp.com",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID":"snapchat-clone-643f2",
+        "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET":"snapchat-clone-643f2.appspot.com",
+        "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID":"351048470095",
+        "EXPO_PUBLIC_FIREBASE_APP_ID":"1:351048470095:web:907f0ae0ebf7080b15e43a",
+        "EXPO_PUBLIC_GENERATIVE_AI_KEY":"AIzaSyB71cHEYg7dPQJlQ4WAM60s-LzJ0lLHFJA"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

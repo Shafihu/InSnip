@@ -92,7 +92,7 @@ const VideoCard = ({ video, isActive, handleOpenPress, totalComments}) => {
       <Video
         ref={videoRef}
         source={{ uri: video.url }}
-        style={styles.video}c
+        style={styles.video}
         resizeMode=""
         shouldPlay={play}
         isLooping
@@ -106,10 +106,8 @@ const VideoCard = ({ video, isActive, handleOpenPress, totalComments}) => {
         <View style={styles.leftControls}>
           <View style={styles.userInfo}>
             <View style={styles.userAvatar}>
-              {/* <Image source={processUserImage(userInfo?.avatar)} style={styles.avatarImage} /> */}
               <Image source={processUserImage(avatar)} style={styles.avatarImage} />
             </View>
-            {/* <Text numberOfLines={1} ellipsizeMode='tail' style={styles.username}>{userInfo?.Username || ''}</Text> */}
             <Text numberOfLines={1} ellipsizeMode='tail' style={styles.username}>{username || ''}</Text>
           </View>
         </View>
@@ -133,30 +131,6 @@ const VideoCard = ({ video, isActive, handleOpenPress, totalComments}) => {
           </Pressable>
         </View>
       </Pressable>
-      {/* {commentsModal && (
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={commentsModal}
-          onRequestClose={toggleCommentsModal}
-        >
-          <Pressable style={styles.modalOverlay}>
-            <View style={styles.modalContainer}>
-            <View style={styles.modalHeader}>
-                  <Text style={styles.modalTitle}>Comments</Text>
-                  <Pressable onPress={toggleCommentsModal}>
-                    <Ionicons name="close" color="#333333" size={20} />
-                  </Pressable>
-                </View>
-              <ScrollView contentContainerStyle={styles.modalContent}>
-                <View style={styles.modalBody}>
-                  <Text style={{textAlign: 'center'}}>The creator has turned off comments</Text>
-                </View>
-              </ScrollView>
-            </View>
-          </Pressable>
-        </Modal>
-      )} */}
     </View>
   );
 };

@@ -43,6 +43,8 @@ const BottomSheetModals = ({ toggleBackSheetModal, setToggleBackSheetModal, comm
   };
 
   const handleSendComment = async () => {
+    if(userComment.trim() === "") return
+
     if (postOwnerId) {
         try {
             console.log('Sending comment...');
