@@ -16,6 +16,7 @@ import { FIRESTORE_DB } from "../../../../Firebase/config";
 import { Video, ResizeMode } from "expo-av";
 import CustomLoader from "../../../components/CustomLoader";
 import { Image } from "expo-image";
+import { useTheme } from "../../../../context/ThemeContext";
 
 const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 0;
@@ -29,12 +30,12 @@ const UserProfile = () => {
   const [stories, setStories] = useState([]);
   const [spotlights, setSpotlights] = useState([]);
   const [selected, setSelected] = useState(null);
-  const [tab, setTab] = useState(true);
+  const [tab, setTab] = useState('stories');
   const [tabLoading, setTabLoading] = useState(false);
   const [spotlightLoading, setSpotlightsLoading] = useState(false);
   const scrollY = new Animated.Value(0);
   const [optionsModal, setOptionsModal] = useState(false);
-  const [timer, setTimer] = useState(false);
+  const { theme } = useTheme();
 
   const currentUserId = userData?.id;
 
@@ -86,8 +87,8 @@ const UserProfile = () => {
     }
   };
 
-  const toggleTab = () => {
-    setTab(prev => !prev);
+  const toggleTab = (tab) => {
+    setTab(tab);
   }
 
   const headerHeight = scrollY.interpolate({
@@ -186,7 +187,7 @@ const UserProfile = () => {
     )
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
       <View style={styles.buttonContainer}>
         <Pressable  onPress={() => router.back()} style={styles.button}>
           <FontAwesome6 name="chevron-left" color="#fff" size={20} />
@@ -205,7 +206,7 @@ const UserProfile = () => {
         />
       </Animated.View>
       <Animated.View style={{ flex: 1, paddingTop: HEADER_MAX_HEIGHT }}>
-        <View style={styles.scrollViewInner}>
+        <View style={[styles.scrollViewInner, {backgroundColor: theme.backgroundColor}]}>
           {userData ? (
             <>
               <View style={styles.userContainer}>
@@ -214,7 +215,7 @@ const UserProfile = () => {
                   <Image source={processUserImage(userData.avatar)} style={styles.userImage} />
                 </Pressable>
                 <View style={styles.userInfoContainer}>
-                  <Text style={styles.userInfo}>{userData.FirstName} {userData.LastName}</Text>
+                  <Text style={[styles.userInfo, {color: theme.textColor}]}>{userData.FirstName} {userData.LastName}</Text>
                   <Text style={styles.userUsername}>{userData.Username}</Text>
                 </View>
                 </View>
@@ -229,11 +230,11 @@ const UserProfile = () => {
             <Text>No user data available</Text>
           )}
           <View style={styles.tabContainer}>
-            <Pressable onPress={toggleTab} style={[styles.tabButton, tab && styles.activeTab]}>
-              <Text style={[styles.tabText, tab && styles.activeTabText]}>Stories {!tabLoading ? stories.length : '-'}</Text>
+            <Pressable onPress={() => toggleTab('stories')} style={tab === 'stories' ? [styles.tabButton, styles.activeTab, {borderBottomColor: theme.textColor}] : styles.tabButton}>
+              <Text style={tab === 'stories' ? [styles.tabText, styles.activeTabText, {color: theme.textColor}] : styles.tabText}>Stories {!tabLoading ? spotlights.length : '-'}</Text>
             </Pressable>
-            <Pressable onPress={toggleTab} style={[styles.tabButton, !tab && styles.activeTab]}>
-              <Text style={[styles.tabText, !tab && styles.activeTabText]}>Spotlight {!tabLoading ? spotlights.length : '-'}</Text>
+            <Pressable onPress={() => toggleTab('spotlights')} style={tab === 'spotlights' ? [styles.tabButton, styles.activeTab, {borderBottomColor: theme.textColor}] : styles.tabButton}>
+              <Text style={tab === 'spotlights' ? [styles.tabText, styles.activeTabText, {color: theme.textColor}] : styles.tabText}>Spotlight {!tabLoading ? spotlights.length : '-'}</Text>
             </Pressable>
           </View>
         </View>
@@ -243,7 +244,7 @@ const UserProfile = () => {
           <CustomLoader />
         </View>
       )}
-      {tab ? (
+      {tab === 'stories' ? (
         stories && stories.length > 0 ? (
           <FlatList
             data={stories}
@@ -345,7 +346,6 @@ export default UserProfile;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
     position: 'relative',
   },
   loadingContainer: {
@@ -368,7 +368,6 @@ const styles = StyleSheet.create({
   },
   scrollViewInner: {
     padding: 20,
-    backgroundColor: 'white',
   },
   userContainer: {
     flexDirection: 'row',

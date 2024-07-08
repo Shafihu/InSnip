@@ -13,6 +13,7 @@ import { fetchSpotlights } from "../../../../utils/fetchSpotlights";
 import { fetchStories } from "../../../../utils/fetchStories";
 import CustomLoader from "../../../components/CustomLoader";
 import { Video, ResizeMode } from "expo-av";
+import { useTheme } from "../../../../context/ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HEADER_MAX_HEIGHT = 280;
@@ -24,7 +25,7 @@ const CARD_WIDTH = width / 3;
 const UserProfile = () => {
     const { id, firstname, lastname, username, avatar } = useLocalSearchParams();
     const [profilePic, setProfilePic] = useState(null);
-    const [tab, setTab] = useState(true);
+    const [tab, setTab] = useState('stories');
     const [stories, setStories] = useState([]);
     const [spotlights, setSpotlights] = useState([]);
     const [selected, setSelected] = useState(null);
@@ -33,6 +34,7 @@ const UserProfile = () => {
     const [optionsModal, setOptionsModal] = useState(false);
     const scrollY = new Animated.Value(0);
     const { userData } = useUser();
+    const { theme } = useTheme();
     const { changeBlock, isReceiverBlocked, isCurrentUserBlocked } = useChatStore();
 
     const currentUser = userData;
@@ -82,8 +84,8 @@ const UserProfile = () => {
         });
     };
 
-    const toggleTab = () => {
-        setTab(prev => !prev);
+    const toggleTab = (tab) => {
+        setTab(tab);
     };
 
     const loadCurrentUserStories = async (id) => {
@@ -183,7 +185,7 @@ const UserProfile = () => {
 
 
     return (
-        <View style={styles.container}>
+      <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
           <View style={styles.buttonContainer}>
             <Pressable  onPress={() => router.back()} style={styles.button}>
               <FontAwesome6 name="chevron-left" color="#fff" size={20} />
@@ -202,7 +204,7 @@ const UserProfile = () => {
             />
           </Animated.View>
           <Animated.View style={{ flex: 1, paddingTop: HEADER_MAX_HEIGHT }}>
-            <View style={styles.scrollViewInner}>
+          <View style={[styles.scrollViewInner, {backgroundColor: theme.backgroundColor}]}>
               {id ? (
                 <>
                   <View style={styles.userContainer}>
@@ -211,20 +213,20 @@ const UserProfile = () => {
                       <Image source={processUserImage(avatar)} style={styles.userImage} />
                     </Pressable>
                     <View style={styles.userInfoContainer}>
-                      <Text style={styles.userInfo}>{firstname} {lastname}</Text>
+                      <Text style={[styles.userInfo, {color: theme.textColor}]}>{firstname} {lastname}</Text>
                       <Text style={styles.userUsername}>{username}</Text>
                     </View>
                     </View>
                   </View>
                 
                   <View style={styles.tabContainer}>
-                    <Pressable onPress={toggleTab} style={[styles.tabButton, tab && styles.activeTab]}>
-                      <Text style={[styles.tabText, tab && styles.activeTabText]}>Stories {!tabLoading ? stories.length : '-'}</Text>
-                    </Pressable>
-                    <Pressable onPress={toggleTab} style={[styles.tabButton, !tab && styles.activeTab]}>
-                      <Text style={[styles.tabText, !tab && styles.activeTabText]}>Spotlight {!tabLoading ? spotlights.length : '-'}</Text>
-                    </Pressable>
-                  </View>
+            <Pressable onPress={() => toggleTab('stories')} style={tab === 'stories' ? [styles.tabButton, styles.activeTab, {borderBottomColor: theme.textColor}] : styles.tabButton}>
+              <Text style={tab === 'stories' ? [styles.tabText, styles.activeTabText, {color: theme.textColor}] : styles.tabText}>Stories {!tabLoading ? spotlights.length : '-'}</Text>
+            </Pressable>
+            <Pressable onPress={() => toggleTab('spotlights')} style={tab === 'spotlights' ? [styles.tabButton, styles.activeTab, {borderBottomColor: theme.textColor}] : styles.tabButton}>
+              <Text style={tab === 'spotlights' ? [styles.tabText, styles.activeTabText, {color: theme.textColor}] : styles.tabText}>Spotlight {!tabLoading ? spotlights.length : '-'}</Text>
+            </Pressable>
+          </View>
               </>
               ) : (
                 <View style={styles.userContainer}>
@@ -233,7 +235,7 @@ const UserProfile = () => {
                   <Image source={require('../../../../assets/aiChatPic.png')} style={styles.userImage} />
                 </Pressable>
                 <View style={styles.userInfoContainer}>
-                  <Text style={styles.userInfo}>My AI</Text>
+                  <Text style={[styles.userInfo, {color: theme.textColor}]}>My AI</Text>
                   <Text style={styles.userUsername}>myai</Text>
                 </View>
                 </View>
@@ -248,7 +250,7 @@ const UserProfile = () => {
           )}
             {!id ? <View /> : (
                 <>
-                              {tab ? (
+                              {tab === 'stories' ? (
             stories && stories.length > 0 ? (
               <FlatList
                 data={stories}

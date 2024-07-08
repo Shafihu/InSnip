@@ -308,8 +308,8 @@ const HomeScreen = () => {
                 )}
 
                 {!photo && (
-                  <SafeAreaView style={{ flex: 1, justifyContent: "space-between", marginBottom: photo ? 0 : 80 }}>
-                    <View style={{ flex: 1, justifyContent: "space-between" }}>
+                  <View style={{ flex: 1, justifyContent: "space-between", marginBottom: photo ? 0 : 0 }}>
+                    <View style={{ flex: 1, justifyContent: "space-between", position: 'relative'}}>
                       <>
                         <Header
                           header=""
@@ -318,7 +318,7 @@ const HomeScreen = () => {
                         />
 
                         {/* BOTTOM CAMERA ICONS */}
-                        <View style={{}}>
+                        <View style={{ position: 'absolute', bottom: 80}}>
                           <View style={styles.iconRow}>
                             <Pressable onPress={handlePostStoryByGallery} style={styles.iconButton}>
                               <Ionicons
@@ -345,7 +345,7 @@ const HomeScreen = () => {
                         </View>
                       </>
                     </View>
-                  </SafeAreaView>
+                  </View>
                 )}
               </CameraView>
             )}
