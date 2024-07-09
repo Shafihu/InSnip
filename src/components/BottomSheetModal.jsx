@@ -7,6 +7,7 @@ import processUserImage from '../../utils/processUserImage';
 import { useUser } from '../../context/UserContext';
 import { doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import { FIRESTORE_DB } from '../../Firebase/config';
+import { useTheme } from '../../context/ThemeContext'
 
 const BottomSheetModals = ({ toggleBackSheetModal, setToggleBackSheetModal, comments, setComments, commentLoading, postUrl, postOwnerId }) => {
   const bottomSheetModalRef = useRef(null);
@@ -15,6 +16,7 @@ const BottomSheetModals = ({ toggleBackSheetModal, setToggleBackSheetModal, comm
   const [userComment, setUserComment] = useState('');
 
   const { userData } = useUser();
+  const { theme } = useTheme();
 
   useEffect(() => {
     bottomSheetModalRef.current?.present();
@@ -108,12 +110,12 @@ const BottomSheetModals = ({ toggleBackSheetModal, setToggleBackSheetModal, comm
       onChange={handleSheetChanges}
       backdropComponent={renderBackdrop}
     >
-      <View style={{ padding: 10, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ fontWeight: '600', textAlign: 'center' }}>
+      <View style={{ padding: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.backgroundColor }}>
+        <Text style={{ fontWeight: '600', textAlign: 'center', color: theme.textColor }}>
           {commentLoading ? '-' : !comments ? '0' : comments?.length} comments
         </Text>
       </View>
-      <BottomSheetScrollView contentContainerStyle={styles.mainContentContainer}>
+      <BottomSheetScrollView contentContainerStyle={[styles.mainContentContainer, {backgroundColor: theme.backgroundColor}]}>
         <View style={styles.contentContainer}>
           {commentLoading ? 
             <View style={{ justifyContent: 'center', alignItems: 'center', flex: 0.5 }}>
@@ -125,8 +127,8 @@ const BottomSheetModals = ({ toggleBackSheetModal, setToggleBackSheetModal, comm
                 <View key={comment.text} style={styles.commentContainer}>
                   <Image source={processUserImage(comment.avatar)} style={styles.avatar} />
                   <View style={styles.commentTextContainer}>
-                    <Text style={styles.username}>{comment.username}</Text>
-                    <Text style={styles.commentText}>{comment.text}</Text>
+                    <Text style={[styles.username, {color: theme.grayText}]}>{comment.username}</Text>
+                    <Text style={[styles.commentText, {color: theme.textColor}]}>{comment.text}</Text>
                   </View>
                 </View>
               )) : 
