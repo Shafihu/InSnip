@@ -231,7 +231,7 @@ const UserProfile = () => {
           )}
           <View style={styles.tabContainer}>
             <Pressable onPress={() => toggleTab('stories')} style={tab === 'stories' ? [styles.tabButton, styles.activeTab, {borderBottomColor: theme.textColor}] : styles.tabButton}>
-              <Text style={tab === 'stories' ? [styles.tabText, styles.activeTabText, {color: theme.textColor}] : styles.tabText}>Stories {!tabLoading ? spotlights.length : '-'}</Text>
+              <Text style={tab === 'stories' ? [styles.tabText, styles.activeTabText, {color: theme.textColor}] : styles.tabText}>Stories {!tabLoading ? stories.length : '-'}</Text>
             </Pressable>
             <Pressable onPress={() => toggleTab('spotlights')} style={tab === 'spotlights' ? [styles.tabButton, styles.activeTab, {borderBottomColor: theme.textColor}] : styles.tabButton}>
               <Text style={tab === 'spotlights' ? [styles.tabText, styles.activeTabText, {color: theme.textColor}] : styles.tabText}>Spotlight {!tabLoading ? spotlights.length : '-'}</Text>
@@ -244,37 +244,30 @@ const UserProfile = () => {
           <CustomLoader />
         </View>
       )}
-      {tab === 'stories' ? (
-        stories && stories.length > 0 ? (
-          <FlatList
-            data={stories}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.url}
-            showsHorizontalScrollIndicator={false}
-            numColumns={3}
-            contentContainerStyle={styles.storiesList}
-          />
-          ) : (
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-              <Text style={{textAlign: 'center', color: 'gray'}}>Stories you post will appear here.</Text>
-            </View>
-          )
-        ) : (
-          spotlights && spotlights.length > 0 ? (
-            <FlatList
-              data={spotlights}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.url}
-              showsHorizontalScrollIndicator={false}
-              numColumns={3}
-              contentContainerStyle={styles.storiesList}
-            />
-              ) : (
-                <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                  <Text style={{textAlign: 'center', color: 'gray'}}>Spotlights you post will appear here.</Text>
-                </View>
-              )
-          )}
+                 {tab === 'stories' && (
+              <FlatList
+                data={stories}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+                horizontal={false}
+                numColumns={3}
+                contentContainerStyle={styles.flatListContent}
+                showsVerticalScrollIndicator={false}
+              />
+            )
+          }
+          {tab === 'spotlights' && (
+              <FlatList
+                data={spotlights}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+                horizontal={false}
+                numColumns={3}
+                contentContainerStyle={styles.flatListContent}
+                showsVerticalScrollIndicator={false}
+              />
+            )
+          }
         </View>
       </Animated.View>
       {(selected) && (
@@ -461,7 +454,7 @@ const styles = StyleSheet.create({
   storyContainer: {
     width: CARD_WIDTH,
     height: 200,
-    backgroundColor: 'rgba(0,0,0,0.3)'
+    backgroundColor: '#f0f0f0'
   },
   storyImage: {
     width: '100%',
