@@ -113,7 +113,7 @@ const Map = () => {
         <Image source={processUserImage(user.avatar)} style={styles.markerImage} />
         <Callout onPress={() => calloutPressed(user)}>
           <View style={styles.calloutView}>
-            <Text style={styles.calloutUsername}>{user.Username}</Text>
+            <Text style={styles.calloutUsername} numberOfLines={1} ellipsizeMode='tail'>{user.Username}</Text>
             <Image
               source={user.picture ? { uri: user.picture } : processUserImage(user.avatar)}
               style={styles.calloutImage}
@@ -190,6 +190,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor:'#ffffff'
   },
   calloutUsername: {
     fontWeight: 'bold',

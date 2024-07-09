@@ -1,3 +1,5 @@
+//TODO: play around with the theme
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, SafeAreaView, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
 import SearchBar from '../../../components/SearchBar';
@@ -10,6 +12,7 @@ import processUserImage from '../../../../utils/processUserImage';
 import { useUser } from "../../../../context/UserContext";
 import { Image } from 'expo-image';
 import * as Contacts from 'expo-contacts';
+import { useTheme } from '../../../../context/ThemeContext'
 
 const NewChat = () => {
   const navigation = useNavigation();
@@ -18,6 +21,7 @@ const NewChat = () => {
   const [contacts, setContacts] = useState([]);
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     getContactsPermission();
@@ -149,15 +153,15 @@ const NewChat = () => {
 
   if (!permissionGranted) {
     return (
-      <View style={{ backgroundColor: '#fff', flex: 1, justifyContent: "center", alignItems: "center", gap: 20 }}>
+      <View style={{ backgroundColor: theme.backgroundColor, flex: 1, justifyContent: "center", alignItems: "center", gap: 20 }}>
         <View style={{ maxHeight: '40%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
           <Image source={require('../../../../assets/contactsPermission.png')} style={{ width: '90%', height: '100%', objectFit: 'cover' }} />
         </View>
         <View style={{ gap: 20, width: '100%', justifyContent: 'center', alignItems: 'center', }}>
-          <Text style={{ textAlign: "center", color: "gray" }}>
+          <Text style={{ textAlign: "center", color: theme.grayText }}>
             We need your permission to access your contacts
           </Text>
-          <TouchableOpacity onPress={getContactsPermission} style={{ width: '90%', padding: 8, backgroundColor: '#2ecc71', justifyContent: 'center', alignItems: 'center', borderRadius: 5 }}>
+          <TouchableOpacity onPress={getContactsPermission} style={{ width: '90%', padding: 8, backgroundColor: theme.primaryColor, justifyContent: 'center', alignItems: 'center', borderRadius: 5 }}>
             <Text style={{ color: '#fff', fontWeight: '600', fontSize: 16 }}>Grant Permission</Text>
           </TouchableOpacity>
         </View>
@@ -166,26 +170,26 @@ const NewChat = () => {
   }
 
   return (
-    <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
+    <SafeAreaView style={{ backgroundColor: theme.backgroundColor, flex: 1 }}>
       <SearchBar onChangeText={handleSearchQuery} onActualChange={onActualChange} color='#f5f5f5' />
-      <View style={{ paddingHorizontal: 15, backgroundColor: '#f5f5f5', paddingBottom: 5 }}>
+      <View style={{ paddingHorizontal: 15, backgroundColor: theme.backgroundColor, paddingBottom: 5 }}>
         <View style={{ marginVertical: 0 }}>
-          <Text style={styles.title}>Results</Text>
+          <Text style={[styles.title, {color: theme.textColor}]}>Results</Text>
         </View>
         {loading ? (
-          <ActivityIndicator size="small" color="#2ecc71" />
+          <ActivityIndicator size="small" color={theme.primaryColor} />
         ) : (
           user &&
           <Pressable
             onPress={() => handleUserProfile(user)}
-            style={[styles.pressable, styles.shadow]}
+            style={[styles.pressable, styles.shadow, {backgroundColor: 'rgba(225, 255, 255, 0.5)'}]}
           >
             <View style={styles.userAvatar}>
               <Image source={processUserImage(user.avatar)} style={{ width: '100%', height: '100%' }} />
             </View>
             <View style={styles.userInfo}>
-              <Text style={styles.userName}>{user.FirstName} {user.LastName}</Text>
-              <View style={styles.userDetails}>
+              <Text style={[styles.userName, {color: theme.textColor}]}>{user.FirstName} {user.LastName}</Text>
+              <View style={[styles.userDetails, {color: theme.grayText}]}>
                 <MaterialIcons name="chat-bubble-outline" size={12} color="gray" />
                 <Text style={styles.userUsername}>{user.Username}</Text>
               </View>
@@ -197,14 +201,14 @@ const NewChat = () => {
           </Pressable>
         )}
       </View>
-      <View style={styles.container}>
-        <Text style={styles.title}>Contacts</Text>
+      <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
+        <Text style={[styles.title, {color: theme.textColor}]}>Contacts</Text>
         <View style={styles.contactListContainer}>
           <FlatList
             data={contacts}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <View style={styles.contactItem}>
+              <View style={[styles.contactItem, {backgroundColor: 'rgba(0, 0, 0, 0.1)'}]}>
                 <View style={styles.contactAvatar}>
                   <Image source={require('../../../../assets/avatars/user.png')} style={styles.avatarImage} />
                 </View>

@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
       storyContainer: {
         width: CARD_WIDTH,
         height: 200,
-        backgroundColor: 'rgba(0,0,0,0.3)'
+        backgroundColor: '#f0f0f0'
       },
       storyImage: {
         width: '100%',

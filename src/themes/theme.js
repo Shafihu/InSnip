@@ -9,6 +9,8 @@ export const lightTheme = {
   tabIconColor: "#333333",
   innerTabContainerColor: "rgba(0, 0, 0, 0.06)",
   chatListBackgroundColor: "#f3f4f6",
+  chatBackgroundImage: require("../../assets/chat_background.jpg"),
+  chatContactColor: "#ffffff",
 };
 
 export const darkTheme = {
@@ -22,4 +24,6 @@ export const darkTheme = {
   tabIconColor: "#f5f5f5",
   innerTabContainerColor: "rgba(255, 255, 255, 0.2)",
   chatListBackgroundColor: "#000000",
+  chatBackgroundImage: require("../../assets/chat_background_dark_1.jpg"),
+  chatContactColor: "red",
 };

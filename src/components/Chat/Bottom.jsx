@@ -2,9 +2,11 @@ import { View, TextInput, Pressable, StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import { Ionicons, Entypo, FontAwesome } from 'react-native-vector-icons';
 import { useChatStore } from '../../../context/ChatContext';
+import { useTheme } from '../../../context/ThemeContext';
 
 const Bottom = ({ handleSend, handlePickMedia, from, user }) => {
   const [message, setMessage] = useState("");
+  const { theme } = useTheme();
 
   const { isCurrentUserBlocked, isReceiverBlocked } = useChatStore();
 
@@ -16,19 +18,19 @@ const Bottom = ({ handleSend, handlePickMedia, from, user }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: theme.backgroundColor}]}>
       {from && from === 'bot' ? <View /> :
         <View style={styles.cameraButtonWrapper}>
-          <Pressable disabled={isCurrentUserBlocked || isReceiverBlocked} style={styles.cameraButton}>
-            <FontAwesome name="camera" size={18} color={isReceiverBlocked ? 'gray' : "#3B2F2F"} />
+          <Pressable disabled={isCurrentUserBlocked || isReceiverBlocked} style={[styles.cameraButton, {backgroundColor: theme.innerTabContainerColor}]}>
+            <FontAwesome name="camera" size={18} color={isReceiverBlocked ? 'gray' : theme.textColor} />
           </Pressable>
         </View>
       }
       <View style={styles.textInputWrapper}>
         <TextInput
           placeholder="Chat"
-          placeholderTextColor={isReceiverBlocked ? 'rgba(0,0,0,.1)' : 'rgba(0,0,0,.5)'}
-          style={styles.textInput}
+          placeholderTextColor={isReceiverBlocked ? 'rgba(0,0,0,.1)' : theme.grayText}
+          style={[styles.textInput, {backgroundColor: theme.innerTabContainerColor, color: theme.textColor}]}
           value={message}
           onChangeText={(text) => setMessage(text)}
           onSubmitEditing={onSend}
@@ -42,8 +44,8 @@ const Bottom = ({ handleSend, handlePickMedia, from, user }) => {
           <Ionicons name="send" size={25} color={isReceiverBlocked ? 'gray' : "#2ecc71"} />
         </Pressable>
         {from && from === 'bot' ? <View /> :
-          <Pressable disabled={isCurrentUserBlocked || isReceiverBlocked} onPress={handlePickMedia} style={styles.actionButton}>
-            <Ionicons name="images-outline" size={23} color={isReceiverBlocked ? 'gray' : "#3B2F2F"} style={styles.rotateIcon} />
+          <Pressable disabled={isCurrentUserBlocked || isReceiverBlocked} onPress={handlePickMedia} style={[styles.actionButton, {backgroundColor: theme.innerTabContainerColor}]}>
+            <Ionicons name="images-outline" size={23} color={isReceiverBlocked ? 'gray' : theme.textColor} style={styles.rotateIcon} />
           </Pressable>
         }
       </View>

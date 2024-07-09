@@ -3,10 +3,12 @@ import React from 'react';
 import { FontAwesome5, FontAwesome, AntDesign, MaterialIcons } from 'react-native-vector-icons';
 import { router } from 'expo-router';
 import processUserImage from '../../../utils/processUserImage';
-import { useChatStore } from '../../../context/ChatContext';
+import { useChatStore } from '../../../context/ChatContext'
+import { useTheme } from '../../../context/ThemeContext';
 
 const Header = ({ title, avatar, firstname, lastname, id, username, user, handleClearChats, chooseVoice }) => {
   const { isReceiverBlocked } = useChatStore();
+  const { theme } = useTheme();
   return (
     <Pressable
       onPress={() =>
@@ -22,10 +24,10 @@ const Header = ({ title, avatar, firstname, lastname, id, username, user, handle
           },
         })
       }
-      style={styles.headerContainer}
+      style={[styles.headerContainer, {backgroundColor: theme.backgroundColor}]}
     >
       <Pressable onPress={() => router.back()} style={styles.backButton}>
-        <FontAwesome5 name="chevron-left" size={25} color="#3B2F2F" />
+        <FontAwesome5 name="chevron-left" size={25} color={theme.textColor} />
       </Pressable>
       <View style={styles.titleContainer}>
         <View style={styles.avatarContainer}>
@@ -40,27 +42,27 @@ const Header = ({ title, avatar, firstname, lastname, id, username, user, handle
             style={styles.avatarImage}
           />
         </View>
-        <Text style={styles.titleText} numberOfLines={1} ellipsizeMode="tail">
+        <Text style={[styles.titleText, {color: theme.textColor}]} numberOfLines={2} ellipsizeMode="tail">
           {title}
         </Text>
       </View>
       <View style={styles.actionsContainer}>
         {title === 'My AI' ? (
           <>
-            <Pressable onPress={chooseVoice} style={styles.actionButton}>
-              <MaterialIcons name="keyboard-voice" size={21} color="#3B2F2F" />
+            <Pressable onPress={chooseVoice} style={[styles.actionButton, {backgroundColor: theme.innerTabContainerColor}]}>
+              <MaterialIcons name="keyboard-voice" size={21} color={theme.textColor}  />
             </Pressable>
-            <Pressable onPress={handleClearChats} style={styles.actionButton}>
+            <Pressable onPress={handleClearChats} style={[styles.actionButton, {backgroundColor: theme.innerTabContainerColor}]}>
               <AntDesign name="delete" size={21} color="red" />
             </Pressable>
           </>
         ) : (
           <>
-            <Pressable style={styles.actionButton}>
-              <FontAwesome name="phone" size={21} color="#3B2F2F" />
+            <Pressable style={[styles.actionButton, {backgroundColor: theme.innerTabContainerColor}]}>
+              <FontAwesome name="phone" size={21} color={theme.textColor}  />
             </Pressable>
-            <Pressable style={styles.actionButton}>
-              <FontAwesome name="video-camera" size={18} color="#3B2F2F" />
+            <Pressable style={[styles.actionButton, {backgroundColor: theme.innerTabContainerColor}]}>
+              <FontAwesome name="video-camera" size={18} color={theme.textColor}  />
             </Pressable>
           </>
         )}
@@ -78,7 +80,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 2,
     paddingHorizontal: 5,
-    backgroundColor: 'transparent',
   },
   backButton: {
     alignItems: 'center',

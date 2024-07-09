@@ -28,7 +28,7 @@ import ImageView from "react-native-image-viewing";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomLoader from '../../../components/CustomLoader';
 import { MaterialCommunityIcons } from 'react-native-vector-icons'
-
+import { useTheme } from '../../../../context/ThemeContext';
 
 
 const { width } = Dimensions.get('window');
@@ -51,6 +51,8 @@ const ChatRoom = () => {
   const [visible, setIsVisible] = useState(false);
   const [chatImages, setChatImages] = useState([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const { theme } = useTheme();
+
   const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
   useEffect(() => {
@@ -193,23 +195,23 @@ const ChatRoom = () => {
     }
   };
 
-  const theme = {
-    backgroundColor: '#333333',
-    primaryColor: '#2ecc71',
-    secondaryColor: 'red',
-    textColor: '#333',
-    modalBackgroundColor: 'white',
-    modalTextColor: 'red',
-    borderColor: '#00BFFF',
-    placeholderColor: 'gray',
-    activityIndicatorColor: 'gray',
-    fullScreenPlayIconColor: 'rgba(255,255,255,0.7)',
-    chatBackgroundImage: require('../../../../assets/chat_background.jpg'),
-    crossIconColor: 'gray',
-    blockUserTextColor: 'white',
-    blockUserBackgroundColor: 'rgba(0,0,0,.3)',
-    deleteButtonColor: 'red',
-  };
+  // const theme = {
+  //   backgroundColor: '#333333',
+  //   primaryColor: '#2ecc71',
+  //   secondaryColor: 'red',
+  //   textColor: '#333',
+  //   modalBackgroundColor: 'white',
+  //   modalTextColor: 'red',
+  //   borderColor: '#00BFFF',
+  //   placeholderColor: 'gray',
+  //   activityIndicatorColor: 'gray',
+  //   fullScreenPlayIconColor: 'rgba(255,255,255,0.7)',
+  //   chatBackgroundImage: ,
+  //   crossIconColor: 'gray',
+  //   blockUserTextColor: 'white',
+  //   blockUserBackgroundColor: 'rgba(0,0,0,.3)',
+  //   deleteButtonColor: 'red',
+  // };
 
   useEffect(() => {
     let i = 0;
@@ -230,7 +232,7 @@ const ChatRoom = () => {
   }, [chat]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -239,7 +241,7 @@ const ChatRoom = () => {
         <View style={{ top: 0, left: 0 }}>
           <Header title={`${firstname} ${lastname}`} avatar={avatar} firstname={firstname} lastname={lastname} id={userId} username={username} user={user} />
         </View>
-        <ImageBackground source={theme.chatBackgroundImage} style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
+        <ImageBackground source={require('../../../../assets/chat_background_dark_1.jpg')} style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
           <ScrollView
             ref={scrollViewRef}
             contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', paddingVertical: 10, paddingHorizontal: 6 }}
@@ -263,7 +265,7 @@ const ChatRoom = () => {
                     borderRightWidth: message.senderId === currentUserId ? 3 : 0,
                     borderColor: message.senderId === currentUserId ? theme.primaryColor : theme.secondaryColor,
                     marginBottom: 8,
-                    backgroundColor: isSender ? '#DCF8C5' : 'white',
+                    backgroundColor: isSender ? '#DCF8C5' : theme.backgroundColor,
                     maxWidth: '80%',
                   }}
                 >
@@ -292,7 +294,7 @@ const ChatRoom = () => {
                             />
                           </Pressable>
                           {message.text && (
-                            <Text style={{ letterSpacing: 0.2, fontSize: 15, color: theme.textColor }}>
+                            <Text style={{ letterSpacing: 0.2, fontSize: 15, color: message.senderId === currentUserId ? '333333' : theme.textColor}}>
                               {message.text}
                             </Text>
                           )}
@@ -323,16 +325,16 @@ const ChatRoom = () => {
                                 alignItems: 'center',
                               }}
                             >
-                              <Ionicons name="play-circle" size={60} color={theme.fullScreenPlayIconColor} />
+                              <Ionicons name="play-circle" size={60} color='rgba(255,255,255,0.7)' />
                             </Pressable>
                           )}
-                          <Text style={{ letterSpacing: 0.2, fontSize: 15, color: theme.textColor }}>
+                          <Text style={{ letterSpacing: 0.2, fontSize: 15, color: message.senderId === currentUserId ? '333333' : theme.textColor }}>
                             {message.text}
                           </Text>
                         </View>
                       )
                     ) : (
-                      <Text style={{ letterSpacing: 0.2, fontSize: 15, color: theme.backgroundColor }}>
+                      <Text style={{ letterSpacing: 0.2, fontSize: 15, color: message.senderId === currentUserId ? '333333' : theme.textColor }}>
                         {message.text}
                       </Text>
                     )}
@@ -385,8 +387,8 @@ const ChatRoom = () => {
               </View>
             )}
             {isReceiverBlocked && (
-              <View style={{ backgroundColor: theme.blockUserBackgroundColor, padding: 10 }}>
-                <Text style={{ textAlign: 'center', fontWeight: '500', color: theme.blockUserTextColor, fontSize: 12 }}>
+              <View style={{ backgroundColor: theme.grayText, padding: 10 }}>
+                <Text style={{ textAlign: 'center', fontWeight: '500', color: 'white', fontSize: 12 }}>
                   You can no longer send or receive messages from this user!
                 </Text>
               </View>
@@ -394,7 +396,7 @@ const ChatRoom = () => {
           </ScrollView>
           <Bottom handleSend={handleSend} handlePickMedia={handlePickMedia} user={user} />
           <Modal isVisible={isModalVisible} onBackdropPress={handleCloseModal} backdropOpacity={0.4}>
-            <View style={{ backgroundColor: theme.modalBackgroundColor, borderRadius: 10, paddingVertical: 15, paddingHorizontal: 20}}>
+            <View style={{ backgroundColor: theme.backgroundColor, borderRadius: 10, paddingVertical: 15, paddingHorizontal: 20}}>
               <View style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start', gap: 10}}>
                 {selectedMessage?.mediaUrl && (
                   <ExpoImage 
@@ -406,11 +408,11 @@ const ChatRoom = () => {
                   />
                 )}
                 {selectedMessage?.text && (
-                  <Text style={{color: 'rgba(0,0,0,0.5)'}}>{selectedMessage.text}</Text>
+                  <Text style={{color: theme.grayText}}>{selectedMessage.text}</Text>
                 )}
               </View>
               <TouchableOpacity onPress={handleDeleteMessage} style={{ paddingTop: 0}}>
-                <Text style={{textAlign: 'right'}}><MaterialCommunityIcons name='delete-empty-outline' size={25} color={theme.deleteButtonColor} /> </Text>
+                <Text style={{textAlign: 'right'}}><MaterialCommunityIcons name='delete-empty-outline' size={25} color={theme.secondaryColor} /> </Text>
               </TouchableOpacity>
             </View>
           </Modal>

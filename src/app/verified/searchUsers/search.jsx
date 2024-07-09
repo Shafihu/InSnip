@@ -6,6 +6,7 @@ import { FIRESTORE_DB } from '../../../../Firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
 import processUserImage from '../../../../utils/processUserImage';
 import { useUser } from '../../../../context/UserContext';
+import { useTheme } from '../../../../context/ThemeContext'
 
 const Search = () => {
     const [users, setUsers] = useState([]);
@@ -15,6 +16,7 @@ const Search = () => {
     const [searchText, setSearchText] = useState('');
     const { userData } = useUser();
     const currentUserId = userData.id;
+    const { theme } = useTheme();
 
     const shuffleArray = (array) => {
         const shuffled = array.slice();
@@ -73,7 +75,7 @@ const Search = () => {
     const renderItem = ({ item }) => (
         <Pressable 
             onPress={() => handleUserProfile(item)} 
-            style={[styles.pressable, styles.shadow, styles.flexRow, styles.alignCenter, styles.justifyBetween, styles.gap4, styles.bgWhite, styles.py2, styles.px3, styles.pr5]}
+            style={[styles.pressable, styles.shadow, styles.flexRow, styles.alignCenter, styles.justifyBetween, styles.gap4, styles.py2, styles.px3, styles.pr5, {backgroundColor: 'rgba(225, 255, 255, 0.5)'}]}
         >
             <View style={[styles.avatarContainer]}>
                 <Image source={processUserImage(item.avatar)} style={{ width: '100%', height: '100%' }} />
@@ -88,28 +90,28 @@ const Search = () => {
     );
 
     return (
-        <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
+        <SafeAreaView style={{ backgroundColor: theme.backgroundColor, flex: 1 }}>
             <SearchBar onActualChange={onActualChange} color='white'/>
-            <View style={{ paddingVertical: 0, backgroundColor: '#fff', }}>
+            <View style={{ paddingVertical: 0, backgroundColor: theme.backgroundColor }}>
                 <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
-                    <Text style={[styles.fontSemibold, styles.trackingWider, styles.text16, {color: '#3B2F2F'}]}>Results</Text>
+                    <Text style={[styles.fontSemibold, styles.trackingWider, styles.text16, {color: theme.textColor}]}>Results</Text>
                 </View>
-                <View style={[styles.shadow, {backgroundColor: '#fff', padding: 0, borderRadius: 0, overflow:'hidden'}]}>
+                <View style={[styles.shadow, { padding: 0, borderRadius: 0, overflow:'hidden'}]}>
                     <FlatList
                         data={shuffledFilteredUsers}
                         renderItem={renderItem}
                         keyExtractor={item => item.id}
-                        contentContainerStyle={{ paddingHorizontal: 10, gap: 0, paddingVertical: 10}}
+                        contentContainerStyle={{ paddingHorizontal: 10, gap: 0, paddingVertical: 10, backgroundColor: theme.backgroundColor}}
                     />
                 </View>
                 <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
-                    <Text style={[styles.fontSemibold, styles.trackingWider, styles.text16, {color: '#3B2F2F'}]}>People you may know</Text>
+                    <Text style={[styles.fontSemibold, styles.trackingWider, styles.text16, {color: theme.textColor}]}>People you may know</Text>
                 </View>
                 <FlatList
                     data={shuffledUsers}
                     renderItem={renderItem}
                     keyExtractor={item => item.id}
-                    contentContainerStyle={{ paddingBottom: 28, paddingHorizontal: 15, gap: 0, paddingVertical: 10 }}
+                    contentContainerStyle={{ paddingBottom: 28, paddingHorizontal: 15, gap: 0, paddingVertical: 10, backgroundColor: theme.backgroundColor }}
                 />
             </View>
         </SafeAreaView>
