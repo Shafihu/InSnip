@@ -4,7 +4,7 @@ import { Ionicons, Entypo, FontAwesome } from 'react-native-vector-icons';
 import { useChatStore } from '../../../context/ChatContext';
 import { useTheme } from '../../../context/ThemeContext';
 
-const Bottom = ({ handleSend, handlePickMedia, from, user }) => {
+const Bottom = ({ handleSend, handlePickMedia, from, handleFocusedInput, user }) => {
   const [message, setMessage] = useState("");
   const { theme } = useTheme();
 
@@ -35,8 +35,9 @@ const Bottom = ({ handleSend, handlePickMedia, from, user }) => {
           onChangeText={(text) => setMessage(text)}
           onSubmitEditing={onSend}
           returnKeyType='send'
-          editable={!isCurrentUserBlocked && !isReceiverBlocked}
+          // editable={!isCurrentUserBlocked && !isReceiverBlocked}
           selectionColor="#2ecc71"
+          onFocus={() => handleFocusedInput}
         />
       </View>
       <View style={styles.actionsWrapper}>

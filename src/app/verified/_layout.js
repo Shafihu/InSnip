@@ -21,12 +21,9 @@ const HomeLayout = () => {
         />
         <Stack.Screen
           name="searchUsers"
-          options={{ headerShown: false, presentation: "" }}
+          options={{ headerShown: false, presentation: "fullScreenModal" }}
         />
-        <Stack.Screen
-          name="viewStory"
-          options={{ headerShown: false, presentation: "" }}
-        />
+        <Stack.Screen name="viewStory" options={{ headerShown: false }} />
       </Stack>
     </BottomSheetModalProvider>
   );

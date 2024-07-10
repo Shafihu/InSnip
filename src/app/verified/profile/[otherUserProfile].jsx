@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, Pressable, StyleSheet, View, Animated, Dimensions, FlatList, Modal, SafeAreaView, ScrollView } from "react-native";
+import { Text, Pressable, StyleSheet, View, Animated, Dimensions, FlatList, Modal, SafeAreaView, ScrollView, Platform, StatusBar } from "react-native";
 import Toast from "react-native-toast-message";
 import processUserImage from "../../../../utils/processUserImage";
 import { router, useLocalSearchParams } from "expo-router";
@@ -282,27 +282,30 @@ const UserProfile = () => {
           {(selected) && (
             <Modal visible={true} transparent={true} animationType="fade">
               <SafeAreaView style={styles.modalContainer}>
-                <Pressable onPress={handleClosePreview} style={styles.closeButton}>
-                  <Ionicons name='close' size={25} color='white' />
-                </Pressable>
-                <View style={styles.modalContent}>
-                <Pressable onPress={handleClosePreview} style={styles.top}>
-                    <View style={{backgroundColor: 'orange', borderRadius: '100%'}}>
-                        <Image source={processUserImage(selected.userDetails.avatar)} style={styles.modalAvatar} />
-                    </View>
-                    <View style={{gap: 4}}>
-                      <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalUsername}>{selected.userDetails ? selected.userDetails.Username : 'Unknown'}</Text>
-                      <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalTime}>5 days ago</Text>
-                    </View>
-                </Pressable>
-                  {selected && selected.type && selected.type.startsWith('image') ? (
-                    <Image source={{ uri: selected.url }} style={styles.modalMedia} />
-                  ) : selected && selected.type && selected.type.startsWith('video') ? (
-                    <Video source={{ uri: selected.url }} style={styles.modalMedia} resizeMode={ResizeMode.CONTAIN} shouldPlay isLooping/>
-                  ) : (
-                    <Text style={styles.errorText}>Oops! Something went wrong.</Text>
-                  )}
+          <StatusBar hidden={Platform.OS === 'ios' ? false : true } />
+              <View style={styles.modalContent}>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 9999}}>
+            <Pressable onPress={() => handleProfile(selected)} style={styles.top}>
+                <View style={{backgroundColor: 'orange', borderRadius: 50, overflow: 'hidden'}}>
+                    <Image source={processUserImage(selected.userDetails.avatar)} style={styles.modalAvatar} />
                 </View>
+                <View style={{gap: 4}}>
+                  <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalUsername}>{selected.userDetails ? selected.userDetails.Username : 'Unknown'}</Text>
+                  <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalTime}>5 days ago</Text>
+                </View>
+            </Pressable>
+            <Pressable onPress={handleClosePreview} style={styles.closeButton}>
+              <Ionicons name='close' size={25} color='#fff' />
+            </Pressable>
+            </View>
+              {selected && selected.type && selected.type.startsWith('image') ? (
+                <Image source={{ uri: selected.url }} style={styles.modalMedia} />
+              ) : selected && selected.type && selected.type.startsWith('video') ? (
+                <Video source={{ uri: selected.url }} style={styles.modalMedia} resizeMode={ResizeMode.CONTAIN} shouldPlay isLooping/>
+              ) : (
+                <Text style={styles.errorText}>Oops! Something went wrong.</Text>
+              )}
+            </View>
                 <View style={styles.bottom}>
                   <Pressable  style={[styles.pressable, styles.miniButtons]}>
                     <MaterialCommunityIcons name='camera-wireless' size={25} color="white" />
@@ -380,7 +383,7 @@ const styles = StyleSheet.create({
       userImageContainer: {
         borderWidth: 3,
         borderColor: '#2ecc71',
-        borderRadius: '100%',
+        borderRadius: 50,
         backgroundColor: 'orange'
       },
       userImage: {
@@ -426,7 +429,7 @@ const styles = StyleSheet.create({
       },
       button: {
         backgroundColor: 'rgba(0,0,0,.35)',
-        borderRadius: '100%',
+        borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center',
         height: 40,
@@ -499,9 +502,6 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
       },
       closeButton: {
-        position: 'absolute',
-        top: 40,
-        right: 8,
         zIndex: 10,
         paddingVertical: 16,
         paddingHorizontal: 8,
@@ -511,9 +511,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 8,
         gap: 8,
-        position: 'absolute',
-        top: 0, 
-        left: 0,
         zIndex: 99,
         
       },
@@ -524,11 +521,13 @@ const styles = StyleSheet.create({
       },
       modalContent: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        borderRadius: 15,
+        borderRadius: 20,
         overflow: 'hidden',
-        position: 'relative'
+        position: 'relative',
+        backgroundColor: 'black',
+        width: '100%'
       },
       modalMedia: {
         width: '100%',

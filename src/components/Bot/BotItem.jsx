@@ -16,7 +16,7 @@ const BotItem = () => {
           source={require('../../../assets/aiChatPic.png')}
           style={styles.avatar}
         />
-        <View style={{position: 'absolute', left: 0, bottom: -5, width: 20, height: 20, backgroundColor: 'transparent', borderRadius: '10', overflow: 'hidden'}}>
+        <View style={{position: 'absolute', left: 0, bottom: -5, width: 20, height: 20, backgroundColor: 'transparent', borderRadius: 10, overflow: 'hidden'}}>
           <Image source={require('../../../assets/subBot.png')} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
         </View>
       </View>
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: '100%',
     height: '100%',
-    borderRadius: '50%'
+    borderRadius: 50
   },
   content: {
     flex: 1,

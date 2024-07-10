@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { CameraView, useCameraPermissions, Camera } from "expo-camera";
 import { shareAsync } from "expo-sharing";
 import * as MediaLibrary from "expo-media-library";
-import { Button, Image, Pressable, SafeAreaView, Text, TouchableOpacity, View, StyleSheet, ActivityIndicator, ScrollView } from "react-native";
+import { Button, Image, Pressable, SafeAreaView, Text, TouchableOpacity, View, StyleSheet, ActivityIndicator, ScrollView, Platform, StatusBar } from "react-native";
 import { Ionicons, Foundation } from "react-native-vector-icons";
 import Toast from "react-native-toast-message";
 
@@ -249,7 +249,7 @@ const HomeScreen = () => {
   return (
     <>
       <View style={[styles.container, (stories || chat) && {backgroundColor: theme.backgroundColor}]}>
-        <SafeAreaView style={{ flex: 1, justifyContent: "center" }}>
+        <SafeAreaView style={{ flex: 1, justifyContent: "center", paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0, }}>
           <View style={styles.cameraContainer}>
             {camera && (
               <CameraView

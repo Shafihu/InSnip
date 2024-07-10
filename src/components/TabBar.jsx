@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Pressable, Text } from 'react-native';
+import { View, StyleSheet, Pressable, Text, Platform } from 'react-native';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from 'react-native-vector-icons';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -43,7 +43,7 @@ export default TabBar;
 
 const styles = StyleSheet.create({
   tabBar: {
-    height: 100,
+    height: Platform.OS === 'android' ? 80 : 100,
     position: 'absolute',
     bottom: 0,
     left: 0,

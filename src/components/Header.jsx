@@ -78,7 +78,7 @@ const Header = ({ header, toggleCameraFacing, toggleCameraFlash, addSpotlight}) 
                 fontSize: 21,
                 fontWeight: '600',
                 textAlign: 'center',
-                color: header === ('Spotlight' || header === '' || header === 'Map') ? 'white' : theme.textColor,
+                color: (header === 'Spotlight' || header === '' || header === 'Map') ? 'white' : theme.textColor,
                 marginRight: header === 'Spotlight' || header === '' || header === 'Map' ? 40 : 0
             }}>
                 {header}

@@ -1,12 +1,12 @@
-import { View, Text, Pressable, Image, SafeAreaView, StyleSheet, FlatList } from 'react-native';
+import { View, Text, Pressable, Image, SafeAreaView, StyleSheet, FlatList, Platform, StatusBar } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import SearchBar from '../../../components/SearchBar';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { FIRESTORE_DB } from '../../../../Firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
 import processUserImage from '../../../../utils/processUserImage';
 import { useUser } from '../../../../context/UserContext';
-import { useTheme } from '../../../../context/ThemeContext'
+import { useTheme } from '../../../../context/ThemeContext';
 
 const Search = () => {
     const [users, setUsers] = useState([]);
@@ -17,6 +17,7 @@ const Search = () => {
     const { userData } = useUser();
     const currentUserId = userData.id;
     const { theme } = useTheme();
+    const router = useRouter();
 
     const shuffleArray = (array) => {
         const shuffled = array.slice();
@@ -75,43 +76,35 @@ const Search = () => {
     const renderItem = ({ item }) => (
         <Pressable 
             onPress={() => handleUserProfile(item)} 
-            style={[styles.pressable, styles.shadow, styles.flexRow, styles.alignCenter, styles.justifyBetween, styles.gap4, styles.py2, styles.px3, styles.pr5, {backgroundColor: 'rgba(225, 255, 255, 0.5)'}]}
+            style={[styles.pressable, { backgroundColor: theme.cardBackgroundColor }]}
         >
-            <View style={[styles.avatarContainer]}>
-                <Image source={processUserImage(item.avatar)} style={{ width: '100%', height: '100%' }} />
+            <View style={styles.avatarContainer}>
+                <Image source={processUserImage(item.avatar)} style={styles.avatar} />
             </View>
-            <View style={[styles.flex1, styles.gap1]}>
-                <Text style={[styles.fontMedium, styles.textMedium, styles.trackingWider, styles.capitalize, {color: '#333333'}]}>{item.FirstName} {item.LastName}</Text>
-                <View style={[styles.flexRow, styles.alignCenter, styles.gap2]}>
-                    <Text style={[styles.text11, styles.fontSemibold, {color: '#7f8c8d'}]}>{item.Username}</Text>
-                </View>
+            <View style={styles.userInfo}>
+                <Text style={[styles.userName, { color: theme.textColor }]}>{item.FirstName} {item.LastName}</Text>
+                <Text style={[styles.userUsername, { color: theme.grayText }]}>{item.Username}</Text>
             </View>
         </Pressable>
     );
 
     return (
-        <SafeAreaView style={{ backgroundColor: theme.backgroundColor, flex: 1 }}>
-            <SearchBar onActualChange={onActualChange} color='white'/>
-            <View style={{ paddingVertical: 0, backgroundColor: theme.backgroundColor }}>
-                <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
-                    <Text style={[styles.fontSemibold, styles.trackingWider, styles.text16, {color: theme.textColor}]}>Results</Text>
-                </View>
-                <View style={[styles.shadow, { padding: 0, borderRadius: 0, overflow:'hidden'}]}>
-                    <FlatList
-                        data={shuffledFilteredUsers}
-                        renderItem={renderItem}
-                        keyExtractor={item => item.id}
-                        contentContainerStyle={{ paddingHorizontal: 10, gap: 0, paddingVertical: 10, backgroundColor: theme.backgroundColor}}
-                    />
-                </View>
-                <View style={{ marginVertical: 15, marginHorizontal: 15 }}>
-                    <Text style={[styles.fontSemibold, styles.trackingWider, styles.text16, {color: theme.textColor}]}>People you may know</Text>
-                </View>
+        <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.backgroundColor }]}>
+            <SearchBar onActualChange={onActualChange} color='white' />
+            <View style={styles.container}>
+                <Text style={[styles.sectionTitle, { color: theme.textColor }]}>Results</Text>
+                <FlatList
+                    data={shuffledFilteredUsers}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id}
+                    contentContainerStyle={[styles.listContainer, { backgroundColor: theme.backgroundColor }]}
+                />
+                <Text style={[styles.sectionTitle, { color: theme.textColor }]}>People you may know</Text>
                 <FlatList
                     data={shuffledUsers}
                     renderItem={renderItem}
                     keyExtractor={item => item.id}
-                    contentContainerStyle={{ paddingBottom: 28, paddingHorizontal: 15, gap: 0, paddingVertical: 10, backgroundColor: theme.backgroundColor }}
+                    contentContainerStyle={[styles.listContainer, styles.listBottom, { backgroundColor: theme.backgroundColor }]}
                 />
             </View>
         </SafeAreaView>
@@ -119,41 +112,36 @@ const Search = () => {
 }
 
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight,
+    },
+    container: {
+        flex: 1,
+        paddingHorizontal: 15,
+    },
+    sectionTitle: {
+        marginVertical: 15,
+        fontSize: 16,
+        fontWeight: '600',
+        letterSpacing: 1.25,
+    },
+    listContainer: {
+        paddingHorizontal: 10,
+        gap: 0,
+        paddingVertical: 10,
+    },
+    listBottom: {
+        paddingBottom: 28,
+    },
     pressable: {
-        backgroundColor: 'white',
-        borderBottomWidth: 1,
-        borderColor: 'rgba(0,0,0,0.2)'  
-    },
-    shadow: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 10,
-        elevation: 5,
-    },
-    flexRow: {
         flexDirection: 'row',
-    },
-    alignCenter: {
         alignItems: 'center',
-    },
-    justifyBetween: {
         justifyContent: 'space-between',
-    },
-    gap4: {
-        gap: 16, // 4 * 4 (assuming 1 unit is 4px)
-    },
-    bgWhite: {
-        backgroundColor: 'white',
-    },
-    py2: {
-        paddingVertical: 8, // 2 * 4 (assuming 1 unit is 4px)
-    },
-    px3: {
-        paddingHorizontal: 12, // 3 * 4 (assuming 1 unit is 4px)
-    },
-    pr5: {
-        paddingRight: 20, // 5 * 4 (assuming 1 unit is 4px)
+        paddingVertical: 12,
+        paddingHorizontal: 15,
+        borderRadius: 10,
+        marginVertical: 5,
     },
     avatarContainer: {
         width: 50,
@@ -162,44 +150,23 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         overflow: 'hidden',
     },
-    flex1: {
+    avatar: {
+        width: '100%',
+        height: '100%',
+    },
+    userInfo: {
         flex: 1,
+        marginLeft: 15,
     },
-    gap1: {
-        gap: 4, // 1 * 4 (assuming 1 unit is 4px)
-    },
-    fontMedium: {
+    userName: {
+        fontSize: 16,
         fontWeight: '500',
-    },
-    textMedium: {
-        fontSize: 16, // equivalent to medium text size
-    },
-    trackingWider: {
-        letterSpacing: 1.25, // example for wider tracking
-    },
-    capitalize: {
         textTransform: 'capitalize',
     },
-    flexRow: {
-        flexDirection: 'row',
-    },
-    alignCenter: {
-        alignItems: 'center',
-    },
-    gap2: {
-        gap: 8, // 2 * 4 (assuming 1 unit is 4px)
-    },
-    text11: {
-        fontSize: 11,
-    },
-    fontSemibold: {
+    userUsername: {
+        fontSize: 12,
         fontWeight: '600',
-    },
-    fontSemibold: {
-        fontWeight: '600',
-    },
-    text16: {
-        fontSize: 16,
+        color: '#7f8c8d',
     },
 });
 

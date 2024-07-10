@@ -1,14 +1,15 @@
-//TODO: play around with the theme
-
 import React, { useState } from 'react';
-import { TextInput, View, Text, Pressable } from 'react-native';
+import { TextInput, View, Text, Pressable, StyleSheet, Dimensions } from 'react-native';
 import { Foundation } from 'react-native-vector-icons';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
 
-const SearchBar = ({ onChangeText, onActualChange, color }) => {
+const { width } = Dimensions.get('window');
+
+const SearchBar = ({ onChangeText, onActualChange }) => {
   const [searchText, setSearchText] = useState('');
   const { theme } = useTheme();
+  const router = useRouter();
 
   const handleSearch = () => {
     onChangeText(searchText);
@@ -16,28 +17,67 @@ const SearchBar = ({ onChangeText, onActualChange, color }) => {
 
   const handleChangeText = (text) => {
     setSearchText(text);
-    onActualChange(text); // Correctly passing the updated text
+    onActualChange(text);
   };
 
   return (
-    <View style={{ backgroundColor: theme.backgroundColor, width: '100%', paddingVertical: 10, paddingHorizontal: 15, gap: 5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
-      <View style={{ position: 'relative', width: '80%', borderRadius: '100%', overflow: 'hidden', backgroundColor: 'rgba(0,0,0,.05)' }}  >
-        <Foundation name="magnifying-glass" size={20} color='#555c57' style={{ position: 'absolute', left: 15, top: '50%', zIndex: 999, transform: [{ translateY: -10 }, { scaleX: -1 }] }} />
+    <View style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+      <View style={[styles.searchContainer, { backgroundColor: theme.innerTabContainerColor }]}>
+        <Foundation name="magnifying-glass" size={20} color={theme.textColor} style={styles.icon} />
         <TextInput
           placeholder="Search"
-          placeholderTextColor="#555c57"
+          placeholderTextColor={theme.textColor}
           value={searchText}
           onChangeText={handleChangeText}
-          // onSubmitEditing={handleSearch}
           returnKeyType='search'
-          style={{ paddingVertical: 10, paddingLeft: 40, paddingRight: 15, borderRadius: 100, fontSize: 15, fontWeight: '500', color: theme.textColor, backgroundColor: theme.grayText }}
+          style={[styles.textInput, { color: theme.textColor }]}
         />
       </View>
-      <Pressable onPress={() => router.back()} style={{ width: '20%' }}>
-        <Text style={{ textAlign: 'center', fontWeight: 'bold', color: theme.grayText }}>Cancel</Text>
+      <Pressable onPress={() => router.back()} style={styles.cancelButton}>
+        <Text style={[styles.cancelText, { color: theme.grayText }]}>Cancel</Text>
       </Pressable>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  searchContainer: {
+    position: 'relative',
+    width: width * 0.75,
+    borderRadius: 50,
+    overflow: 'hidden',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  icon: {
+    position: 'absolute',
+    left: 15,
+    zIndex: 999,
+  },
+  textInput: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingLeft: 40,
+    paddingRight: 15,
+    borderRadius: 50,
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  cancelButton: {
+    width: width * 0.2,
+  },
+  cancelText: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+});
 
 export default SearchBar;

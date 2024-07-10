@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, Pressable, StyleSheet, View, Animated, Dimensions, FlatList, ScrollView, Modal, SafeAreaView } from "react-native";
+import { Text, Pressable, StyleSheet, View, Animated, Dimensions, FlatList, ScrollView, Modal, SafeAreaView, Platform, StatusBar } from "react-native";
 import { signOut } from "firebase/auth";
 import Toast from "react-native-toast-message";
 import { useUser } from "../../../../context/UserContext";
@@ -248,7 +248,7 @@ const UserProfile = () => {
               <FlatList
                 data={stories}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.url}
                 horizontal={false}
                 numColumns={3}
                 contentContainerStyle={styles.flatListContent}
@@ -260,7 +260,7 @@ const UserProfile = () => {
               <FlatList
                 data={spotlights}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.url}
                 horizontal={false}
                 numColumns={3}
                 contentContainerStyle={styles.flatListContent}
@@ -272,13 +272,12 @@ const UserProfile = () => {
       </Animated.View>
       {(selected) && (
         <Modal visible={true} transparent={true} animationType="fade">
+          <StatusBar hidden={Platform.OS === 'ios' ? false : true } />
           <SafeAreaView style={styles.modalContainer}>
-            <Pressable onPress={handleClosePreview} style={styles.closeButton}>
-              <Ionicons name='close' size={25} color='white' />
-            </Pressable>
             <View style={styles.modalContent}>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', position: 'absolute', top: 0, left: 0, width: '100%', zIndex: 9999}}>
             <Pressable onPress={() => handleProfile(selected)} style={styles.top}>
-                <View style={{backgroundColor: 'orange', borderRadius: '100%'}}>
+                <View style={{backgroundColor: 'orange', borderRadius: 50, overflow: 'hidden'}}>
                     <Image source={processUserImage(selected.userDetails.avatar)} style={styles.modalAvatar} />
                 </View>
                 <View style={{gap: 4}}>
@@ -286,6 +285,10 @@ const UserProfile = () => {
                   <Text numberOfLines={1} ellipsizeMode='trail' style={styles.modalTime}>5 days ago</Text>
                 </View>
             </Pressable>
+            <Pressable onPress={handleClosePreview} style={styles.closeButton}>
+              <Ionicons name='close' size={25} color='#fff' />
+            </Pressable>
+            </View>
               {selected && selected.type && selected.type.startsWith('image') ? (
                 <Image source={{ uri: selected.url }} style={styles.modalMedia} />
               ) : selected && selected.type && selected.type.startsWith('video') ? (
@@ -313,15 +316,15 @@ const UserProfile = () => {
               visible={optionsModal} 
               onBackdropPressed={toggleOptionsModal}
               transparent={true}>
-              <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 16}}>
+              <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 50}}>
                 <ScrollView contentContainerStyle={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'transparent', paddingHorizontal: 10, paddingBottom: 25, gap: 15}}>
-                  <View style={{backgroundColor: 'white', minHeight: '30%', borderRadius: 16, padding: 10}}>
+                  <View style={{backgroundColor: 'white', minHeight: '30%', borderRadius: 50, padding: 10}}>
                       <Text>Options</Text>
                   </View>
-                  <View style={{backgroundColor: 'pink', minHeight: '10%', borderRadius: 16, padding: 10}}>
+                  <View style={{backgroundColor: 'pink', minHeight: '10%', borderRadius: 50, padding: 10}}>
                       <Text>More options go dey here</Text>
                   </View>
-                  <Pressable onPress={toggleOptionsModal} style={{backgroundColor: 'white', minHeight: '5%', borderRadius: 16, padding: 10, justifyContent: 'center', alignItems: 'center'}}>
+                  <Pressable onPress={toggleOptionsModal} style={{backgroundColor: 'white', minHeight: '5%', borderRadius: 50, padding: 10, justifyContent: 'center', alignItems: 'center'}}>
                       <Text style={{fontWeight: 'bold', fontSize: 17, color: '#333333'}}>Done</Text>
                   </Pressable>
                 </ScrollView>
@@ -371,12 +374,12 @@ const styles = StyleSheet.create({
   userImageContainer: {
     borderWidth: 3,
     borderColor: '#2ecc71',
-    borderRadius: '100%',
+    borderRadius: 50,
   },
   userImage: {
     width: 75,
     height: 75,
-    borderRadius: 37.5,
+    borderRadius: 50,
   },
   userInfoContainer: {
     justifyContent: 'center',
@@ -404,7 +407,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    top: 50,
+    top:50,
     alignSelf: 'center',
     zIndex: 999,
     backgroundColor: 'transparent',
@@ -416,7 +419,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: 'rgba(0,0,0,.35)',
-    borderRadius: '100%',
+    borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
     height: 40,
@@ -429,8 +432,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   tabButton: {
-    width: '50%',
     padding: 10,
+    paddingBottom: 4,
+    flexDirection: 'row',
   },
   activeTab: {
     borderBottomWidth: 3,
@@ -485,13 +489,10 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     backgroundColor: 'black',
-    borderRadius: 30,
+    // borderRadius: 20,
     overflow: 'hidden',
   },
   closeButton: {
-    position: 'absolute',
-    top: 40,
-    right: 8,
     zIndex: 10,
     paddingVertical: 16,
     paddingHorizontal: 8,
@@ -501,24 +502,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 8,
     gap: 8,
-    position: 'absolute',
-    top: 0, 
-    left: 0,
     zIndex: 99,
     
   },
-  closeButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
   modalContent: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    borderRadius: 15,
+    borderRadius: 20,
     overflow: 'hidden',
-    position: 'relative'
+    position: 'relative',
+    backgroundColor: 'black',
+    width: '100%'
   },
   modalMedia: {
     width: '100%',
@@ -567,7 +562,7 @@ const styles = StyleSheet.create({
   modalAvatar: {
     width: 35,
     height: 35,
-    borderRadius: 17.5,
+    borderRadius: 50,
   },
   modalUsername: {
     color: '#fff',

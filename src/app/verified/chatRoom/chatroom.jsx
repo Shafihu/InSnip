@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
   ImageBackground,
   Pressable,
+  StatusBar,
+  Keyboard,
 } from 'react-native';
 import { onSnapshot, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import { FIRESTORE_DB } from '../../../../Firebase/config';
@@ -231,17 +233,21 @@ const ChatRoom = () => {
     }
   }, [chat]);
 
+  const handleFocusedInput = () => {
+    scrollViewRef.current.scrollToEnd({animated: true});
+  }
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor, paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight }}>
+              <View style={{ top: 0, left: 0 }}>
+          <Header title={`${firstname} ${lastname}`} avatar={avatar} firstname={firstname} lastname={lastname} id={userId} username={username} user={user} />
+        </View>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -260}
       >
-        <View style={{ top: 0, left: 0 }}>
-          <Header title={`${firstname} ${lastname}`} avatar={avatar} firstname={firstname} lastname={lastname} id={userId} username={username} user={user} />
-        </View>
-        <ImageBackground source={require('../../../../assets/chat_background_dark_1.jpg')} style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
+        <ImageBackground source={require('../../../../assets/chat_background.jpg')} style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
           <ScrollView
             ref={scrollViewRef}
             contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', paddingVertical: 10, paddingHorizontal: 6 }}
@@ -394,7 +400,7 @@ const ChatRoom = () => {
               </View>
             )}
           </ScrollView>
-          <Bottom handleSend={handleSend} handlePickMedia={handlePickMedia} user={user} />
+          <Bottom handleSend={handleSend} handlePickMedia={handlePickMedia} user={user} handleFocusedInput={handleFocusedInput} />
           <Modal isVisible={isModalVisible} onBackdropPress={handleCloseModal} backdropOpacity={0.4}>
             <View style={{ backgroundColor: theme.backgroundColor, borderRadius: 10, paddingVertical: 15, paddingHorizontal: 20}}>
               <View style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start', gap: 10}}>
