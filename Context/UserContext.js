@@ -7,9 +7,9 @@ import Toast from "react-native-toast-message";
 
 const UserContext = createContext();
 
-const showToast = (message) => {
+const showErrorToast = (message) => {
   Toast.show({
-    type: "error",
+    type: "customErrorToast",
     text1: message,
   });
 };
@@ -41,7 +41,8 @@ export const UserProvider = ({ children }) => {
         }
       } catch (error) {
         console.error("Error fetching user data: ", error);
-        showToast("Check your connection and try again");
+        showErrorToast("Check your connection and try again");
+        return;
       }
     };
 

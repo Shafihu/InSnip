@@ -6,48 +6,49 @@ import { UsersProvider } from "../../context/UsersContext";
 import { ChatProvider } from "../../context/ChatContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider } from "../../context/ThemeContext";
+import { View, Text } from "react-native";
+import { Ionicons } from "react-native-vector-icons";
 
 const RootLayout = () => {
   const toastConfig = {
-    success: (props) => (
-      <BaseToast
-        {...props}
+    customSuccessToast: ({ text1 }) => (
+      <View
         style={{
-          borderLeftColor: "#32cc2d",
+          height: 40,
+          // width: "60%",
+          backgroundColor: "rgba(0,0,0,0.75)",
+          borderRadius: 20,
+          padding: 10,
+          flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
+          marginTop: 10,
+          gap: 5,
         }}
-        contentContainerStyle={{
-          paddingHorizontal: 15,
-        }}
-        text1Style={{
-          fontSize: 14,
-          fontWeight: "600",
-        }}
-        text2Style={{
-          fontSize: 14,
-        }}
-      />
+      >
+        <Ionicons name="checkmark-circle" color="#2ecc71" size={20} />
+        <Text style={{ color: "#fff", textAlign: "center" }}>{text1}</Text>
+      </View>
     ),
-    error: (props) => (
-      <ErrorToast
-        {...props}
+
+    customErrorToast: ({ text1 }) => (
+      <View
         style={{
-          borderLeftColor: "red",
+          height: 40,
+          // width: 50%",
+          backgroundColor: "rgba(0,0,0,0.75)",
+          borderRadius: 20,
+          padding: 10,
+          flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
+          marginTop: 10,
+          gap: 5,
         }}
-        contentContainerStyle={{
-          paddingHorizontal: 15,
-        }}
-        text1Style={{
-          fontSize: 14,
-          fontWeight: "600",
-        }}
-        text2Style={{
-          fontSize: 14,
-        }}
-      />
+      >
+        <Ionicons name="close-circle" color="red" size={20} />
+        <Text style={{ color: "#fff", textAlign: "center" }}>{text1}</Text>
+      </View>
     ),
   };
 

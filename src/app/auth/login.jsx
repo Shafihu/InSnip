@@ -9,12 +9,13 @@ import {
   ActivityIndicator,
   SafeAreaView,
   Alert,
-  Image
+  Image,
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../../Firebase/config";
 import { useNavigation } from "expo-router";
+import Toast from "react-native-toast-message";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -25,6 +26,13 @@ const LoginScreen = () => {
   const [validPassword, setValidPassword] = useState(0);
 
   const navigation = useNavigation();
+
+  const showErrorToast = (message) => {
+    Toast.show({
+      type: "customErrorToast",
+      text1: message,
+    });
+  };
 
   useEffect(() => {
     validateEmail();
@@ -37,16 +45,13 @@ const LoginScreen = () => {
   };
 
   const validatePassword = () => {
-    if (password.trim() !== '') {
+    if (password.trim() !== "") {
       if (password.trim().length < 6) {
         setValidPassword(1);
-        console.log('Weak password');
       } else if (password.trim().length >= 6 && password.trim().length < 12) {
         setValidPassword(2);
-        console.log('Strong password');
       } else if (password.trim().length >= 12) {
         setValidPassword(3);
-        console.log('Very Strong password');
       }
     } else {
       setValidPassword(0);
@@ -54,8 +59,9 @@ const LoginScreen = () => {
   };
 
   const handleLogin = async () => {
-    if (!validEmail || password.trim() === '') {
-      Alert.alert("Error", "Please enter a valid email and password");
+    if (!validEmail || password.trim() === "") {
+      // Alert.alert("Error", "Please enter a valid email and password");
+      showErrorToast("Please enter a valid email and password");
       return;
     }
 
@@ -71,7 +77,7 @@ const LoginScreen = () => {
       navigation.goBack();
     } catch (error) {
       console.log("Sign In Failed: " + error);
-      Alert.alert("☹️", "Invalid email or password. Please try again.");
+      showErrorToast("Invalid email or password. Please try again");
     } finally {
       setLoading(false);
     }
@@ -217,24 +223,24 @@ const styles = StyleSheet.create({
   inputLabel: {
     marginBottom: 5,
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#34495e',
+    fontWeight: "bold",
+    color: "#34495e",
   },
   input: {
     height: 50,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,
     fontSize: 16,
   },
   passwordContainer: {
-    width: '100%'
+    width: "100%",
   },
   eyeIcon: {
     position: "absolute",
     right: 15,
-    top: '25%'
+    top: "25%",
   },
   loginButton: {
     backgroundColor: "#2ecc71",

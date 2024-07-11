@@ -2,7 +2,20 @@ import React, { useEffect, useRef, useState } from "react";
 import { CameraView, useCameraPermissions, Camera } from "expo-camera";
 import { shareAsync } from "expo-sharing";
 import * as MediaLibrary from "expo-media-library";
-import { Button, Image, Pressable, SafeAreaView, Text, TouchableOpacity, View, StyleSheet, ActivityIndicator, ScrollView, Platform, StatusBar } from "react-native";
+import {
+  Button,
+  Image,
+  Pressable,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  ScrollView,
+  Platform,
+  StatusBar,
+} from "react-native";
 import { Ionicons, Foundation } from "react-native-vector-icons";
 import Toast from "react-native-toast-message";
 
@@ -27,7 +40,8 @@ const HomeScreen = () => {
   const [facing, setFacing] = useState("front");
   const [flash, setFlash] = useState("off");
   const [permission, requestPermission] = useCameraPermissions();
-  const [permissionResponse, requestMediaPermission] = MediaLibrary.usePermissions();
+  const [permissionResponse, requestMediaPermission] =
+    MediaLibrary.usePermissions();
   const [photo, setPhoto] = useState();
   const [video, setVideo] = useState();
   const [isRecording, setIsRecording] = useState(false);
@@ -38,21 +52,19 @@ const HomeScreen = () => {
   const [stories, setStories] = useState(false);
   const [spotlight, setSpotlight] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [spotRefresh, setSpotRefreshing] = useState(false)
+  const [spotRefresh, setSpotRefreshing] = useState(false);
   const [storyUrl, setStoryUrl] = useState(null);
   const [error, setError] = useState(null);
   const { userData, loading } = useUser();
   const currentUserId = userData?.id;
   const { theme, toggleTheme } = useTheme();
 
-
-  const showToast = (message) => {
+  const showSuccessToast = (message) => {
     Toast.show({
-      type: "success",
+      type: "customSuccessToast",
       text1: message,
     });
   };
-
 
   const handleCameraPress = () => {
     setCamera(true);
@@ -100,22 +112,22 @@ const HomeScreen = () => {
     setCamera(false);
     setChat(false);
     setStories(false);
-    setSpotRefreshing(prev => !prev);
+    setSpotRefreshing((prev) => !prev);
   };
 
   const getCameraPermission = async () => {
     await requestPermission();
-  }
+  };
 
   const getAlbums = async () => {
-    if (permissionResponse.status !== 'granted') {
+    if (permissionResponse.status !== "granted") {
       await requestMediaPermission();
     }
     const fetchedAlbums = await MediaLibrary.getAlbumsAsync({
       includeSmartAlbums: true,
     });
     setAlbums(fetchedAlbums);
-  }
+  };
 
   if (!permission) {
     return <View />;
@@ -123,18 +135,55 @@ const HomeScreen = () => {
 
   if (!permission.granted) {
     return (
-      <View style={{backgroundColor: '#fff', flex: 1, justifyContent: "center", alignItems: "center", gap: 20}}>
-        <View style={{maxHeight: '40%', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
-        <Image source={require('../../../assets/cameraPermission.png')} style={{width: '90%', height: '80%', objectFit: 'cover'}} />
+      <View
+        style={{
+          backgroundColor: "#fff",
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 20,
+        }}
+      >
+        <View
+          style={{
+            maxHeight: "40%",
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Image
+            source={require("../../../assets/cameraPermission.png")}
+            style={{ width: "90%", height: "80%", objectFit: "cover" }}
+          />
         </View>
-          <View style={{gap: 20, width: '100%', justifyContent: 'center', alignItems: 'center', }}>
+        <View
+          style={{
+            gap: 20,
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <Text style={{ textAlign: "center", color: "gray" }}>
-          We need your permission to access the camera
-        </Text>
-        <TouchableOpacity onPress={getCameraPermission} style={{width: '90%', padding: 8, backgroundColor: '#2ecc71', justifyContent: 'center', alignItems: 'center', borderRadius: 5}}>
-          <Text style={{color: '#fff', fontWeight: '600', fontSize: 16}}>Grant Permission</Text>
-        </TouchableOpacity>
-          </View>
+            We need your permission to access the camera
+          </Text>
+          <TouchableOpacity
+            onPress={getCameraPermission}
+            style={{
+              width: "90%",
+              padding: 8,
+              backgroundColor: "#2ecc71",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 5,
+            }}
+          >
+            <Text style={{ color: "#fff", fontWeight: "600", fontSize: 16 }}>
+              Grant Permission
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -146,19 +195,19 @@ const HomeScreen = () => {
   };
 
   let handleRecord = async () => {
-    setIsRecording(true)
-    console.log('recording')
-    const options = { maxDuration: 30, mute: false, VideoQuality: '1080p' };
+    setIsRecording(true);
+    console.log("recording");
+    const options = { maxDuration: 30, mute: false, VideoQuality: "1080p" };
     cameraRef.current.recordAsync(options).then((recordedVideo) => {
       setVideo(recordedVideo);
-      setIsRecording(false)
+      setIsRecording(false);
     });
   };
 
   let handleStopRecord = async () => {
     setIsRecording(false);
     await cameraRef.current.stopRecording();
-  }
+  };
 
   const toggleCameraFacing = () => {
     setFacing((current) => (current === "back" ? "front" : "back"));
@@ -171,44 +220,56 @@ const HomeScreen = () => {
   const handleDownload = () => {
     if (photo) {
       MediaLibrary.saveToLibraryAsync(photo.uri).then(() => {
-        showToast('Photo Saved!');
+        showSuccessToast("Photo Saved!");
       });
     } else if (video) {
       MediaLibrary.saveToLibraryAsync(video.uri).then(() => {
-        showToast('Video Saved!');
+        showSuccessToast("Video Saved!");
       });
     }
   };
 
   const updateUserPosts = async (url) => {
-      const docRef = doc(FIRESTORE_DB, 'users', currentUserId);
+    const docRef = doc(FIRESTORE_DB, "users", currentUserId);
 
-      // await updateDoc(docRef, {
-      //   posts: arrayUnion({
-      //     url: url,
-      //   })
-      // });
+    // await updateDoc(docRef, {
+    //   posts: arrayUnion({
+    //     url: url,
+    //   })
+    // });
 
-      showToast("Story sent!");
-    }
+    showSuccessToast("Story sent!");
+  };
 
   const handlePostStory = async () => {
     try {
       let downloadUrl;
-  
+
       if (photo) {
-        downloadUrl = await storyPostUpload(photo.uri, currentUserId, setUploadProgress, 'stories', userData);
+        downloadUrl = await storyPostUpload(
+          photo.uri,
+          currentUserId,
+          setUploadProgress,
+          "stories",
+          userData
+        );
       } else if (video) {
-        downloadUrl = await storyPostUpload(video.uri, currentUserId, setUploadProgress, 'stories', userData);
+        downloadUrl = await storyPostUpload(
+          video.uri,
+          currentUserId,
+          setUploadProgress,
+          "stories",
+          userData
+        );
       }
-  
+
       if (downloadUrl) {
         updateUserPosts(downloadUrl);
       } else {
-        console.log('No download URL returned');
+        console.log("No download URL returned");
       }
     } catch (error) {
-      console.error('Error getting url and storing it:', error);
+      console.error("Error getting url and storing it:", error);
     }
   };
 
@@ -216,26 +277,33 @@ const HomeScreen = () => {
 
   const handlePostStoryByGallery = async () => {
     try {
-      const downloadUrl = await storyPostUpload(null, currentUserId, setUploadProgress, 'stories', userData);
-      if(downloadUrl){
+      const downloadUrl = await storyPostUpload(
+        null,
+        currentUserId,
+        setUploadProgress,
+        "stories",
+        userData
+      );
+      if (downloadUrl) {
         updateUserPosts(downloadUrl);
         setStoryUrl(downloadUrl);
       }
       return downloadUrl;
     } catch (error) {
-      setError('Failed to upload story');
+      setError("Failed to upload story");
       console.log(error);
     }
   };
 
   const handleShare = async () => {
-    if(photo){
+    if (photo) {
       await shareAsync(photo.uri);
       setPhoto(undefined);
-    } else if (video){
+    } else if (video) {
       await shareAsync(video.uri);
       setVideo(undefined);
-    } else {}
+    } else {
+    }
   };
 
   if (loading) {
@@ -248,12 +316,23 @@ const HomeScreen = () => {
 
   return (
     <>
-      <View style={[styles.container, (stories || chat) && {backgroundColor: theme.backgroundColor}]}>
-        <SafeAreaView style={{ flex: 1, justifyContent: "center", paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0, }}>
+      <View
+        style={[
+          styles.container,
+          (stories || chat) && { backgroundColor: theme.backgroundColor },
+        ]}
+      >
+        <SafeAreaView
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+          }}
+        >
           <View style={styles.cameraContainer}>
             {camera && (
               <CameraView
-                mode= {photo ? 'picture' : 'video'}
+                mode={photo ? "picture" : "video"}
                 style={styles.cameraView}
                 facing={facing}
                 flash={flash}
@@ -263,35 +342,65 @@ const HomeScreen = () => {
               >
                 {photo && (
                   <View style={styles.photoContainer}>
-                    <Image source={{ uri: photo.uri }} style={styles.fullSizeImage} resizeMode="cover" />
+                    <Image
+                      source={{ uri: photo.uri }}
+                      style={styles.fullSizeImage}
+                      resizeMode="cover"
+                    />
                     <View style={styles.photoControls}>
                       <TouchableOpacity onPress={() => setPhoto(undefined)}>
                         <Ionicons name="close" color="white" size={30} />
                       </TouchableOpacity>
-                      <TouchableOpacity >
+                      <TouchableOpacity>
                         {/* Edit buttons go dey here */}
                       </TouchableOpacity>
                     </View>
                     {uploadProgress > 0 && uploadProgress < 100 && (
-                        <View style={{backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute', top: 0, left: 0, padding: 10, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flex: 1, width: '100%', height: '100%', gap: 5}}>
-                          <CustomLoader />
-                          <Text style={{color: '#fff', fontWeight: 'bold', letterSpacing: 0.5, textAlign: 'center', width: '100%'}}>{uploadProgress.toFixed(2)}%</Text>
-                        </View>
-                      )}
+                      <View
+                        style={{
+                          backgroundColor: "rgba(0,0,0,0.5)",
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          padding: 10,
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          flex: 1,
+                          width: "100%",
+                          height: "100%",
+                          gap: 5,
+                        }}
+                      >
+                        <CustomLoader />
+                        <Text
+                          style={{
+                            color: "#fff",
+                            fontWeight: "bold",
+                            letterSpacing: 0.5,
+                            textAlign: "center",
+                            width: "100%",
+                          }}
+                        >
+                          {uploadProgress.toFixed(2)}%
+                        </Text>
+                      </View>
+                    )}
                   </View>
                 )}
 
                 {video && (
                   <View style={styles.videoContainer}>
-                    <Video 
-                        style={{alignSelf: 'stretch', flex: 1}}
-                        source={{uri: video.uri}}
-                        useNativeControls
-                        resizeMode="stretch"
-                        isLooping
-                        autofocus
-                        shouldRasterizeIOS
-                        shouldPlay
+                    <Video
+                      style={{ alignSelf: "stretch", flex: 1 }}
+                      source={{ uri: video.uri }}
+                      useNativeControls
+                      resizeMode="stretch"
+                      isLooping
+                      autofocus
+                      shouldRasterizeIOS
+                      shouldPlay
                     />
                     <View style={styles.videoControls}>
                       <TouchableOpacity onPress={() => setVideo(undefined)}>
@@ -299,17 +408,55 @@ const HomeScreen = () => {
                       </TouchableOpacity>
                     </View>
                     {uploadProgress > 0 && uploadProgress < 100 && (
-                        <View style={{backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute', top: 0, left: 0, padding: 10, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flex: 1, width: '100%', height: '100%', gap: 5}}>
-                          <CustomLoader />
-                          <Text style={{color: '#fff', fontWeight: 'bold', letterSpacing: 0.5, textAlign: 'center', width: '100%'}}>{uploadProgress.toFixed(2)}%</Text>
-                        </View>
-                      )}
+                      <View
+                        style={{
+                          backgroundColor: "rgba(0,0,0,0.5)",
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          padding: 10,
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          flex: 1,
+                          width: "100%",
+                          height: "100%",
+                          gap: 5,
+                        }}
+                      >
+                        <CustomLoader />
+                        <Text
+                          style={{
+                            color: "#fff",
+                            fontWeight: "bold",
+                            letterSpacing: 0.5,
+                            textAlign: "center",
+                            width: "100%",
+                          }}
+                        >
+                          {uploadProgress.toFixed(2)}%
+                        </Text>
+                      </View>
+                    )}
                   </View>
                 )}
 
                 {!photo && (
-                  <View style={{ flex: 1, justifyContent: "space-between", marginBottom: photo ? 0 : 0 }}>
-                    <View style={{ flex: 1, justifyContent: "space-between", position: 'relative'}}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "space-between",
+                      marginBottom: photo ? 0 : 0,
+                    }}
+                  >
+                    <View
+                      style={{
+                        flex: 1,
+                        justifyContent: "space-between",
+                        position: "relative",
+                      }}
+                    >
                       <>
                         <Header
                           header=""
@@ -318,9 +465,12 @@ const HomeScreen = () => {
                         />
 
                         {/* BOTTOM CAMERA ICONS */}
-                        <View style={{ position: 'absolute', bottom: 80}}>
+                        <View style={{ position: "absolute", bottom: 80 }}>
                           <View style={styles.iconRow}>
-                            <Pressable onPress={handlePostStoryByGallery} style={styles.iconButton}>
+                            <Pressable
+                              onPress={handlePostStoryByGallery}
+                              style={styles.iconButton}
+                            >
                               <Ionicons
                                 name="images-outline"
                                 size={23}
@@ -329,7 +479,10 @@ const HomeScreen = () => {
                               />
                             </Pressable>
 
-                            <Pressable onPress={toggleTheme} style={styles.iconButton}>
+                            <Pressable
+                              onPress={toggleTheme}
+                              style={styles.iconButton}
+                            >
                               <Foundation
                                 name="magnifying-glass"
                                 size={25}
@@ -341,7 +494,11 @@ const HomeScreen = () => {
 
                           {/* FILTERS */}
                           {/* <Button title={isRecording ? 'Stop' : 'Record'} onPress={isRecording ? stopRecording : recordVideo}/> */}
-                          <FilterScrollView handleCapture={handleCapture} handleRecord={handleRecord} handleStopRecord={handleStopRecord}/>
+                          <FilterScrollView
+                            handleCapture={handleCapture}
+                            handleRecord={handleRecord}
+                            handleStopRecord={handleStopRecord}
+                          />
                         </View>
                       </>
                     </View>
@@ -353,7 +510,7 @@ const HomeScreen = () => {
             {maps && <Map />}
             {chat && <Chat handleChatCam={handleChatCam} />}
             {stories && <Stories />}
-            {spotlight && <Spotlight reload={spotRefresh}/>}
+            {spotlight && <Spotlight reload={spotRefresh} />}
           </View>
         </SafeAreaView>
 
@@ -367,7 +524,7 @@ const HomeScreen = () => {
           />
         )}
 
-        {(photo || video)   && (
+        {(photo || video) && (
           <TabBarPreview
             handleDownload={handleDownload}
             handleShare={handleShare}

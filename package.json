@@ -17,7 +17,7 @@
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.3.29",
     "axios": "^1.7.2",
-    "expo": "^51.0.19",
+    "expo": "^51.0.20",
     "expo-asset": "^10.0.10",
     "expo-av": "^14.0.6",
     "expo-blur": "~13.0.2",

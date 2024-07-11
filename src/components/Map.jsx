@@ -46,7 +46,7 @@ const Map = () => {
 
       const usersSnapshot = await getDocs(collection(FIRESTORE_DB, 'users'));
       const usersData = usersSnapshot.docs.map((doc) => doc.data());
-      setOtherUsers(usersData?.filter((user) => user.id !== userData?.id));
+      setOtherUsers(usersData?.filter((user) => user?.id !== userData?.id));
       setLoading(false);
     };
 
@@ -98,11 +98,11 @@ const Map = () => {
     router.push({
       pathname: '/verified/profile/[otherUserProfile]',
       params: {
-        id: user.id,
-        firstname: user.FirstName,
-        lastname: user.LastName,
-        username: user.Username,
-        avatar: user.avatar,
+        id: user?.id,
+        firstname: user?.FirstName,
+        lastname: user?.LastName,
+        username: user?.Username,
+        avatar: user?.avatar,
       },
     });
   };
