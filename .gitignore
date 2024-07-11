@@ -35,3 +35,6 @@ yarn-error.*
 *.tsbuildinfo
 
 .env
+
+# Ignore eas.json file
+eas.json

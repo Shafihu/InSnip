@@ -67,7 +67,7 @@ const Chatbot = ({ chats, setChats, modalVisible, setModalVisible }) => {
 
     try {
       const response = await axios.post(
-        `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`,
         {
           contents: updatedChat,
         }

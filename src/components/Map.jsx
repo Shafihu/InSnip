@@ -21,15 +21,15 @@ const Map = () => {
   useEffect(() => {
     setLoading(true);
     const fetchUserLocation = async () => {
-      const userDocRef = doc(FIRESTORE_DB, 'users', userData.id);
+      const userDocRef = doc(FIRESTORE_DB, 'users', userData?.id);
       const userDoc = await getDoc(userDocRef);
 
       const currentLocation = await getCurrentLocation();
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        if (userData.location) {
-          const storedLocation = userData.location;
+        if (userData?.location) {
+          const storedLocation = userData?.location;
           if (isLocationDifferent(storedLocation, currentLocation)) {
             setLocation(currentLocation);
             await updateLocationInFirestore(userDocRef, currentLocation);
@@ -46,12 +46,12 @@ const Map = () => {
 
       const usersSnapshot = await getDocs(collection(FIRESTORE_DB, 'users'));
       const usersData = usersSnapshot.docs.map((doc) => doc.data());
-      setOtherUsers(usersData.filter((user) => user.id !== userData.id));
+      setOtherUsers(usersData?.filter((user) => user.id !== userData?.id));
       setLoading(false);
     };
 
     fetchUserLocation();
-  }, [userData.id]);
+  }, [userData?.id]);
 
   const getCurrentLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -108,14 +108,14 @@ const Map = () => {
   };
 
   const renderUserMarker = (user) =>
-    user.location && (
-      <Marker key={user.id} coordinate={user.location}>
-        <Image source={processUserImage(user.avatar)} style={styles.markerImage} />
+    user?.location && (
+      <Marker key={user?.id} coordinate={user?.location}>
+        <Image source={processUserImage(user?.avatar)} style={styles.markerImage} />
         <Callout onPress={() => calloutPressed(user)}>
           <View style={styles.calloutView}>
-            <Text style={styles.calloutUsername} numberOfLines={1} ellipsizeMode='tail'>{user.Username}</Text>
+            <Text style={styles.calloutUsername} numberOfLines={1} ellipsizeMode='tail'>{user?.Username}</Text>
             <Image
-              source={user.picture ? { uri: user.picture } : processUserImage(user.avatar)}
+              source={user?.picture ? { uri: user?.picture } : processUserImage(user?.avatar)}
               style={styles.calloutImage}
             />
           </View>
