@@ -4,6 +4,7 @@ import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
+import { router } from "expo-router";
 
 const UserContext = createContext();
 
@@ -42,7 +43,6 @@ export const UserProvider = ({ children }) => {
       } catch (error) {
         console.error("Error fetching user data: ", error);
         showErrorToast("Check your connection and try again");
-        return;
       }
     };
 

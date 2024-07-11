@@ -8,7 +8,6 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   SafeAreaView,
-  Alert,
   Image,
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
@@ -29,8 +28,9 @@ const LoginScreen = () => {
 
   const showErrorToast = (message) => {
     Toast.show({
-      type: "customErrorToast",
-      text1: message,
+      type: "error",
+      text1: "Error",
+      text2: message,
     });
   };
 
@@ -60,7 +60,6 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     if (!validEmail || password.trim() === "") {
-      // Alert.alert("Error", "Please enter a valid email and password");
       showErrorToast("Please enter a valid email and password");
       return;
     }
@@ -173,6 +172,7 @@ const LoginScreen = () => {
           </View>
         </View>
       </SafeAreaView>
+      <Toast />
     </KeyboardAvoidingView>
   );
 };

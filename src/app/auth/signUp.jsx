@@ -9,7 +9,6 @@ import {
   FlatList,
   Platform,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import { ProgressBar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -343,8 +342,9 @@ const SignUpScreen = () => {
 
           <View style={{ marginVertical: 30 }}>
             <Text style={styles.privacyText}>
-              By tapping Finish, you acknowledge that you have read the Privacy
-              Policy and agree to the Terms of Service.
+              By tapping Finish, you acknowledge that you have read the{" "}
+              <Text style={{ color: "#2ecc71" }}>Privacy Policy</Text> and agree
+              to the <Text style={{ color: "#2ecc71" }}>Terms of Service</Text>.
             </Text>
           </View>
         </>

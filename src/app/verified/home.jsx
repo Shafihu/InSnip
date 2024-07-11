@@ -238,7 +238,7 @@ const HomeScreen = () => {
     //   })
     // });
 
-    showSuccessToast("Story sent!");
+    showSuccessToast("Story sent");
   };
 
   const handlePostStory = async () => {

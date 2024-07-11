@@ -15,19 +15,20 @@ const RootLayout = () => {
       <View
         style={{
           height: 40,
-          // width: "60%",
           backgroundColor: "rgba(0,0,0,0.75)",
           borderRadius: 20,
           padding: 10,
+          paddingHorizontal: 15,
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
-          marginTop: 10,
           gap: 5,
         }}
       >
         <Ionicons name="checkmark-circle" color="#2ecc71" size={20} />
-        <Text style={{ color: "#fff", textAlign: "center" }}>{text1}</Text>
+        <Text numberOfLines={1} style={{ color: "#fff", textAlign: "center" }}>
+          {text1}
+        </Text>
       </View>
     ),
 
@@ -35,46 +36,49 @@ const RootLayout = () => {
       <View
         style={{
           height: 40,
-          // width: 50%",
           backgroundColor: "rgba(0,0,0,0.75)",
           borderRadius: 20,
           padding: 10,
+          paddingHorizontal: 15,
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
-          marginTop: 10,
           gap: 5,
         }}
       >
         <Ionicons name="close-circle" color="red" size={20} />
-        <Text style={{ color: "#fff", textAlign: "center" }}>{text1}</Text>
+        <Text numberOfLines={1} style={{ color: "#fff", textAlign: "center" }}>
+          {text1}
+        </Text>
       </View>
     ),
   };
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider>
-        <UserProvider>
-          <UsersProvider>
-            <ChatProvider>
-              <Stack>
-                <Stack.Screen name="index" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="auth"
-                  options={{ headerShown: false, gestureEnabled: false }}
-                />
-                <Stack.Screen
-                  name="verified"
-                  options={{ headerShown: false, gestureEnabled: false }}
-                />
-              </Stack>
-              <Toast config={toastConfig} />
-            </ChatProvider>
-          </UsersProvider>
-        </UserProvider>
-      </ThemeProvider>
-    </GestureHandlerRootView>
+    <>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ThemeProvider>
+          <UserProvider>
+            <UsersProvider>
+              <ChatProvider>
+                <Stack>
+                  <Stack.Screen name="index" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="auth"
+                    options={{ headerShown: false, gestureEnabled: false }}
+                  />
+                  <Stack.Screen
+                    name="verified"
+                    options={{ headerShown: false, gestureEnabled: false }}
+                  />
+                </Stack>
+              </ChatProvider>
+            </UsersProvider>
+          </UserProvider>
+        </ThemeProvider>
+      </GestureHandlerRootView>
+      <Toast config={toastConfig} />
+    </>
   );
 };
 
