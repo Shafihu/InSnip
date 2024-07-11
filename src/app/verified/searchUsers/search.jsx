@@ -33,7 +33,7 @@ const Search = () => {
     };
 
     const handleUserProfile = (user) => {
-        router.push({
+        router.replace({
             pathname: '/verified/profile/[otherUserProfile]',
             params: {
                 id: user.id,

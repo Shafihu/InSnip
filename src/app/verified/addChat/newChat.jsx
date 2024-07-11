@@ -132,9 +132,9 @@ const NewChat = () => {
   };
 
   const handleUserProfile = (user) => {
-    router.back();
-    setTimeout(() => {
-      router.navigate({
+    // router.back();
+    // setTimeout(() => {
+      router.replace({
         pathname: '/verified/profile/[otherUserProfile]',
         params: {
           id: user.id,
@@ -144,7 +144,7 @@ const NewChat = () => {
           avatar: user.avatar,
         }
       });
-    }, 0);
+    // }, 0);
   };
 
   const onActualChange = (text) => {

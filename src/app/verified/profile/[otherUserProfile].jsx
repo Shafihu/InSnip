@@ -255,7 +255,7 @@ const UserProfile = () => {
               <FlatList
                 data={stories}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.url}
                 horizontal={false}
                 numColumns={3}
                 contentContainerStyle={styles.flatListContent}
@@ -267,7 +267,7 @@ const UserProfile = () => {
               <FlatList
                 data={spotlights}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.url}
                 horizontal={false}
                 numColumns={3}
                 contentContainerStyle={styles.flatListContent}

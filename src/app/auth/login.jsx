@@ -9,33 +9,53 @@ import {
   ActivityIndicator,
   SafeAreaView,
   Alert,
+  Image
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../../Firebase/config";
-import { Image, ImageBackground } from "expo-image";
-import { router, useNavigation } from "expo-router";
+import { useNavigation } from "expo-router";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [valid, setValid] = useState(false);
+  const [validEmail, setValidEmail] = useState(false);
+  const [validPassword, setValidPassword] = useState(0);
 
   const navigation = useNavigation();
 
   useEffect(() => {
-    validateInput();
+    validateEmail();
+    validatePassword();
   }, [email, password]);
 
-  const validateInput = () => {
-    setValid(email.trim() !== "" && password.trim() !== "");
+  const validateEmail = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    setValidEmail(emailRegex.test(email.trim()));
+  };
+
+  const validatePassword = () => {
+    if (password.trim() !== '') {
+      if (password.trim().length < 6) {
+        setValidPassword(1);
+        console.log('Weak password');
+      } else if (password.trim().length >= 6 && password.trim().length < 12) {
+        setValidPassword(2);
+        console.log('Strong password');
+      } else if (password.trim().length >= 12) {
+        setValidPassword(3);
+        console.log('Very Strong password');
+      }
+    } else {
+      setValidPassword(0);
+    }
   };
 
   const handleLogin = async () => {
-    if (!valid) {
-      Alert.alert("Error", "Please enter your email and password");
+    if (!validEmail || password.trim() === '') {
+      Alert.alert("Error", "Please enter a valid email and password");
       return;
     }
 
@@ -48,10 +68,11 @@ const LoginScreen = () => {
       );
       setEmail("");
       setPassword("");
+      console.log('Response: ' + [...response]);
       navigation.goBack();
     } catch (error) {
       console.log("Sign In Failed: " + error);
-      Alert.alert("Error", "Invalid email or password. Please try again.");
+      Alert.alert("☹️", "Invalid email or password. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -74,7 +95,17 @@ const LoginScreen = () => {
             <View style={styles.inputWrapper}>
               <Text style={styles.inputLabel}>EMAIL</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input,
+                  {
+                    borderColor:
+                      email.trim() === ""
+                        ? "gray"
+                        : validEmail
+                        ? "#2ecc71"
+                        : "red",
+                  },
+                ]}
                 value={email.toLowerCase()}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -85,7 +116,19 @@ const LoginScreen = () => {
               <Text style={styles.inputLabel}>PASSWORD</Text>
               <View style={styles.passwordContainer}>
                 <TextInput
-                  style={styles.input}
+                  style={[
+                    styles.input,
+                    {
+                      borderColor:
+                        validPassword === 0
+                          ? "gray"
+                          : validPassword === 1
+                          ? "red"
+                          : validPassword === 2
+                          ? "orange"
+                          : validPassword === 3 && "#2ecc71",
+                    },
+                  ]}
                   secureTextEntry={!showPassword}
                   value={password}
                   onChangeText={setPassword}
@@ -104,12 +147,12 @@ const LoginScreen = () => {
               </View>
             </View>
             <TouchableOpacity
-              disabled={!valid}
+              disabled={!validEmail}
               onPress={handleLogin}
               style={[
                 styles.loginButton,
                 {
-                  backgroundColor: valid ? "#2ecc71" : "rgba(0,0,0,0.2)",
+                  backgroundColor: validEmail ? "#2ecc71" : "rgba(0,0,0,0.2)",
                 },
               ]}
             >
@@ -129,61 +172,30 @@ const LoginScreen = () => {
   );
 };
 
-export default LoginScreen
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  header: {
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    alignSelf: "flex-start",
-    borderRadius: 25,
-    marginHorizontal: 10,
-    zIndex: 99
+    backgroundColor: "#fff",
   },
   container: {
     flex: 1,
-    // justifyContent: "center",
     alignItems: "center",
-    paddingTop: 10,
+    paddingTop: 0,
     marginHorizontal: 20,
   },
   keyboardView: {
     flex: 1,
     justifyContent: "center",
   },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 40,
-  },
-  logoWrapper: {
-    backgroundColor: '#2F3E46',
-    width: 60,
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 30,
-    paddingBottom: 12,
-  },
   logo: {
-    width: '100%',
-    height: '38%',
-  },
-  logoText: {
-    fontWeight: '500',
-    fontSize: 35,
-    letterSpacing: 0.8,
-    color: '#2F3E46',
-    marginLeft: 10,
+    width: "100%",
+    height: "30%",
   },
   loginContainer: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
   loginTitle: {
     textAlign: "center",
@@ -200,40 +212,38 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   inputWrapper: {
-    width: '100%',
+    width: "100%",
     marginBottom: 20,
   },
   inputLabel: {
-    fontSize: 12,
-    color: "#333333",
     marginBottom: 5,
-    fontWeight: '500'
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#34495e',
   },
   input: {
+    height: 50,
+    borderColor: 'gray',
     borderWidth: 1,
-    borderColor: "#2ecc71",
-    borderRadius: 8,
-    padding: 10,
-    fontSize: 15,
-    fontWeight: "500",
-    backgroundColor: '#ffffff',
-    width: '100%',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    fontSize: 16,
   },
   passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    width: '100%'
   },
   eyeIcon: {
-    position: 'absolute',
+    position: "absolute",
     right: 15,
+    top: '25%'
   },
   loginButton: {
     backgroundColor: "#2ecc71",
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",
-    width: '100%',
-    marginVertical: 8
+    width: "100%",
+    marginVertical: 8,
   },
   loginText: {
     color: "#fff",

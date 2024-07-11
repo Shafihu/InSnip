@@ -1,8 +1,5 @@
-//TODO: auto generate username
-
-
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList, Platform , ActivityIndicator} from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList, Platform , ActivityIndicator, Alert} from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
@@ -12,20 +9,24 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../Firebase/config";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigation } from 'expo-router';
+import { router } from 'expo-router';
 
 const SignUpScreen = () => {
   const [step, setStep] = useState(0);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [dob, setDob] = useState(new Date());
+  const [dob, setDob] = useState(new Date(2005, 1, 1));
   const [username, setUsername] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(true);
   const [valid, setValid] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [validEmail, setValidEmail] = useState(false);
+  const [validPassword, setValidPassword] = useState(0);
   const navigation = useNavigation();
 
   const images = [
@@ -139,24 +140,26 @@ const SignUpScreen = () => {
           <View style={styles.inputWrapper}>
             <Text style={styles.inputLabel}>EMAIL</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, {borderColor: email.trim() === '' ? 'gray' : !validEmail ? 'red' : '#2ecc71'}]}
               value={email.toLowerCase()}
               onChangeText={setEmail}
               keyboardType="email-address"
               selectionColor="#2ecc71"
               placeholder="eg: afiafrimpong123@gmail.com"
-              placeholderTextColor='rgba(0,0,0,0.3)'
+              placeholderTextColor='rgba(0,0,0,0.15)'
             />
           </View>
           <View style={styles.inputWrapper}>
             <Text style={styles.inputLabel}>PASSWORD</Text>
             <View style={styles.passwordContainer}>
               <TextInput
-                style={styles.input}
+                style={[styles.input, {minWidth: '70%', maxWidth: '70%', borderColor: validPassword === 0 ? 'gray' : validPassword === 1 ? 'red' : validPassword === 2 ? 'orange' : validPassword === 3 && '#2ecc71'}]}
                 secureTextEntry={!showPassword}
                 value={password}
                 onChangeText={setPassword}
                 selectionColor="#2ecc71"
+                placeholder='at least 7 characters'
+                placeholderTextColor='rgba(0,0,0,0.15)'
               />
               <TouchableOpacity
                 style={styles.eyeIcon}
@@ -170,11 +173,13 @@ const SignUpScreen = () => {
             <Text style={styles.inputLabel}>CONFIRM PASSWORD</Text>
             <View style={styles.passwordContainer}>
               <TextInput
-                style={styles.input}
+                style={[styles.input, {minWidth: '70%', maxWidth: '70%', borderColor: (confirmPassword.trim() !== password.trim()) ? 'gray' : (confirmPassword.trim() === password.trim()) ? '#2ecc71' : ''}]}
                 secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
                 selectionColor="#2ecc71"
+                placeholder='at least 7 characters'
+                placeholderTextColor='rgba(0,0,0,0.15)'
               />
               <TouchableOpacity
                 style={styles.eyeIcon}
@@ -184,18 +189,31 @@ const SignUpScreen = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <View>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}>
+            <View style={{ alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <View style={{ backgroundColor: 'red', height: 7, width: 50, borderRadius: 5 }} />
+              <Text style={{ color: 'rgba(0,0,0,0.5)' }}>Weak</Text>
+            </View>
+            <View style={{ alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <View style={{ backgroundColor: 'orange', height: 7, width: 50, borderRadius: 5 }} />
+              <Text style={{ color: 'rgba(0,0,0,0.5)' }}>Average</Text>
+            </View>
+            <View style={{ alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <View style={{ backgroundColor: '#2ecc71', height: 7, width: 50, borderRadius: 5 }} />
+              <Text style={{ color: 'rgba(0,0,0,0.5)' }}>Strong</Text>
+            </View>
+          </View>
+
+          <View style={{marginVertical: 30}}>
             <Text style={styles.privacyText}>
-              By tapping sign up, you acknowledge that you have read the Privacy Policy and agree to the Terms of Service.
+              By tapping Finish, you acknowledge that you have read the Privacy Policy and agree to the Terms of Service.
             </Text>
           </View>
         </>
       )
     },
   ];
-  
-
-  const progress = (step + 1) / steps.length;
 
   useEffect(() => {
     validateStep();
@@ -216,73 +234,120 @@ const SignUpScreen = () => {
         setValid(selectedAvatar !== null);
         break;
       case 4:
-        setValid(email.trim() !== '' && password.trim() !== '');
+        validatePassword();
         break;
       default:
         setValid(false);
     }
   };
 
-  const handleNext = async () => {
-    if (!valid) return;
+  const generateUsername = (firstName, lastName) => {
+    const randomNum = Math.floor(Math.random() * 1000);
+    return `${firstName.trim().toLowerCase()}_${lastName.trim().toLowerCase()}${randomNum}`;
+  };
 
-    if (step < steps.length - 1) {
-      setStep(step + 1);
+  useEffect(() => {
+    if (step === 2 && username.trim() === '') {
+    setUsername(generateUsername(firstName, lastName));
+    }
+    }, [step, firstName, lastName, username]);
+
+  useEffect(() => {
+    validateEmail();
+  }, [email]);
+
+
+const handleRegistration = async () => {
+  try {
+    setLoading(true);
+    const { user } = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
+    if (user) {
+      navigation.goBack()
+      const userData = {
+        id: user.uid,
+        Email: email,
+        Password: password,
+        FirstName: firstName,
+        LastName: lastName,
+        Birthday: dob,
+        Username: username,
+        avatar: selectedAvatar.path,
+        blocked: []
+      };
+      await setDoc(doc(FIRESTORE_DB, "users", user.uid), userData);
+      setLoading(false);
+    }
+  } catch (error) {
+    setLoading(false);
+    Alert.alert("Error", error.message);
+  } finally {
+  }
+};
+
+const validateEmail = () => {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  setValidEmail(emailPattern.test(email.trim()));
+};
+
+const validatePassword = () => {
+  if (password.length >= 7) {
+    if (password.length >= 10) {
+      setValidPassword(3);
+    } else if (password.length >= 8) {
+      setValidPassword(2);
     } else {
-      setLoading(true);
-      try {
-        const response = await createUserWithEmailAndPassword(
-          FIREBASE_AUTH,
-          email,
-          password
-        );
-
-        navigation.goBack();
-
-        await setDoc(doc(FIRESTORE_DB, "users", response.user.uid), {
-          id: response.user.uid,
-          Email: email,
-          Password: password,
-          FirstName: firstName,
-          LastName: lastName,
-          Birthday: dob,
-          Username: username,
-          avatar: selectedAvatar.path,
-          blocked: []
-        });
-
-        await setDoc(doc(FIRESTORE_DB, "userchats", response.user.uid), {
-          chats: []
-        });
-      } catch (error) {
-        console.log("Registration Failed: " + error);
-        alert('Failed to sign up. Try again.');
-      } finally {
-        setLoading(false);
-      }
+      setValidPassword(1);
     }
-  };
+  } else {
+    setValidPassword(0);
+  }
+};
 
-  const handleBack = () => {
-    if (step > 0) {
-      setStep(step - 1);
-    }
-  };
+useEffect(() => {
+  validateEmail();
+  validatePassword();
+  const stepValidations = [
+    () => firstName.trim().length > 0 && lastName.trim().length > 0,
+    () => dob instanceof Date && !isNaN(dob),
+    () => username.trim().length > 0,
+    () => selectedAvatar !== null,
+    () => validEmail && password.length >= 7 && confirmPassword.trim() === password.trim()
+  ];
+  setValid(stepValidations[step]());
+}, [firstName, lastName, dob, username, selectedAvatar, email, password, confirmPassword, step]);
+
+const handleNext = () => {
+  if (step < steps.length - 1) {
+    setStep(step + 1);
+  } else {
+    handleRegistration();
+  }
+};
+
+const handleBack = () => {
+  if (step > 0) {
+    setStep(step - 1);
+  }
+};
 
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
         <View style={{ flexGrow: 1 }}>
-          <ProgressBar progress={progress} style={styles.progressBar} color='#2ecc71' />
-          <Image
-            source={require('../../../assets/signUpImage.png')}
-            style={styles.logo}
-            contentFit="cover"
-          />
+          <Text style={styles.progressText}>Step {step + 1} of {steps.length}</Text>
+          <ProgressBar progress={(step + 1) / steps.length} color="#2ecc71" style={styles.progressBar} />
           <View style={{ flex: 1, justifyContent: 'space-between' }}>
             <View style={{ flex: 1, gap: 20 }}>
-              <Text style={styles.title}>{steps[step].title}</Text>
-              {steps[step].fields}
+            <View style={styles.headerWrapper}>
+          <Text style={styles.title}>{steps[step].title}</Text>
+          <TouchableOpacity onPress={handleBack} disabled={step === 0}>
+            <FontAwesome name="arrow-left" size={24} color={step === 0 ? 'rgba(0,0,0,0.2)' : '#2ecc71'} />
+          </TouchableOpacity>
+        </View>
+
+              <View style={styles.formWrapper}>
+          {steps[step].fields}
+        </View>
               {step === 1 && showDatePicker && (
                 <DateTimePicker
                   mode="date"
@@ -294,21 +359,17 @@ const SignUpScreen = () => {
                     }
                   }}
                   textColor='#333333'
+                  maximumDate={new Date(2005, 11, 31)}
                 />
               )}
             </View>
           </View>
-          <View style={styles.buttonContainer}>
-            {step > 0 &&
-              <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-                <Text style={styles.backText}><FontAwesome name='chevron-left' size={18} color='#fff' /></Text>
-              </TouchableOpacity>
-            }
-            <TouchableOpacity disabled={!valid} style={[styles.continueButton, { backgroundColor: valid ? '#2ecc71' : 'rgba(0,0,0,0.2)' }]} onPress={handleNext}>
+          <View style={styles.buttonWrapper}>
+            <TouchableOpacity disabled={!valid} style={[styles.nextButton, { backgroundColor: valid ? '#2ecc71' : 'rgba(0,0,0,0.2)' }]} onPress={handleNext}>
             {loading ? (
                 <ActivityIndicator size="small" color="white" />
               ) : (
-                <Text style={styles.continueText}>{step === steps.length - 1 ? "Sign-up" : "Continue"}</Text>
+                <Text style={styles.buttonText}>{step === steps.length - 1 ? "Finish" : "Next"}</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -326,39 +387,56 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     backgroundColor: '#fff',
   },
+    progressWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 20,
+  },
   progressBar: {
     height: 10,
     borderRadius: 5,
     marginBottom: 20,
   },
+  progressText: {
+    fontSize: 14,
+    color: '#7f8c8d',
+    textAlign: 'right'
+  },
   logo: {
     width: '100%',
     height: '35%',
   },
+  headerWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
   title: {
-    textAlign: "center",
-    fontWeight: "500",
-    fontSize: 24,
-    color: "#333333",
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#2ecc71',
+  },
+  formWrapper: {
+    flex: 1,
   },
   inputWrapper: {
-    width: '100%',
+    marginBottom: 20,
   },
   inputLabel: {
-    fontSize: 12,
-    color: "#333333",
     marginBottom: 5,
-    fontWeight: '500'
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#34495e',
   },
   input: {
+    height: 50,
+    borderColor: 'gray',
     borderWidth: 1,
-    borderColor: "#2ecc71",
-    borderRadius: 8,
-    padding: 10,
-    fontSize: 15,
-    fontWeight: "500",
-    backgroundColor: '#ffffff',
-    width: '100%',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    fontSize: 16,
   },
   imageContainer: {
     flexDirection: "column",
@@ -382,31 +460,26 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     position: 'absolute',
-    right: 15,
-    top: '20%'
+    right: 10,
   },
   image: {
     width: 60,
     height: 60,
     borderRadius: 30,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 5,
+  buttonWrapper: {
+    marginBottom: 20,
   },
-  continueButton: {
-    backgroundColor: "#2ecc71",
-    paddingVertical: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    flex: 1,
+  nextButton: {
+    height: 50,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  continueText: {
-    color: "#fff",
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "bold",
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   backButton: {
     backgroundColor: 'rgba(0,0,0,0.2)',
