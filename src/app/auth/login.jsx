@@ -68,7 +68,6 @@ const LoginScreen = () => {
       );
       setEmail("");
       setPassword("");
-      console.log('Response: ' + [...response]);
       navigation.goBack();
     } catch (error) {
       console.log("Sign In Failed: " + error);
