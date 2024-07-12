@@ -76,8 +76,8 @@ const RootLayout = () => {
             </UsersProvider>
           </UserProvider>
         </ThemeProvider>
+        <Toast config={toastConfig} />
       </GestureHandlerRootView>
-      <Toast config={toastConfig} />
     </>
   );
 };

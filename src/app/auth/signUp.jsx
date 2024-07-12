@@ -42,8 +42,9 @@ const SignUpScreen = () => {
 
   const showErrorToast = (message) => {
     Toast.show({
-      type: "customErrorToast",
-      text1: message,
+      type: "error",
+      text1: "Error",
+      text2: message,
     });
   };
 
@@ -559,6 +560,7 @@ const SignUpScreen = () => {
           </View>
         </View>
       </KeyboardAvoidingView>
+      <Toast />
     </SafeAreaView>
   );
 };

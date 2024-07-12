@@ -28,9 +28,9 @@ const LoginScreen = () => {
 
   const showErrorToast = (message) => {
     Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: message,
+      type: "customErrorToast",
+      // text1: "Error",
+      text1: message,
     });
   };
 

@@ -13,6 +13,7 @@ const index = () => {
     Toast.show({
       type: "customSuccessToast",
       text1: message,
+      topOffset: 50,
     });
   };
 

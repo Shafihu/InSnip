@@ -17,7 +17,6 @@ import {
   StatusBar,
 } from "react-native";
 import { Ionicons, Foundation } from "react-native-vector-icons";
-import Toast from "react-native-toast-message";
 
 import FilterScrollView from "../../components/FilitersScroll";
 import TabBar from "../../components/TabBar";
@@ -35,6 +34,7 @@ import { storyPostUpload } from "../../../utils/storyPostUpload";
 import CustomLoader from "../../components/CustomLoader";
 import { router } from "expo-router";
 import { useTheme } from "../../../context/ThemeContext";
+import { Toast } from "react-native-toast-message";
 
 const HomeScreen = () => {
   const [facing, setFacing] = useState("front");
@@ -61,7 +61,7 @@ const HomeScreen = () => {
 
   const showSuccessToast = (message) => {
     Toast.show({
-      type: "customSuccessToast",
+      type: "customErrorToast",
       text1: message,
     });
   };
@@ -220,11 +220,11 @@ const HomeScreen = () => {
   const handleDownload = () => {
     if (photo) {
       MediaLibrary.saveToLibraryAsync(photo.uri).then(() => {
-        showSuccessToast("Photo Saved!");
+        showSuccessToast("Photo Saved");
       });
     } else if (video) {
       MediaLibrary.saveToLibraryAsync(video.uri).then(() => {
-        showSuccessToast("Video Saved!");
+        showSuccessToast("Video Saved");
       });
     }
   };
@@ -306,9 +306,10 @@ const HomeScreen = () => {
     }
   };
 
-  if (loading) {
+  if (loading || !userData) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Checking system health...</Text>
         <ActivityIndicator size="small" color="#2ecc71" />
       </View>
     );
