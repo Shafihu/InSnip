@@ -133,7 +133,6 @@ const Stories = () => {
   };
 
   const handleProfile = (data) => {
-    console.log("GO!");
     router.push({
       pathname: "/verified/profile/[otherUserProfile]",
       params: {
@@ -145,6 +144,20 @@ const Stories = () => {
       },
     });
     setSelectedStory(null);
+  };
+
+  const handleUserProfile = (user) => {
+    router.push({
+      pathname: "/verified/profile/[otherUserProfile]",
+      params: {
+        id: user.id,
+        firstname: user.FirstName,
+        lastname: user.LastName,
+        username: user.Username,
+        avatar: user.avatar,
+        user: user,
+      },
+    });
   };
 
   const toggleOptionsModal = () => {
@@ -184,7 +197,11 @@ const Stories = () => {
             >
               {users && users.length > 0 ? (
                 users.map((item) => (
-                  <View key={item.id} style={styles.userContainer}>
+                  <Pressable
+                    onPress={() => handleUserProfile(item)}
+                    key={item.id}
+                    style={styles.userContainer}
+                  >
                     <View
                       style={[
                         styles.avatarContainer,
@@ -228,7 +245,7 @@ const Stories = () => {
                         {item.Username}
                       </Text>
                     </View>
-                  </View>
+                  </Pressable>
                 ))
               ) : (
                 <Text>No data available!</Text>
