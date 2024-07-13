@@ -13,11 +13,8 @@ import {
   Platform,
   StatusBar,
 } from "react-native";
-import { signOut } from "firebase/auth";
-import Toast from "react-native-toast-message";
 import { useUser } from "../../../../context/UserContext";
 import { pickAndUploadBanner } from "../../../../utils/pickAndUploadBanner";
-import { FIREBASE_AUTH } from "../../../../Firebase/config";
 import processUserImage from "../../../../utils/processUserImage";
 import { router } from "expo-router";
 import {
@@ -77,21 +74,6 @@ const UserProfile = () => {
       </View>
     );
   }
-
-  const showErrorToast = (message) => {
-    Toast.show({
-      type: "customErrorToast",
-      text1: message,
-    });
-  };
-
-  const handleSignOut = () => {
-    try {
-      signOut(FIREBASE_AUTH);
-    } catch (error) {
-      showErrorToast("Oops! something went wrong");
-    }
-  };
 
   const handlePickImage = async () => {
     try {
@@ -293,20 +275,6 @@ const UserProfile = () => {
                     </Text>
                     <Text style={styles.userUsername}>{userData.Username}</Text>
                   </View>
-                </View>
-                <View
-                  style={{
-                    height: "100%",
-                    justifyContent: "flex-start",
-                    alignItems: "flex-start",
-                  }}
-                >
-                  <Pressable
-                    onPress={handleSignOut}
-                    style={styles.logoutButton}
-                  >
-                    <FontAwesome name="sign-out" size={25} color="red" />
-                  </Pressable>
                 </View>
               </View>
             </>
@@ -638,16 +606,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "500",
     color: "#7f8c8d",
-  },
-  logoutButton: {
-    width: "100%",
-    paddingHorizontal: 10,
-  },
-  logoutText: {
-    fontSize: 16,
-    color: "red",
-    textAlign: "center",
-    fontWeight: "bold",
   },
   buttonContainer: {
     position: "absolute",

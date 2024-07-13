@@ -8,11 +8,18 @@ import {
   StatusBar,
   ScrollView,
 } from "react-native";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  MaterialIcons,
+  FontAwesome6,
+} from "react-native-vector-icons";
 import { useTheme } from "../../../../context/ThemeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "../../../../utils/themeConfig";
+import { FIREBASE_AUTH } from "../../../../Firebase/config";
+import { signOut } from "firebase/auth";
+import { router, navigation } from "expo-router";
 
 const SettingsScreen = () => {
   const { theme, darkMode, setDarkMode } = useTheme();
@@ -32,12 +39,30 @@ const SettingsScreen = () => {
     });
   };
 
+  const showErrorToast = (message) => {
+    Toast.show({
+      type: "customErrorToast",
+      text1: message,
+      visibilityTime: 1000,
+    });
+  };
+
   const toggleNotifications = () => {
     setNotificationsEnabled((prev) => !prev);
     if (!notificationsEnabled) {
       showToast("Notifications enabled");
     } else {
       showToast("Notifications disabled");
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(FIREBASE_AUTH);
+      await AsyncStorage.removeItem("@userData");
+      showToast("Signed out successfully");
+    } catch (error) {
+      showErrorToast("Oops! something went wrong");
     }
   };
 
@@ -48,6 +73,12 @@ const SettingsScreen = () => {
     >
       <StatusBar barStyle={darkMode ? "light-content" : "dark-content"} />
       <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={{ padding: 10, borderRadius: 50 }}
+        >
+          <FontAwesome6 name="angle-left" size={25} color={theme.textColor} />
+        </TouchableOpacity>
         <Text style={[styles.headerText, { color: theme.textColor }]}>
           Settings
         </Text>
@@ -119,6 +150,17 @@ const SettingsScreen = () => {
           About
         </Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.option} onPress={handleSignOut}>
+        <Ionicons
+          name="log-out"
+          size={24}
+          color="#c0392b"
+          style={styles.optionIcon}
+        />
+        <Text style={[styles.optionText, { color: theme.textColor }]}>
+          Sign Out
+        </Text>
+      </TouchableOpacity>
       <Toast config={toastConfig} />
     </ScrollView>
   );
@@ -130,10 +172,13 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 60,
   },
   header: {
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-start",
+    gap: 15,
     marginBottom: 20,
   },
   headerText: {

@@ -22,7 +22,7 @@ const index = () => {
       if (user) {
         router.push("/verified");
       } else {
-        router.push("/auth/splash");
+        router.navigate("/auth/splash");
       }
     }
   }, [user, loading, router]);
