@@ -1,12 +1,24 @@
 import React, { useState } from "react";
-import { ScrollView, View, StyleSheet, Image, Dimensions, TouchableOpacity } from "react-native";
+import {
+  ScrollView,
+  View,
+  StyleSheet,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 
-const FilterScrollView = ({ handleCapture, handleRecord, handleStopRecord }) => {
-  const itemWidth = 100; 
+const FilterScrollView = ({
+  handleCapture,
+  handleRecord,
+  handleStopRecord,
+  isRecording,
+}) => {
+  const itemWidth = 100;
   const [activeIndex, setActiveIndex] = useState(0);
 
   const filters = [
-    { id: 99, image: '' },
+    { id: 99, image: "" },
     { id: 1, image: require("../../assets/filters/filterOne.png") },
     { id: 2, image: require("../../assets/filters/filterFourteen.png") },
     { id: 3, image: require("../../assets/filters/filterThree.png") },
@@ -33,18 +45,19 @@ const FilterScrollView = ({ handleCapture, handleRecord, handleStopRecord }) => 
   return (
     <ScrollView
       horizontal={true}
-      decelerationRate="fast" 
+      decelerationRate="fast"
       snapToInterval={itemWidth}
       snapToAlignment={"center"}
       showsHorizontalScrollIndicator={false}
       disableIntervalMomentum={true}
       onScroll={handleScroll}
-      scrollEventThrottle={1} 
+      scrollEventThrottle={1}
       contentContainerStyle={styles.scrollViewContent}
       className={` max-h-28`}
     >
       {filters.map((filter, index) => (
         <TouchableOpacity
+          activeOpacity={0.7}
           onLongPress={handleRecord}
           onPressOut={handleStopRecord}
           onPress={() => {
@@ -57,12 +70,17 @@ const FilterScrollView = ({ handleCapture, handleRecord, handleStopRecord }) => 
             styles.item,
             {
               width: itemWidth,
-              height: itemWidth, 
-              borderRadius: itemWidth / 2, 
+              height: itemWidth,
+              borderRadius: itemWidth / 2,
               transform: [{ scale: activeIndex === index ? 0.8 : 0.6 }],
               opacity: activeIndex === index ? 1 : 0.7,
               borderWidth: activeIndex === index ? 7 : 0,
-              borderColor: activeIndex === index  ? "white" : "transparent", 
+              borderColor:
+                activeIndex === index
+                  ? isRecording
+                    ? "red"
+                    : "white"
+                  : "transparent",
             },
           ]}
         >
@@ -75,16 +93,16 @@ const FilterScrollView = ({ handleCapture, handleRecord, handleStopRecord }) => 
 
 const styles = StyleSheet.create({
   scrollViewContent: {
-    alignItems: "center", 
-    paddingHorizontal: (Dimensions.get("window").width - 100) / 2, 
+    alignItems: "center",
+    paddingHorizontal: (Dimensions.get("window").width - 100) / 2,
   },
   item: {
-    marginHorizontal: 2, 
+    marginHorizontal: 2,
     justifyContent: "center",
     alignItems: "center",
   },
   image: {
-    width: 80, 
+    width: 80,
     height: 80,
     borderRadius: 40,
   },

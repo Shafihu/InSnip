@@ -16,6 +16,13 @@ const AuthLayout = () => {
           presentation: "modal",
         }}
       />
+      <Stack.Screen
+        name="resetPassword"
+        options={{
+          headerShown: false,
+          presentation: "modal",
+        }}
+      />
     </Stack>
   );
 };

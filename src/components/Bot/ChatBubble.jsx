@@ -1,25 +1,37 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
+import { useTheme } from "../../../context/ThemeContext.js";
 
 const ChatBubble = ({ role, text, imageUrl, onSpeech }) => {
+  const { theme } = useTheme();
 
   return (
     <View
       style={[
         styles.chatItem,
         role === "user" ? styles.userChatItem : styles.modelChatItem,
+        role === "user"
+          ? ""
+          : { backgroundColor: theme.archiveBackgroundColor },
       ]}
     >
-      <Text style={role === 'user' ? styles.userName : styles.botName}>{role === 'user' ? 'Me' : 'My AI'}</Text>
-      {imageUrl && role === 'user' && (
-        <Image source={{ uri: imageUrl }} style={styles.chatImage} />
-      )}
-      <Text style={styles.chatText}>{text}</Text>
+      <Text style={role === "user" ? styles.userName : styles.botName}>
+        {role === "user" ? "Me" : "My AI"}
+      </Text>
+      <Text
+        style={[styles.chatText, role !== "user" && { color: theme.textColor }]}
+      >
+        {text}
+      </Text>
       {role === "model" && (
         <View style={styles.speakerIcon}>
           <TouchableOpacity onPress={onSpeech}>
-            <Ionicons name="volume-high-outline" size={24} color="#333" />
+            <Ionicons
+              name="volume-high-outline"
+              size={24}
+              color={theme.textColor}
+            />
           </TouchableOpacity>
         </View>
       )}
@@ -39,21 +51,20 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     backgroundColor: "#DCF8C5",
     borderRightWidth: 3,
-    borderColor: '#2ecc71'
+    borderColor: "#2ecc71",
   },
   modelChatItem: {
     alignSelf: "flex-start",
-    backgroundColor: "#fff",
     borderLeftWidth: 3,
-    borderColor: 'red'
+    borderColor: "red",
   },
   chatText: {
     fontSize: 16,
     color: "#333",
   },
   speakerIcon: {
-    alignItems: 'flex-end',
-    justifyContent: 'center',
+    alignItems: "flex-end",
+    justifyContent: "center",
   },
   chatImage: {
     width: 200,
@@ -62,15 +73,15 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   userName: {
-    color: '#2ecc71',
+    color: "#2ecc71",
     fontSize: 13,
-    marginBottom: 4
+    marginBottom: 4,
   },
   botName: {
-    color: 'red',
+    color: "red",
     fontSize: 13,
-    marginBottom: 4
-  }
+    marginBottom: 4,
+  },
 });
 
 export default ChatBubble;

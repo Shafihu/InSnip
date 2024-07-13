@@ -10,14 +10,20 @@ import {
   Image,
   TouchableOpacity,
   Modal,
-  Button,
 } from "react-native";
 import axios from "axios";
 import ChatBubble from "./ChatBubble";
-import { speak, isSpeakingAsync, stop, getAvailableVoicesAsync, VoiceQuality } from "expo-speech";
+import {
+  speak,
+  isSpeakingAsync,
+  stop,
+  getAvailableVoicesAsync,
+  VoiceQuality,
+} from "expo-speech";
 import Bottom from "../Chat/Bottom";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from 'react-native-vector-icons'
+import { Ionicons } from "react-native-vector-icons";
+import { useTheme } from "../../../context/ThemeContext";
 
 const Chatbot = ({ chats, setChats, modalVisible, setModalVisible }) => {
   const [loading, setLoading] = useState(false);
@@ -25,20 +31,24 @@ const Chatbot = ({ chats, setChats, modalVisible, setModalVisible }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [voices, setVoices] = useState([]);
+  const [backgroundImage, setBackgroundImage] = useState(
+    require("../../../assets/chat_background.jpg")
+  );
   const flatListRef = useRef(null);
+  const { theme } = useTheme();
 
   const API_KEY = process.env.EXPO_PUBLIC_GENERATIVE_AI_KEY;
 
   useEffect(() => {
     const fetchBotChatsFromStorage = async () => {
       try {
-        const storageChats = await AsyncStorage.getItem('BotChats');
+        const storageChats = await AsyncStorage.getItem("BotChats");
         if (storageChats) {
           setChats(JSON.parse(storageChats));
           flatListRef.current.scrollToEnd({ animated: true });
         }
       } catch (error) {
-        console.error('Error fetching chats from storage:', error);
+        console.error("Error fetching chats from storage:", error);
       }
     };
 
@@ -52,7 +62,7 @@ const Chatbot = ({ chats, setChats, modalVisible, setModalVisible }) => {
   }, []);
 
   const handleSend = async (message) => {
-    if (message === '') return;
+    if (message === "") return;
 
     let updatedChat = [
       ...chats,
@@ -86,7 +96,10 @@ const Chatbot = ({ chats, setChats, modalVisible, setModalVisible }) => {
         ];
 
         setChats(updatedChatWithModel);
-        await AsyncStorage.setItem('BotChats', JSON.stringify(updatedChatWithModel));
+        await AsyncStorage.setItem(
+          "BotChats",
+          JSON.stringify(updatedChatWithModel)
+        );
       }
     } catch (error) {
       console.error("Error calling Gemini Pro API:", error);
@@ -104,12 +117,20 @@ const Chatbot = ({ chats, setChats, modalVisible, setModalVisible }) => {
       if (!(await isSpeakingAsync())) {
         speak(text, {
           voice: selectedVoice?.identifier,
-          quality: VoiceQuality.Enhanced
+          quality: VoiceQuality.Enhanced,
         });
         setIsSpeaking(true);
       }
     }
   };
+
+  useEffect(() => {
+    if (theme?.backgroundColor === "#ffffff") {
+      setBackgroundImage(require("../../../assets/chat_background.jpg"));
+    } else {
+      setBackgroundImage(require("../../../assets/chat_background_dark_1.jpg"));
+    }
+  }, [theme]);
 
   const renderChatItem = ({ item }) => (
     <ChatBubble
@@ -127,17 +148,22 @@ const Chatbot = ({ chats, setChats, modalVisible, setModalVisible }) => {
         setModalVisible(false);
       }}
     >
-      <Text style={styles.voiceText}>{item.name || item.identifier}</Text>
+      <Text style={[styles.voiceText, { color: theme.textColor }]}>
+        {item.name || item.identifier}
+      </Text>
     </TouchableOpacity>
   );
 
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
     >
-      <ImageBackground source={require('../../../assets/chat_background.jpg')} style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
+      <ImageBackground
+        source={backgroundImage}
+        style={{ flex: 1, backgroundColor: "#f5f5f5" }}
+      >
         <View style={styles.container}>
           <FlatList
             ref={flatListRef}
@@ -146,31 +172,50 @@ const Chatbot = ({ chats, setChats, modalVisible, setModalVisible }) => {
             keyExtractor={(item, index) => index.toString()}
             contentContainerStyle={styles.chatContainer}
             showsVerticalScrollIndicator={false}
-            onContentSizeChange={() => flatListRef.current.scrollToEnd({ animated: true })}
+            onContentSizeChange={() =>
+              flatListRef.current.scrollToEnd({ animated: true })
+            }
           />
         </View>
-        {loading && 
-          <View style={{paddingHorizontal: 10, backgroundColor: 'transparent'}}>
-            <Image source={require('../../../assets/aiPic.png')} style={{width: 50, height: 50, objectFit: 'cover'}} />
+        {loading && (
+          <View
+            style={{ paddingHorizontal: 10, backgroundColor: "transparent" }}
+          >
+            <Image
+              source={require("../../../assets/aiPic.png")}
+              style={{ width: 50, height: 50, objectFit: "cover" }}
+            />
           </View>
-        }
-        <Bottom handleSend={handleSend} from='bot' />
-        <Modal
-          visible={modalVisible}
-          animationType="slide"
-          transparent={true}
-        >
-          <View style={styles.modalContainer}>
+        )}
+        <Bottom handleSend={handleSend} from="bot" />
+        <Modal visible={modalVisible} animationType="slide" transparent={true}>
+          <View
+            style={[
+              styles.modalContainer,
+              { backgroundColor: theme.backgroundColor },
+            ]}
+          >
             <View style={styles.modalContent}>
               <FlatList
                 data={voices}
                 renderItem={renderVoiceItem}
                 keyExtractor={(item, index) => index.toString()}
-                contentContainerStyle={{ flexGrow: 1}}
+                contentContainerStyle={{ flexGrow: 1 }}
+                showsVerticalScrollIndicator={false}
               />
-                <TouchableOpacity onPress={() => setModalVisible(false)}  style={{width: 50, height: 50, borderRadius: 25, backgroundColor: 'rgba(0,0,0,0.2)', alignItems: 'center', justifyContent: 'center'}}>
-                  <Ionicons name='close' size={30} color='rgba(0,0,0,0.8)' />
-                </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setModalVisible(false)}
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 25,
+                  backgroundColor: theme.innerTabContainerColor,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Ionicons name="close" size={30} color={theme.textColor} />
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
@@ -244,17 +289,15 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: "center",
-    // alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    width: '100%'
+    width: "100%",
   },
   modalContent: {
     width: "80%",
-    backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     width: "100%",
     paddingVertical: 70,
     gap: 20,
@@ -264,13 +307,12 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ccc",
     borderBottomWidth: 1,
     width: "100%",
-    
   },
   voiceText: {
     fontSize: 16,
     color: "#333",
-    textAlign: 'center',
-    width: '100%'
+    textAlign: "center",
+    width: "100%",
   },
 });
 

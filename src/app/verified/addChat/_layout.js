@@ -1,8 +1,9 @@
 import React from "react";
 import { Stack } from "expo-router";
-import Entypo from "react-native-vector-icons";
+import { useTheme } from "../../../../context/ThemeContext";
 
 const NewChatLayout = () => {
+  const { theme } = useTheme();
   return (
     <Stack>
       <Stack.Screen
@@ -11,7 +12,8 @@ const NewChatLayout = () => {
           headerShown: true,
           presentation: "modal",
           headerTitle: `New Chat`,
-          headerTintColor: "#3B2F2F",
+          headerTintColor: theme.textColor,
+          headerStyle: { backgroundColor: theme.backgroundColor },
         }}
       />
     </Stack>

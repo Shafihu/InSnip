@@ -19,7 +19,6 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../Firebase/config";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigation } from "expo-router";
-import Toast from "react-native-toast-message";
 import { router } from "expo-router";
 
 const SignUpScreen = () => {
@@ -39,14 +38,6 @@ const SignUpScreen = () => {
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(0);
   const navigation = useNavigation();
-
-  const showErrorToast = (message) => {
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: message,
-    });
-  };
 
   const images = [
     {
@@ -216,6 +207,7 @@ const SignUpScreen = () => {
               selectionColor="#2ecc71"
               placeholder="eg: afiafrimpong123@gmail.com"
               placeholderTextColor="rgba(0,0,0,0.15)"
+              autoCapitalize="none"
             />
           </View>
           <View style={styles.inputWrapper}>
@@ -390,9 +382,7 @@ const SignUpScreen = () => {
 
   const generateUsername = (firstName, lastName) => {
     const randomNum = Math.floor(Math.random() * 1000);
-    return `${firstName.trim().toLowerCase()}_${lastName
-      .trim()
-      .toLowerCase()}${randomNum}`;
+    return `${firstName.trim().toLowerCase()}_${randomNum}`;
   };
 
   useEffect(() => {
@@ -431,7 +421,6 @@ const SignUpScreen = () => {
       }
     } catch (error) {
       setLoading(false);
-      showErrorToast(error);
     }
   };
 
@@ -542,7 +531,7 @@ const SignUpScreen = () => {
           </View>
           <View style={styles.buttonWrapper}>
             <TouchableOpacity
-              disabled={!valid}
+              disabled={!valid || loading}
               style={[
                 styles.nextButton,
                 { backgroundColor: valid ? "#2ecc71" : "rgba(0,0,0,0.2)" },
@@ -560,11 +549,9 @@ const SignUpScreen = () => {
           </View>
         </View>
       </KeyboardAvoidingView>
-      <Toast />
     </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -688,512 +675,3 @@ const styles = StyleSheet.create({
 });
 
 export default SignUpScreen;
-
-// //SECOND STYLE
-
-// import React, { useState, useEffect } from 'react';
-// import { View, StyleSheet, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, FlatList, Platform , ActivityIndicator, Alert} from 'react-native';
-// import { ProgressBar } from 'react-native-paper';
-// import { SafeAreaView } from 'react-native-safe-area-context';
-// import { Image } from 'expo-image';
-// import { FontAwesome, FontAwesome6 } from "react-native-vector-icons";
-// import DateTimePicker from "@react-native-community/datetimepicker";
-// import { createUserWithEmailAndPassword } from "firebase/auth";
-// import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../Firebase/config";
-// import { doc, setDoc } from "firebase/firestore";
-// import { useNavigation } from 'expo-router';
-
-// const SignUpScreen = () => {
-//   const [step, setStep] = useState(0);
-//   const [firstName, setFirstName] = useState('');
-//   const [lastName, setLastName] = useState('');
-//   const [dob, setDob] = useState(new Date(2005, 1, 1));
-//   const [username, setUsername] = useState('');
-//   const [selectedAvatar, setSelectedAvatar] = useState(null);
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [confirmPassword, setConfirmPassword] = useState('');
-//   const [showPassword, setShowPassword] = useState(false);
-//   const [showDatePicker, setShowDatePicker] = useState(true);
-//   const [valid, setValid] = useState(false);
-//   const [loading, setLoading] = useState(false);
-//   const [validEmail, setValidEmail] = useState(false);
-//   const [validPassword, setValidPassword] = useState(0);
-//   const navigation = useNavigation();
-
-//   const images = [
-//     { id: 1, source: require("../../../assets/avatars/avatar_1.png"), path: "avatar_1.png" },
-//     { id: 2, source: require("../../../assets/avatars/avatar_11.png"), path: "avatar_11.png" },
-//     { id: 3, source: require("../../../assets/avatars/avatar_3.webp"), path: "avatar_3.webp" },
-//     { id: 4, source: require("../../../assets/avatars/avatar_4.webp"), path: "avatar_4.webp" },
-//     { id: 5, source: require("../../../assets/avatars/avatar_5.png"), path: "avatar_5.png" },
-//     { id: 6, source: require("../../../assets/avatars/avatar_6.png"), path: "avatar_6.png" },
-//     { id: 7, source: require("../../../assets/avatars/avatar_7.jpg"), path: "avatar_7.jpg" },
-//     { id: 8, source: require("../../../assets/avatars/avatar_8.jpg"), path: "avatar_8.jpg" },
-//     { id: 9, source: require("../../../assets/avatars/avatar_9.png"), path: "avatar_9.png" },
-//     { id: 10, source: require("../../../assets/avatars/avatar_10.webp"), path: "avatar_10.webp" },
-//   ];
-
-//   const handleImageSelect = (item) => {
-//     setSelectedAvatar(item);
-//   };
-
-//   const steps = [
-//     {
-//       title: `What's your name?`,
-//       fields: (
-//         <>
-//           <View style={styles.inputWrapper}>
-//             <Text style={styles.inputLabel}>FIRSTNAME</Text>
-//             <TextInput
-//               style={styles.input}
-//               value={firstName}
-//               onChangeText={setFirstName}
-//               selectionColor="#2ecc71"
-//               placeholder="eg: Afia"
-//               placeholderTextColor='rgba(0,0,0,0.3)'
-//             />
-//           </View>
-//           <View style={styles.inputWrapper}>
-//             <Text style={styles.inputLabel}>LASTNAME</Text>
-//             <TextInput
-//               style={styles.input}
-//               value={lastName}
-//               onChangeText={setLastName}
-//               selectionColor="#2ecc71"
-//               placeholder="eg: Frimpong"
-//               placeholderTextColor='rgba(0,0,0,0.3)'
-//             />
-//           </View>
-//         </>
-//       )
-//     },
-//     {
-//       title: `What's your birthday?`,
-//       fields: (
-//         <View style={styles.inputWrapper}>
-//           <Text style={styles.inputLabel}>DATE OF BIRTH</Text>
-//           <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-//             <TextInput
-//               style={[styles.input, {marginBottom: 0}]}
-//               value={dob.toDateString()}
-//               editable={false}
-//               pointerEvents="none"
-//               selectionColor="#2ecc71"
-//             />
-//           </TouchableOpacity>
-//         </View>
-//       )
-//     },
-//     {
-//       title: 'Pick a username',
-//       fields: (
-//         <View style={styles.inputWrapper}>
-//           <Text style={styles.inputLabel}>USERNAME</Text>
-//           <TextInput
-//             style={styles.input}
-//             value={username}
-//             onChangeText={setUsername}
-//             selectionColor="#2ecc71"
-//             placeholder="eg: afia_frimpong123"
-//             placeholderTextColor='rgba(0,0,0,0.3)'
-//           />
-//         </View>
-//       )
-//     },
-//     {
-//       title: 'Choose an avatar',
-//       fields: (
-//         <View style={{flex: 1}}>
-//           <FlatList
-//             data={images}
-//             contentContainerStyle={styles.imageContainer}
-//             keyExtractor={(item) => item.id.toString()}
-//             numColumns={4}
-//             renderItem={({ item }) => (
-//               <TouchableOpacity
-//                 onPress={() => handleImageSelect(item)}
-//                 style={[
-//                   styles.imageWrapper,
-//                   selectedAvatar?.id === item.id && styles.selectedAvatar,
-//                 ]}
-//               >
-//                 <Image source={item.source} style={styles.image} />
-//               </TouchableOpacity>
-//             )}
-//           />
-//         </View>
-//       )
-//     },
-//     {
-//       title: 'Completing your registration',
-//       fields: (
-//         <>
-//           <View style={styles.inputWrapper}>
-//             <Text style={styles.inputLabel}>EMAIL</Text>
-//             <TextInput
-//               style={[styles.input, {borderColor: email.trim() === '' ? 'gray' : !validEmail ? 'red' : '#2ecc71'}]}
-//               value={email.toLowerCase()}
-//               onChangeText={setEmail}
-//               keyboardType="email-address"
-//               selectionColor="#2ecc71"
-//               placeholder="eg: afiafrimpong123@gmail.com"
-//               placeholderTextColor='rgba(0,0,0,0.15)'
-//             />
-//           </View>
-//           <View style={styles.inputWrapper}>
-//             <Text style={styles.inputLabel}>PASSWORD</Text>
-//             <View style={styles.passwordContainer}>
-//               <TextInput
-//                 style={[styles.input, {borderColor: validPassword === 0 ? 'gray' : validPassword === 1 ? 'red' : validPassword === 2 ? 'orange' : validPassword === 3 && '#2ecc71'}]}
-//                 secureTextEntry={!showPassword}
-//                 value={password}
-//                 onChangeText={setPassword}
-//                 selectionColor="#2ecc71"
-//                 placeholder='at least 7 characters'
-//                 placeholderTextColor='rgba(0,0,0,0.15)'
-//               />
-//               <TouchableOpacity
-//                 style={styles.eyeIcon}
-//                 onPress={() => setShowPassword(!showPassword)}
-//               >
-//                 <FontAwesome6 name={showPassword ? "eye" : "eye-slash"} size={18} color="#7f8c8d" />
-//               </TouchableOpacity>
-//             </View>
-//           </View>
-//           <View style={styles.inputWrapper}>
-//             <Text style={styles.inputLabel}>CONFIRM PASSWORD</Text>
-//             <View style={styles.passwordContainer}>
-//               <TextInput
-//                 style={[styles.input, {borderColor: (confirmPassword.trim() !== password.trim()) ? 'gray' : (confirmPassword.trim() === password.trim()) ? '#2ecc71' : ''}]}
-//                 secureTextEntry={!showPassword}
-//                 value={confirmPassword}
-//                 onChangeText={setConfirmPassword}
-//                 selectionColor="#2ecc71"
-//                 placeholder='at least 7 characters'
-//                 placeholderTextColor='rgba(0,0,0,0.15)'
-//               />
-//               <TouchableOpacity
-//                 style={styles.eyeIcon}
-//                 onPress={() => setShowPassword(!showPassword)}
-//               >
-//                 <FontAwesome6 name={showPassword ? "eye" : "eye-slash"} size={18} color="#7f8c8d" />
-//               </TouchableOpacity>
-//             </View>
-//           </View>
-
-//           <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around'}}>
-//             <View style={{alignItems: 'center', justifyContent: 'center', gap: 8}}>
-//               <View style={{backgroundColor: 'red', height: 7, width: 50, borderRadius: 5}}/>
-//               <Text style={{color: 'rgba(0,0,0,0.5)'}}>Weak</Text>
-//             </View>
-//             <View style={{alignItems: 'center', justifyContent: 'center', gap: 8}}>
-//               <View style={{backgroundColor: 'orange', height: 7, width: 50, borderRadius: 5}}/>
-//               <Text style={{color: 'rgba(0,0,0,0.5)'}}>Strong</Text>
-//             </View>
-//             <View style={{alignItems: 'center', justifyContent: 'center', gap: 8}}>
-//               <View style={{backgroundColor: '#2ecc71', height: 7, width: 50, borderRadius: 5}}/>
-//               <Text style={{color: 'rgba(0,0,0,0.5)'}}>Very Strong</Text>
-//             </View>
-//           </View>
-
-//           <View>
-//             <Text style={styles.privacyText}>
-//               By tapping sign up, you acknowledge that you have read the Privacy Policy and agree to the Terms of Service.
-//             </Text>
-//           </View>
-//         </>
-//       )
-//     },
-//   ];
-
-//   const progress = (step + 1) / steps.length;
-
-//   useEffect(() => {
-//     validateStep();
-//   }, [firstName, lastName, dob, username, selectedAvatar, email, password, step]);
-
-//   const validateStep = () => {
-//     switch (step) {
-//       case 0:
-//         setValid(firstName.trim() !== '' && lastName.trim() !== '');
-//         break;
-//       case 1:
-//         setValid(dob !== null);
-//         break;
-//       case 2:
-//         setValid(username.trim() !== '');
-//         break;
-//       case 3:
-//         setValid(selectedAvatar !== null);
-//         break;
-//       case 4:
-//         validatePassword();
-//         break;
-//       default:
-//         setValid(false);
-//     }
-//   };
-
-//   const generateUsername = (firstName, lastName) => {
-//     const randomNum = Math.floor(Math.random() * 1000);
-//     return `${firstName.trim().toLowerCase()}_${lastName.trim().toLowerCase()}${randomNum}`;
-//   };
-
-//   useEffect(() => {
-//     validateEmail();
-//   }, [email]);
-
-//   const validateEmail = () => {
-//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//     setValidEmail(emailRegex.test(email.trim()));
-//   };
-
-//   const validatePassword = () => {
-//     if (password.trim() !== '') {
-//       if (password.trim().length <= 8) {
-//         setValidPassword(1)
-//         return false
-//        } else if (password.trim().length >= 9 && password.trim().length <= 12) {
-//         setValidPassword(2)
-//         return true
-//        } else if (password.trim().length >= 15) {
-//         setValidPassword(3)
-//         return true
-//        }
-//     } else {
-//       setValidPassword(0)
-//       return false
-//     }
-// };
-
-//   useEffect(() => {
-//     if (firstName && lastName) {
-//       setUsername(generateUsername(firstName.trim(), lastName.trim()));
-//     }
-//   }, [firstName, lastName]);
-
-//   const handleNext = async () => {
-//     if (!valid) return;
-
-//     if (step < steps.length - 1) {
-//       setStep(step + 1);
-//     } else {
-
-//       if (email.trim() === '') {
-//         Alert.alert('👌','Please provide a valid email and password!');
-//         return;
-//       }
-
-//       if (password.trim().length <= 8) {
-//         Alert.alert('🤒','Password is too weak!');
-//         return;
-//       }
-
-//       if (confirmPassword !== password) {
-//         Alert.alert('🟰','Password mismatch!')
-//         return;
-//       }
-//       setLoading(true);
-//       try {
-//         const response = await createUserWithEmailAndPassword(
-//           FIREBASE_AUTH,
-//           email,
-//           password
-//         );
-
-//         navigation.goBack();
-
-//         await setDoc(doc(FIRESTORE_DB, "users", response.user.uid), {
-//           id: response.user.uid,
-//           Email: email,
-//           Password: password,
-//           FirstName: firstName,
-//           LastName: lastName,
-//           Birthday: dob,
-//           Username: username,
-//           avatar: selectedAvatar.path,
-//           blocked: []
-//         });
-
-//         await setDoc(doc(FIRESTORE_DB, "userchats", response.user.uid), {
-//           chats: []
-//         });
-//       } catch (error) {
-//         console.log("Registration Failed: " + error);
-//         alert('Failed to sign up. Try again.');
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
-//   };
-
-//   const handleBack = () => {
-//     if (step > 0) {
-//       setStep(step - 1);
-//     }
-//   };
-
-//   return (
-//     <SafeAreaView style={styles.container}>
-//       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-//         <View style={{ flexGrow: 1 }}>
-//           <ProgressBar progress={progress} style={styles.progressBar} color='#2ecc71' />
-//           {step !== 4 && (
-//                     <Image
-//                       source={require('../../../assets/signUpImage.png')}
-//                       style={styles.logo}
-//                       contentFit="cover"
-//                     />
-//           )}
-//           <View style={{ flex: 1, justifyContent: 'space-between' }}>
-//             <View style={{ flex: 1, gap: 20 }}>
-//               <Text style={styles.title}>{steps[step].title}</Text>
-//               {steps[step].fields}
-//               {step === 1 && showDatePicker && (
-//                 <DateTimePicker
-//                   mode="date"
-//                   display="spinner"
-//                   value={dob}
-//                   onChange={(event, selectedDate) => {
-//                     if (selectedDate) {
-//                       setDob(selectedDate);
-//                     }
-//                   }}
-//                   textColor='#333333'
-//                   maximumDate={new Date(2005, 11, 31)}
-//                 />
-//               )}
-//             </View>
-//           </View>
-//           <View style={styles.buttonContainer}>
-//             {step > 0 &&
-//               <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-//                 <Text style={styles.backText}><FontAwesome name='chevron-left' size={18} color='#fff' /></Text>
-//               </TouchableOpacity>
-//             }
-//             <TouchableOpacity disabled={!valid} style={[styles.continueButton, { backgroundColor: valid ? '#2ecc71' : 'rgba(0,0,0,0.2)' }]} onPress={handleNext}>
-//             {loading ? (
-//                 <ActivityIndicator size="small" color="white" />
-//               ) : (
-//                 <Text style={styles.continueText}>{step === steps.length - 1 ? "Sign-up" : "Continue"}</Text>
-//               )}
-//             </TouchableOpacity>
-//           </View>
-//         </View>
-//       </KeyboardAvoidingView>
-//     </SafeAreaView>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     padding: 20,
-//     paddingBottom: 0,
-//     paddingTop: 0,
-//     backgroundColor: '#fff',
-//   },
-//   progressBar: {
-//     height: 10,
-//     borderRadius: 5,
-//     marginBottom: 20,
-//   },
-//   logo: {
-//     width: '100%',
-//     height: '35%',
-//   },
-//   title: {
-//     textAlign: "center",
-//     fontWeight: "500",
-//     fontSize: 24,
-//     color: "#333333",
-//   },
-//   inputWrapper: {
-//     width: '100%',
-//   },
-//   inputLabel: {
-//     fontSize: 12,
-//     color: "#333333",
-//     marginBottom: 5,
-//     fontWeight: '500'
-//   },
-//   input: {
-//     borderWidth: 1,
-//     borderColor: "#2ecc71",
-//     borderRadius: 8,
-//     padding: 10,
-//     fontSize: 15,
-//     fontWeight: "500",
-//     backgroundColor: '#ffffff',
-//     width: '100%',
-//   },
-//   imageContainer: {
-//     flexDirection: "column",
-//     alignItems: 'center',
-//     flex: 1,
-//   },
-//   imageWrapper: {
-//     borderWidth: 2,
-//     borderColor: "transparent",
-//     borderRadius: 30,
-//     backgroundColor: 'white',
-//     margin: 5
-//   },
-//   selectedAvatar: {
-//     borderColor: "#2ecc71",
-//     borderRadius: 50,
-//   },
-//   passwordContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//   },
-//   eyeIcon: {
-//     position: 'absolute',
-//     right: 15,
-//     top: '20%'
-//   },
-//   image: {
-//     width: 60,
-//     height: 60,
-//     borderRadius: 30,
-//   },
-//   buttonContainer: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     gap: 5,
-//   },
-//   continueButton: {
-//     backgroundColor: "#2ecc71",
-//     paddingVertical: 15,
-//     borderRadius: 8,
-//     alignItems: "center",
-//     flex: 1,
-//   },
-//   continueText: {
-//     color: "#fff",
-//     textAlign: "center",
-//     fontSize: 16,
-//     fontWeight: "bold",
-//   },
-//   backButton: {
-//     backgroundColor: 'rgba(0,0,0,0.2)',
-//     borderRadius: 8,
-//     alignItems: "center",
-//     justifyContent: 'center',
-//     flex: .2
-//   },
-//   backText: {
-//     color: "#fff",
-//     textAlign: "center",
-//     fontSize: 16,
-//     fontWeight: "bold",
-//   },
-//   privacyText: {
-//     fontSize: 12,
-//     color: "#7f8c8d",
-//     textAlign: "center",
-//   },
-// });
-
-// export default SignUpScreen;

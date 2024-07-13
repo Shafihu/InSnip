@@ -15,6 +15,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../../Firebase/config";
 import { useNavigation } from "expo-router";
 import Toast from "react-native-toast-message";
+import { router } from "expo-router";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -25,12 +26,11 @@ const LoginScreen = () => {
   const [validPassword, setValidPassword] = useState(0);
 
   const navigation = useNavigation();
-
-  const showErrorToast = (message) => {
+  const showToast = () => {
     Toast.show({
-      type: "customErrorToast",
-      // text1: "Error",
-      text1: message,
+      type: "error",
+      text1: "Authentication Error",
+      text2: "Please check your email and password.",
     });
   };
 
@@ -60,7 +60,6 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     if (!validEmail || password.trim() === "") {
-      showErrorToast("Please enter a valid email and password");
       return;
     }
 
@@ -76,7 +75,8 @@ const LoginScreen = () => {
       navigation.goBack();
     } catch (error) {
       console.log("Sign In Failed: " + error);
-      showErrorToast("Invalid email or password. Please try again");
+      setLoading(false);
+      showToast();
     } finally {
       setLoading(false);
     }
@@ -87,7 +87,7 @@ const LoginScreen = () => {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           <Image
-            source={require("../../../assets/login2.png")}
+            source={require("../../../assets/signup_1.png")}
             style={styles.logo}
             contentFit="cover"
           />
@@ -114,6 +114,7 @@ const LoginScreen = () => {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 selectionColor="#2ecc71"
+                autoCapitalize="none"
               />
             </View>
             <View style={styles.inputWrapper}>
@@ -151,7 +152,7 @@ const LoginScreen = () => {
               </View>
             </View>
             <TouchableOpacity
-              disabled={!validEmail}
+              disabled={!validEmail || loading}
               onPress={handleLogin}
               style={[
                 styles.loginButton,
@@ -166,13 +167,15 @@ const LoginScreen = () => {
                 <Text style={styles.loginText}>Sign-in</Text>
               )}
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push("/auth/resetPassword")}
+            >
               <Text style={styles.forgotPassword}>Forgot your password?</Text>
             </TouchableOpacity>
           </View>
         </View>
+        <Toast />
       </SafeAreaView>
-      <Toast />
     </KeyboardAvoidingView>
   );
 };
@@ -206,7 +209,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "700",
     fontSize: 28,
-    color: "#333333",
+    color: "#34495e",
     marginBottom: 4,
   },
   loginSubtitle: {
@@ -249,6 +252,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     marginVertical: 8,
+    marginBottom: 15,
   },
   loginText: {
     color: "#fff",

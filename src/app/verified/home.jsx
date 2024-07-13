@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CameraView, useCameraPermissions, Camera } from "expo-camera";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { shareAsync } from "expo-sharing";
 import * as MediaLibrary from "expo-media-library";
 import {
-  Button,
   Image,
   Pressable,
   SafeAreaView,
@@ -12,7 +11,6 @@ import {
   View,
   StyleSheet,
   ActivityIndicator,
-  ScrollView,
   Platform,
   StatusBar,
 } from "react-native";
@@ -34,14 +32,13 @@ import { storyPostUpload } from "../../../utils/storyPostUpload";
 import CustomLoader from "../../components/CustomLoader";
 import { router } from "expo-router";
 import { useTheme } from "../../../context/ThemeContext";
-import { Toast } from "react-native-toast-message";
+import Toast from "react-native-toast-message";
+import DotsLoader from "../../components/DotsLoader";
 
 const HomeScreen = () => {
   const [facing, setFacing] = useState("front");
   const [flash, setFlash] = useState("off");
   const [permission, requestPermission] = useCameraPermissions();
-  const [permissionResponse, requestMediaPermission] =
-    MediaLibrary.usePermissions();
   const [photo, setPhoto] = useState();
   const [video, setVideo] = useState();
   const [isRecording, setIsRecording] = useState(false);
@@ -55,15 +52,33 @@ const HomeScreen = () => {
   const [spotRefresh, setSpotRefreshing] = useState(false);
   const [storyUrl, setStoryUrl] = useState(null);
   const [error, setError] = useState(null);
+  const [showHint, setShowHint] = useState(false);
   const { userData, loading } = useUser();
   const currentUserId = userData?.id;
   const { theme, toggleTheme } = useTheme();
 
-  const showSuccessToast = (message) => {
+  const showSuccessToast = (text) => {
+    Toast.show({
+      type: "customSuccessToast",
+      text1: text,
+      topOffset: 50,
+    });
+  };
+
+  const showErrorToast = (text) => {
     Toast.show({
       type: "customErrorToast",
-      text1: message,
+      text1: text,
+      topOffset: 50,
     });
+  };
+
+  const toggleHint = () => {
+    setShowHint(true);
+
+    setTimeout(() => {
+      setShowHint(false);
+    }, 5000);
   };
 
   const handleCameraPress = () => {
@@ -117,16 +132,6 @@ const HomeScreen = () => {
 
   const getCameraPermission = async () => {
     await requestPermission();
-  };
-
-  const getAlbums = async () => {
-    if (permissionResponse.status !== "granted") {
-      await requestMediaPermission();
-    }
-    const fetchedAlbums = await MediaLibrary.getAlbumsAsync({
-      includeSmartAlbums: true,
-    });
-    setAlbums(fetchedAlbums);
   };
 
   if (!permission) {
@@ -220,25 +225,17 @@ const HomeScreen = () => {
   const handleDownload = () => {
     if (photo) {
       MediaLibrary.saveToLibraryAsync(photo.uri).then(() => {
-        showSuccessToast("Photo Saved");
+        showSuccessToast("Photo saved");
       });
     } else if (video) {
       MediaLibrary.saveToLibraryAsync(video.uri).then(() => {
-        showSuccessToast("Video Saved");
+        showSuccessToast("Video saved");
       });
     }
   };
 
   const updateUserPosts = async (url) => {
     const docRef = doc(FIRESTORE_DB, "users", currentUserId);
-
-    // await updateDoc(docRef, {
-    //   posts: arrayUnion({
-    //     url: url,
-    //   })
-    // });
-
-    showSuccessToast("Story sent");
   };
 
   const handlePostStory = async () => {
@@ -265,11 +262,13 @@ const HomeScreen = () => {
 
       if (downloadUrl) {
         updateUserPosts(downloadUrl);
+        showSuccessToast("Story sent");
       } else {
         console.log("No download URL returned");
       }
     } catch (error) {
       console.error("Error getting url and storing it:", error);
+      showErrorToast("Oops, failed to post story");
     }
   };
 
@@ -287,11 +286,13 @@ const HomeScreen = () => {
       if (downloadUrl) {
         updateUserPosts(downloadUrl);
         setStoryUrl(downloadUrl);
+        showSuccessToast("Story sent");
       }
       return downloadUrl;
     } catch (error) {
       setError("Failed to upload story");
       console.log(error);
+      showErrorToast("Oops, failed to upload story");
     }
   };
 
@@ -308,9 +309,27 @@ const HomeScreen = () => {
 
   if (loading || !userData) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Checking system health...</Text>
-        <ActivityIndicator size="small" color="#2ecc71" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 0,
+          paddingHorizontal: 10,
+        }}
+      >
+        <Text
+          style={{
+            textAlign: "center",
+            fontSize: 18,
+            fontWeight: "500",
+            color: "#34495e",
+          }}
+        >
+          Just a sec, making sure everything's picture perfect...
+        </Text>
+
+        <DotsLoader />
       </View>
     );
   }
@@ -403,7 +422,7 @@ const HomeScreen = () => {
                       shouldRasterizeIOS
                       shouldPlay
                     />
-                    <View style={styles.videoControls}>
+                    <View style={styles.photoControls}>
                       <TouchableOpacity onPress={() => setVideo(undefined)}>
                         <Ionicons name="close" color="white" size={30} />
                       </TouchableOpacity>
@@ -463,10 +482,12 @@ const HomeScreen = () => {
                           header=""
                           toggleCameraFacing={toggleCameraFacing}
                           toggleCameraFlash={toggleCameraFlash}
+                          handlePostStoryByGallery={handlePostStoryByGallery}
+                          toggleHint={toggleHint}
                         />
 
                         {/* BOTTOM CAMERA ICONS */}
-                        <View style={{ position: "absolute", bottom: 80 }}>
+                        <View style={{ position: "absolute", bottom: 100 }}>
                           <View style={styles.iconRow}>
                             <Pressable
                               onPress={handlePostStoryByGallery}
@@ -480,8 +501,16 @@ const HomeScreen = () => {
                               />
                             </Pressable>
 
+                            {showHint && (
+                              <Text style={{ color: "#2ecc71" }}>
+                                Tap to capture / Hold to record
+                              </Text>
+                            )}
+
                             <Pressable
-                              onPress={toggleTheme}
+                              onPress={() =>
+                                router.push("/verified/searchUsers")
+                              }
                               style={styles.iconButton}
                             >
                               <Foundation
@@ -494,11 +523,11 @@ const HomeScreen = () => {
                           </View>
 
                           {/* FILTERS */}
-                          {/* <Button title={isRecording ? 'Stop' : 'Record'} onPress={isRecording ? stopRecording : recordVideo}/> */}
                           <FilterScrollView
                             handleCapture={handleCapture}
                             handleRecord={handleRecord}
                             handleStopRecord={handleStopRecord}
+                            isRecording={isRecording}
                           />
                         </View>
                       </>

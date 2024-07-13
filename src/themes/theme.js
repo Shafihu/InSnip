@@ -11,6 +11,8 @@ export const lightTheme = {
   chatListBackgroundColor: "#f3f4f6",
   chatBackgroundImage: require("../../assets/chat_background.jpg"),
   chatContactColor: "#ffffff",
+  archiveBackgroundColor: "#ffffff",
+  archiveTextColor: "#2F3E46",
 };
 
 export const darkTheme = {
@@ -26,4 +28,6 @@ export const darkTheme = {
   chatListBackgroundColor: "#000000",
   chatBackgroundImage: require("../../assets/chat_background_dark_1.jpg"),
   chatContactColor: "red",
+  archiveBackgroundColor: "#2F3E46",
+  archiveTextColor: "#ffffff",
 };
