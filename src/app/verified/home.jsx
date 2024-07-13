@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   View,
   StyleSheet,
-  ActivityIndicator,
   Platform,
   StatusBar,
 } from "react-native";
@@ -55,7 +54,7 @@ const HomeScreen = () => {
   const [showHint, setShowHint] = useState(false);
   const { userData, loading } = useUser();
   const currentUserId = userData?.id;
-  const { theme, toggleTheme } = useTheme();
+  const { theme, darkMode } = useTheme();
 
   const showSuccessToast = (text) => {
     Toast.show({
@@ -336,6 +335,15 @@ const HomeScreen = () => {
 
   return (
     <>
+      <StatusBar
+        barStyle={
+          darkMode
+            ? "light-content"
+            : !spotlight || !Map
+            ? "dark-content"
+            : "light-content"
+        }
+      />
       <View
         style={[
           styles.container,

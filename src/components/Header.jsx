@@ -304,6 +304,7 @@ const Header = ({
                   </Pressable>
                 ) : (
                   <Pressable
+                    onPress={() => router.push("/verified/settings")}
                     style={{
                       backgroundColor: theme.innerTabContainerColor,
                       borderRadius: 20,
@@ -314,11 +315,10 @@ const Header = ({
                       overflow: "hidden",
                     }}
                   >
-                    <Fontisto
-                      name="more-v-a"
-                      size={20}
+                    <Ionicons
+                      name="settings-sharp"
+                      size={25}
                       color={header === "" ? "white" : theme.textColor}
-                      style={{ transform: [{ rotate: "90deg" }] }}
                     />
                   </Pressable>
                 )}
