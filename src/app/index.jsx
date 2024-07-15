@@ -3,10 +3,12 @@ import { onAuthStateChanged } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../Firebase/config";
 import { ActivityIndicator, View } from "react-native";
 import { router } from "expo-router";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 
 const index = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (authUser) => {

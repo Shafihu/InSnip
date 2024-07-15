@@ -34,6 +34,7 @@ import { Video, ResizeMode } from "expo-av";
 import CustomLoader from "../../../components/CustomLoader";
 import { Image } from "expo-image";
 import { useTheme } from "../../../../context/ThemeContext";
+import { CommonActions } from "@react-navigation/native";
 
 const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 0;
