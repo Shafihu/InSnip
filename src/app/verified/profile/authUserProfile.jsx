@@ -229,13 +229,21 @@ const UserProfile = () => {
         <Pressable onPress={() => router.back()} style={styles.button}>
           <FontAwesome6 name="chevron-left" color="#fff" size={20} />
         </Pressable>
-        <Pressable onPress={handlePickImage} style={styles.button}>
-          <MaterialCommunityIcons
-            name="image-edit-outline"
-            color="#fff"
-            size={20}
-          />
-        </Pressable>
+        <View style={{ gap: 5 }}>
+          <Pressable
+            onPress={() => router.push("/verified/settings")}
+            style={styles.button}
+          >
+            <Ionicons name="settings-sharp" size={25} color="white" />
+          </Pressable>
+          <Pressable onPress={handlePickImage} style={styles.button}>
+            <MaterialCommunityIcons
+              name="image-edit-outline"
+              color="#fff"
+              size={25}
+            />
+          </Pressable>
+        </View>
       </View>
       <Animated.View style={[styles.header, { height: headerHeight }]}>
         <Animated.Image
@@ -617,7 +625,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     width: "100%",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
     flexDirection: "row",
   },
   button: {

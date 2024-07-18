@@ -89,6 +89,91 @@ const SignUpScreen = () => {
       source: require("../../../assets/avatars/avatar_10.webp"),
       path: "avatar_10.webp",
     },
+    {
+      id: 12,
+      source: require("../../../assets/avatars/avatar_12.png"),
+      path: "avatar_12.png",
+    },
+    {
+      id: 13,
+      source: require("../../../assets/avatars/avatar_13.png"),
+      path: "avatar_13.png",
+    },
+    {
+      id: 14,
+      source: require("../../../assets/avatars/avatar_14.png"),
+      path: "avatar_14.png",
+    },
+    {
+      id: 15,
+      source: require("../../../assets/avatars/avatar_15.png"),
+      path: "avatar_15.png",
+    },
+    {
+      id: 16,
+      source: require("../../../assets/avatars/avatar_16.png"),
+      path: "avatar_16.png",
+    },
+    {
+      id: 17,
+      source: require("../../../assets/avatars/avatar_17.png"),
+      path: "avatar_17.png",
+    },
+    {
+      id: 18,
+      source: require("../../../assets/avatars/avatar_18.png"),
+      path: "avatar_18.png",
+    },
+    {
+      id: 19,
+      source: require("../../../assets/avatars/avatar_19.png"),
+      path: "avatar_19.png",
+    },
+    {
+      id: 20,
+      source: require("../../../assets/avatars/avatar_20.png"),
+      path: "avatar_20.png",
+    },
+    {
+      id: 21,
+      source: require("../../../assets/avatars/avatar_21.png"),
+      path: "avatar_21.png",
+    },
+    {
+      id: 22,
+      source: require("../../../assets/avatars/avatar_22.png"),
+      path: "avatar_22.png",
+    },
+    {
+      id: 23,
+      source: require("../../../assets/avatars/avatar_23.png"),
+      path: "avatar_23.png",
+    },
+    {
+      id: 24,
+      source: require("../../../assets/avatars/avatar_24.png"),
+      path: "avatar_24.png",
+    },
+    {
+      id: 25,
+      source: require("../../../assets/avatars/avatar_25.png"),
+      path: "avatar_25.png",
+    },
+    {
+      id: 26,
+      source: require("../../../assets/avatars/avatar_26.png"),
+      path: "avatar_26.png",
+    },
+    {
+      id: 27,
+      source: require("../../../assets/avatars/avatar_27.png"),
+      path: "avatar_27.png",
+    },
+    {
+      id: 28,
+      source: require("../../../assets/avatars/avatar_28.png"),
+      path: "avatar_28.png",
+    },
   ];
 
   const handleImageSelect = (item) => {
