@@ -153,11 +153,10 @@ const VideoCard = ({ video, isActive, handleOpenPress, totalComments }) => {
             style={styles.icon}
           >
             <MaterialIcons name="mode-comment" size={30} color="white" />
-            {totalComments && <Text style={styles.text}>{totalComments}</Text>}
+            <Text style={styles.text}>{totalComments && totalComments}</Text>
           </Pressable>
           <Pressable onPress={handleShare} style={styles.icon}>
             <Fontisto name="share-a" size={28} color="white" />
-            {/* <Text style={styles.text}>135</Text> */}
           </Pressable>
           <Pressable style={styles.moreIcon}>
             <Fontisto

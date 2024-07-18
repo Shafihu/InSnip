@@ -166,23 +166,23 @@ const BottomSheetModals = ({
             </View>
           ) : (
             <View style={{ flex: 1 }}>
-              {comments ? (
+              {comments?.length > 0 ? (
                 comments.map((comment) => (
-                  <View key={comment.text} style={styles.commentContainer}>
+                  <View key={comment?.text} style={styles.commentContainer}>
                     <Image
-                      source={processUserImage(comment.avatar)}
+                      source={processUserImage(comment?.avatar)}
                       style={styles.avatar}
                     />
                     <View style={styles.commentTextContainer}>
                       <Text
                         style={[styles.username, { color: theme.grayText }]}
                       >
-                        {comment.username}
+                        {comment?.username}
                       </Text>
                       <Text
                         style={[styles.commentText, { color: theme.textColor }]}
                       >
-                        {comment.text}
+                        {comment?.text}
                       </Text>
                     </View>
                   </View>
