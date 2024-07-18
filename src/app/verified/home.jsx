@@ -39,6 +39,7 @@ import Toast from "react-native-toast-message";
 import DotsLoader from "../../components/DotsLoader";
 import * as WebBrowser from "expo-web-browser";
 import QRCodeButton from "../../components/QRCodeButton";
+import { manipulateAsync, FlipType, SaveFormat } from "expo-image-manipulator";
 
 const HomeScreen = () => {
   const [facing, setFacing] = useState("front");
@@ -204,7 +205,18 @@ const HomeScreen = () => {
   let handleCapture = async () => {
     const options = { quality: 1, base64: true, exif: false };
     const newPhoto = await cameraRef.current.takePictureAsync(options);
-    setPhoto(newPhoto);
+
+    const manipResult = await manipulateAsync(
+      newPhoto.uri,
+      [{ rotate: 180 }, { flip: FlipType.Vertical }],
+      { compress: 1, format: SaveFormat.PNG }
+    );
+
+    if (facing === "front") {
+      setPhoto(manipResult);
+    } else {
+      setPhoto(newPhoto);
+    }
   };
 
   let handleRecord = async () => {
