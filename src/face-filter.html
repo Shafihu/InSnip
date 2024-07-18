@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Face Filterss</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="jeeFaceFilterCanvas"></canvas>
+    <script src="path/to/jeelizFaceFilter.js"></script>
+    <script>
+      JEELIZFACEFILTER.init({
+        canvasId: 'jeeFaceFilterCanvas',
+        NNCPath: 'path/to/neuralNetworkModel.json', // Replace with the path to your neural network model
+        callbackReady: function (errCode) {
+          if (errCode) {
+            console.log('Error initializing JeelizFaceFilter: ', errCode);
+            return;
+          }
+          console.log('JeelizFaceFilter ready');
+        },
+        callbackTrack: function (detectState) {
+          // Your tracking code here
+        },
+      });
+    </script>
+  </body>
+</html>

@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { CameraView, useCameraPermissions } from "expo-camera";
+import {
+  CameraView,
+  useCameraPermissions,
+  barcodeScannerSettings,
+} from "expo-camera";
 import { shareAsync } from "expo-sharing";
 import * as MediaLibrary from "expo-media-library";
 import {
@@ -33,6 +37,8 @@ import { router } from "expo-router";
 import { useTheme } from "../../../context/ThemeContext";
 import Toast from "react-native-toast-message";
 import DotsLoader from "../../components/DotsLoader";
+import * as WebBrowser from "expo-web-browser";
+import QRCodeButton from "../../components/QRCodeButton";
 
 const HomeScreen = () => {
   const [facing, setFacing] = useState("front");
@@ -53,6 +59,9 @@ const HomeScreen = () => {
   const [error, setError] = useState(null);
   const [showHint, setShowHint] = useState(false);
   const { userData, loading } = useUser();
+  const [isBrowsing, setIsBrowsing] = useState(false);
+  const [qrCodeDetected, setQrCodeDetected] = useState("");
+  const timeoutRef = useRef(null);
   const currentUserId = userData?.id;
   const { theme, darkMode } = useTheme();
 
@@ -259,9 +268,10 @@ const HomeScreen = () => {
         );
       }
 
+      showSuccessToast("Story sent");
+
       if (downloadUrl) {
         updateUserPosts(downloadUrl);
-        showSuccessToast("Story sent");
       } else {
         console.log("No download URL returned");
       }
@@ -298,13 +308,36 @@ const HomeScreen = () => {
   const handleShare = async () => {
     if (photo) {
       await shareAsync(photo.uri);
-      setPhoto(undefined);
-    } else if (video) {
-      await shareAsync(video.uri);
-      setVideo(undefined);
     } else {
+      await shareAsync(video.uri);
     }
   };
+
+  const handleOpenQRCode = async () => {
+    setIsBrowsing(true);
+    const browserResult = await WebBrowser.openBrowserAsync(qrCodeDetected, {
+      presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+    });
+    if (browserResult.type === "cancel") {
+      setIsBrowsing(false);
+    }
+  };
+
+  const handleBarcodeScanned = async (result) => {
+    if (result.data) {
+      setQrCodeDetected(result.data);
+
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        setQrCodeDetected("");
+      }, 1000);
+    }
+  };
+
+  if (isBrowsing) return <></>;
 
   if (loading || !userData) {
     return (
@@ -367,6 +400,9 @@ const HomeScreen = () => {
                 autofocus="on"
                 zoom={0}
                 ref={cameraRef}
+                barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+                onBarcodeScanned={handleBarcodeScanned}
+                onCameraReady={() => console.log("Camera is ready")}
               >
                 {photo && (
                   <View style={styles.photoContainer}>
@@ -494,6 +530,18 @@ const HomeScreen = () => {
                           toggleHint={toggleHint}
                         />
 
+                        <Image
+                          source={require("../../../assets/avatars/avatar_1.png")}
+                          style={{
+                            width: 60,
+                            height: 60,
+                            borderRadius: 30,
+                            position: "absolute",
+                            alignSelf: "center",
+                            top: 10,
+                          }}
+                        />
+
                         {/* BOTTOM CAMERA ICONS */}
                         <View style={{ position: "absolute", bottom: 100 }}>
                           <View style={styles.iconRow}>
@@ -529,6 +577,10 @@ const HomeScreen = () => {
                               />
                             </Pressable>
                           </View>
+
+                          {qrCodeDetected ? (
+                            <QRCodeButton handleOpenQRCode={handleOpenQRCode} />
+                          ) : null}
 
                           {/* FILTERS */}
                           <FilterScrollView

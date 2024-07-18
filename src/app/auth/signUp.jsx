@@ -19,7 +19,6 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../Firebase/config";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigation } from "expo-router";
-import { router } from "expo-router";
 
 const SignUpScreen = () => {
   const [step, setStep] = useState(0);
