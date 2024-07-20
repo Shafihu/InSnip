@@ -40,6 +40,7 @@ import DotsLoader from "../../components/DotsLoader";
 import * as WebBrowser from "expo-web-browser";
 import QRCodeButton from "../../components/QRCodeButton";
 import { manipulateAsync, FlipType, SaveFormat } from "expo-image-manipulator";
+import DoubleTap from "../../components/DoubleTap";
 
 const HomeScreen = () => {
   const [facing, setFacing] = useState("front");
@@ -88,6 +89,11 @@ const HomeScreen = () => {
     setTimeout(() => {
       setShowHint(false);
     }, 5000);
+  };
+
+  const handleDoubleTap = () => {
+    toggleCameraFacing();
+    console.log("Double tap detected!");
   };
 
   const handleCameraPress = () => {
@@ -404,209 +410,213 @@ const HomeScreen = () => {
         >
           <View style={styles.cameraContainer}>
             {camera && (
-              <CameraView
-                mode={photo ? "picture" : "video"}
-                style={styles.cameraView}
-                facing={facing}
-                flash={flash}
-                autofocus="on"
-                zoom={0}
-                ref={cameraRef}
-                barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
-                onBarcodeScanned={handleBarcodeScanned}
-                onCameraReady={() => console.log("Camera is ready")}
-              >
-                {photo && (
-                  <View style={styles.photoContainer}>
-                    <Image
-                      source={{ uri: photo.uri }}
-                      style={styles.fullSizeImage}
-                      resizeMode="cover"
-                    />
-                    <View style={styles.photoControls}>
-                      <TouchableOpacity onPress={() => setPhoto(undefined)}>
-                        <Ionicons name="close" color="white" size={30} />
-                      </TouchableOpacity>
-                      <TouchableOpacity>
-                        {/* Edit buttons go dey here */}
-                      </TouchableOpacity>
-                    </View>
-                    {uploadProgress > 0 && uploadProgress < 100 && (
-                      <View
-                        style={{
-                          backgroundColor: "rgba(0,0,0,0.5)",
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          padding: 10,
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          flex: 1,
-                          width: "100%",
-                          height: "100%",
-                          gap: 5,
-                        }}
-                      >
-                        <CustomLoader />
-                        <Text
+              <DoubleTap onDoubleTap={handleDoubleTap}>
+                <CameraView
+                  mode={photo ? "picture" : "video"}
+                  style={styles.cameraView}
+                  facing={facing}
+                  flash={flash}
+                  autofocus="on"
+                  zoom={0}
+                  ref={cameraRef}
+                  barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+                  onBarcodeScanned={handleBarcodeScanned}
+                  onCameraReady={() => console.log("Camera is ready")}
+                >
+                  {photo && (
+                    <View style={styles.photoContainer}>
+                      <Image
+                        source={{ uri: photo.uri }}
+                        style={styles.fullSizeImage}
+                        resizeMode="cover"
+                      />
+                      <View style={styles.photoControls}>
+                        <TouchableOpacity onPress={() => setPhoto(undefined)}>
+                          <Ionicons name="close" color="white" size={30} />
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                          {/* Edit buttons go dey here */}
+                        </TouchableOpacity>
+                      </View>
+                      {uploadProgress > 0 && uploadProgress < 100 && (
+                        <View
                           style={{
-                            color: "#fff",
-                            fontWeight: "bold",
-                            letterSpacing: 0.5,
-                            textAlign: "center",
+                            backgroundColor: "rgba(0,0,0,0.5)",
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            padding: 10,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            flex: 1,
                             width: "100%",
+                            height: "100%",
+                            gap: 5,
                           }}
                         >
-                          {uploadProgress.toFixed(2)}%
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                )}
-
-                {video && (
-                  <View style={styles.videoContainer}>
-                    <Video
-                      style={{ alignSelf: "stretch", flex: 1 }}
-                      source={{ uri: video.uri }}
-                      useNativeControls
-                      resizeMode="stretch"
-                      isLooping
-                      autofocus
-                      shouldRasterizeIOS
-                      shouldPlay
-                    />
-                    <View style={styles.photoControls}>
-                      <TouchableOpacity onPress={() => setVideo(undefined)}>
-                        <Ionicons name="close" color="white" size={30} />
-                      </TouchableOpacity>
+                          <CustomLoader />
+                          <Text
+                            style={{
+                              color: "#fff",
+                              fontWeight: "bold",
+                              letterSpacing: 0.5,
+                              textAlign: "center",
+                              width: "100%",
+                            }}
+                          >
+                            {uploadProgress.toFixed(2)}%
+                          </Text>
+                        </View>
+                      )}
                     </View>
-                    {uploadProgress > 0 && uploadProgress < 100 && (
-                      <View
-                        style={{
-                          backgroundColor: "rgba(0,0,0,0.5)",
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          padding: 10,
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          flex: 1,
-                          width: "100%",
-                          height: "100%",
-                          gap: 5,
-                        }}
-                      >
-                        <CustomLoader />
-                        <Text
+                  )}
+
+                  {video && (
+                    <View style={styles.videoContainer}>
+                      <Video
+                        style={{ alignSelf: "stretch", flex: 1 }}
+                        source={{ uri: video.uri }}
+                        useNativeControls
+                        resizeMode="stretch"
+                        isLooping
+                        autofocus
+                        shouldRasterizeIOS
+                        shouldPlay
+                      />
+                      <View style={styles.photoControls}>
+                        <TouchableOpacity onPress={() => setVideo(undefined)}>
+                          <Ionicons name="close" color="white" size={30} />
+                        </TouchableOpacity>
+                      </View>
+                      {uploadProgress > 0 && uploadProgress < 100 && (
+                        <View
                           style={{
-                            color: "#fff",
-                            fontWeight: "bold",
-                            letterSpacing: 0.5,
-                            textAlign: "center",
+                            backgroundColor: "rgba(0,0,0,0.5)",
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            padding: 10,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            flex: 1,
                             width: "100%",
+                            height: "100%",
+                            gap: 5,
                           }}
                         >
-                          {uploadProgress.toFixed(2)}%
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                )}
+                          <CustomLoader />
+                          <Text
+                            style={{
+                              color: "#fff",
+                              fontWeight: "bold",
+                              letterSpacing: 0.5,
+                              textAlign: "center",
+                              width: "100%",
+                            }}
+                          >
+                            {uploadProgress.toFixed(2)}%
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  )}
 
-                {!photo && (
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: "space-between",
-                      marginBottom: photo ? 0 : 0,
-                    }}
-                  >
+                  {!photo && (
                     <View
                       style={{
                         flex: 1,
                         justifyContent: "space-between",
-                        position: "relative",
+                        marginBottom: photo ? 0 : 0,
                       }}
                     >
-                      <>
-                        <Header
-                          header=""
-                          toggleCameraFacing={toggleCameraFacing}
-                          toggleCameraFlash={toggleCameraFlash}
-                          handlePostStoryByGallery={handlePostStoryByGallery}
-                          toggleHint={toggleHint}
-                        />
-
-                        <Image
-                          source={require("../../../assets/avatars/avatar_1.png")}
-                          style={{
-                            width: 60,
-                            height: 60,
-                            borderRadius: 30,
-                            position: "absolute",
-                            alignSelf: "center",
-                            top: 10,
-                          }}
-                        />
-
-                        {/* BOTTOM CAMERA ICONS */}
-                        <View style={{ position: "absolute", bottom: 100 }}>
-                          <View style={styles.iconRow}>
-                            <Pressable
-                              onPress={handlePostStoryByGallery}
-                              style={styles.iconButton}
-                            >
-                              <Ionicons
-                                name="images-outline"
-                                size={23}
-                                color="white"
-                                style={styles.rotate90}
-                              />
-                            </Pressable>
-
-                            {showHint && (
-                              <Text style={{ color: "#2ecc71" }}>
-                                Tap to capture / Hold to record
-                              </Text>
-                            )}
-
-                            <Pressable
-                              onPress={() =>
-                                router.push("/verified/searchUsers")
-                              }
-                              style={styles.iconButton}
-                            >
-                              <Foundation
-                                name="magnifying-glass"
-                                size={25}
-                                color="white"
-                                style={styles.flipIcon}
-                              />
-                            </Pressable>
-                          </View>
-
-                          {qrCodeDetected ? (
-                            <QRCodeButton handleOpenQRCode={handleOpenQRCode} />
-                          ) : null}
-
-                          {/* FILTERS */}
-                          <FilterScrollView
-                            handleCapture={handleCapture}
-                            handleRecord={handleRecord}
-                            handleStopRecord={handleStopRecord}
-                            isRecording={isRecording}
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "space-between",
+                          position: "relative",
+                        }}
+                      >
+                        <>
+                          <Header
+                            header=""
+                            toggleCameraFacing={toggleCameraFacing}
+                            toggleCameraFlash={toggleCameraFlash}
+                            handlePostStoryByGallery={handlePostStoryByGallery}
+                            toggleHint={toggleHint}
                           />
-                        </View>
-                      </>
+
+                          <Image
+                            source={require("../../../assets/avatars/avatar_1.png")}
+                            style={{
+                              width: 60,
+                              height: 60,
+                              borderRadius: 30,
+                              position: "absolute",
+                              alignSelf: "center",
+                              top: 10,
+                            }}
+                          />
+
+                          {/* BOTTOM CAMERA ICONS */}
+                          <View style={{ position: "absolute", bottom: 100 }}>
+                            <View style={styles.iconRow}>
+                              <Pressable
+                                onPress={handlePostStoryByGallery}
+                                style={styles.iconButton}
+                              >
+                                <Ionicons
+                                  name="images-outline"
+                                  size={23}
+                                  color="white"
+                                  style={styles.rotate90}
+                                />
+                              </Pressable>
+
+                              {showHint && (
+                                <Text style={{ color: "#2ecc71" }}>
+                                  Tap to capture / Hold to record
+                                </Text>
+                              )}
+
+                              <Pressable
+                                onPress={() =>
+                                  router.push("/verified/searchUsers")
+                                }
+                                style={styles.iconButton}
+                              >
+                                <Foundation
+                                  name="magnifying-glass"
+                                  size={25}
+                                  color="white"
+                                  style={styles.flipIcon}
+                                />
+                              </Pressable>
+                            </View>
+
+                            {qrCodeDetected ? (
+                              <QRCodeButton
+                                handleOpenQRCode={handleOpenQRCode}
+                              />
+                            ) : null}
+
+                            {/* FILTERS */}
+                            <FilterScrollView
+                              handleCapture={handleCapture}
+                              handleRecord={handleRecord}
+                              handleStopRecord={handleStopRecord}
+                              isRecording={isRecording}
+                            />
+                          </View>
+                        </>
+                      </View>
                     </View>
-                  </View>
-                )}
-              </CameraView>
+                  )}
+                </CameraView>
+              </DoubleTap>
             )}
 
             {maps && <Map />}
