@@ -1,20 +1,11 @@
 import React, { useRef, useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-  Modal,
-} from "react-native";
+import { View, Text, Pressable, StyleSheet, Dimensions } from "react-native";
 import { Video } from "expo-av";
 import {
   AntDesign,
   MaterialIcons,
   Fontisto,
   Entypo,
-  Ionicons,
 } from "react-native-vector-icons";
 import { FIRESTORE_DB } from "../../Firebase/config";
 import { doc, getDoc } from "firebase/firestore";
@@ -22,6 +13,7 @@ import { Image } from "expo-image";
 import processUserImage from "../../utils/processUserImage";
 import { shareAsync } from "expo-sharing";
 import Heart from "./Heart";
+import DoubleTap from "./DoubleTap";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -53,8 +45,6 @@ const VideoCard = ({ video, isActive, handleOpenPress, totalComments }) => {
       if (isActive) {
         videoRef.current.playAsync();
         setPlay(true);
-        // const userDetails = await fetchUserDetails(userId);
-        // setUserInfo(userDetails);
       } else {
         videoRef.current.stopAsync();
         setPlay(false);
@@ -75,8 +65,8 @@ const VideoCard = ({ video, isActive, handleOpenPress, totalComments }) => {
 
   const toggleLikeIcon = () => {
     setLike((prev) => !prev);
-    {
-      !like && setShowLikeAnimation(true);
+    if (!like) {
+      setShowLikeAnimation(true);
       setTimeout(() => {
         setShowLikeAnimation(false);
       }, 1000);
@@ -106,11 +96,11 @@ const VideoCard = ({ video, isActive, handleOpenPress, totalComments }) => {
         ref={videoRef}
         source={{ uri: video.url }}
         style={styles.video}
-        resizeMode=""
+        resizeMode="cover"
         shouldPlay={play}
         isLooping
       />
-      <Pressable onPress={togglePlay} style={styles.overlay}>
+      <DoubleTap onDoubleTap={toggleLikeIcon} singleTap={togglePlay}>
         {!play && (
           <View style={styles.playIcon}>
             <Entypo
@@ -167,7 +157,7 @@ const VideoCard = ({ video, isActive, handleOpenPress, totalComments }) => {
             />
           </Pressable>
         </View>
-      </Pressable>
+      </DoubleTap>
     </View>
   );
 };
@@ -180,6 +170,7 @@ const styles = StyleSheet.create({
     position: "relative",
     backgroundColor: "black",
     paddingBottom: 140,
+    flex: 1,
   },
   video: {
     width: "100%",
@@ -245,41 +236,6 @@ const styles = StyleSheet.create({
     left: "50%",
     top: "55%",
     transform: [{ translateX: -35 }],
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContainer: {
-    backgroundColor: "white",
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    padding: 10,
-    minHeight: "60%",
-  },
-  modalContent: {
-    flexGrow: 1,
-    // justifyContent: 'flex-end',
-    paddingBottom: 25,
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    paddingBottom: 10,
-  },
-  modalTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  modalCloseButton: {
-    fontSize: 16,
-    color: "blue",
-  },
-  modalBody: {
-    paddingTop: 10,
   },
 });
 

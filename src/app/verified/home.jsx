@@ -93,7 +93,6 @@ const HomeScreen = () => {
 
   const handleDoubleTap = () => {
     toggleCameraFacing();
-    console.log("Double tap detected!");
   };
 
   const handleCameraPress = () => {
@@ -410,7 +409,7 @@ const HomeScreen = () => {
         >
           <View style={styles.cameraContainer}>
             {camera && (
-              <DoubleTap onDoubleTap={handleDoubleTap}>
+              <DoubleTap onDoubleTap={handleDoubleTap} source="camera">
                 <CameraView
                   mode={photo ? "picture" : "video"}
                   style={styles.cameraView}

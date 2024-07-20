@@ -290,7 +290,7 @@ const ChatRoom = () => {
       <SafeAreaView style={{ flex: 1 }}>
         <WebView source={{ uri: url }} style={{ flex: 1 }} />
         <Pressable
-          onPress={() => router.back()}
+          onPress={() => setSelectedFile(null)}
           style={{
             position: "absolute",
             top: 50,
