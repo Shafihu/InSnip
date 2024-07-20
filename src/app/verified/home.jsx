@@ -368,6 +368,8 @@ const HomeScreen = () => {
           paddingHorizontal: 10,
         }}
       >
+        <DotsLoader />
+
         <Text
           style={{
             textAlign: "center",
@@ -378,8 +380,6 @@ const HomeScreen = () => {
         >
           Just a sec, making sure everything's picture perfect...
         </Text>
-
-        <DotsLoader />
       </View>
     );
   }

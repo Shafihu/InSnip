@@ -13,6 +13,7 @@ import {
   StatusBar,
   Keyboard,
 } from "react-native";
+import { WebView } from "react-native-webview";
 import {
   onSnapshot,
   doc,
@@ -36,8 +37,9 @@ import ImageView from "react-native-image-viewing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomLoader from "../../../components/CustomLoader";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
+import { pickAndUploadFile } from "../../../../utils/pickFile";
 import { useTheme } from "../../../../context/ThemeContext";
-
+import { router } from "expo-router";
 const { width } = Dimensions.get("window");
 
 const ChatRoom = () => {
@@ -46,10 +48,14 @@ const ChatRoom = () => {
     useLocalSearchParams();
   const [chat, setChat] = useState(null);
   const [media, setMedia] = useState(null);
+  const [document, setDocument] = useState(null);
+  const [fileName, setFileName] = useState(null);
   const [localMediaUri, setLocalMediaUri] = useState(null);
+  const [localFileUri, setLocalFileUri] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [play, setPlay] = useState(false);
   const videoRef = useRef(null);
   const currentUserId = userData.id;
@@ -106,8 +112,9 @@ const ChatRoom = () => {
 
   const handleSend = async (message) => {
     setLocalMediaUri(null);
+    setLocalFileUri(null);
     try {
-      if (!message && !media) return;
+      if (!message && !media && !document) return;
 
       const chatRef = doc(FIRESTORE_DB, "chats", chatId);
 
@@ -120,6 +127,10 @@ const ChatRoom = () => {
       if (media) {
         messageData.mediaUrl = media.url;
         messageData.mediaType = media.type;
+      } else {
+        messageData.documentUrl = document.url;
+        messageData.documentType = document.type;
+        messageData.documentName = fileName;
       }
 
       await updateDoc(chatRef, {
@@ -142,6 +153,8 @@ const ChatRoom = () => {
           if (chatIndex !== -1) {
             userChatsData.chats[chatIndex].lastMessage = media
               ? media.url + message
+              : document
+              ? document.url + message
               : message;
             userChatsData.chats[chatIndex].isSeen = id === currentUserId;
             userChatsData.chats[chatIndex].updatedAt = new Date();
@@ -151,6 +164,7 @@ const ChatRoom = () => {
             });
 
             setMedia(null);
+            setDocument(null);
           }
         }
       }
@@ -170,6 +184,23 @@ const ChatRoom = () => {
       }
     } catch (error) {
       console.log("Error picking media: " + error);
+    }
+  };
+
+  const handleFileUpload = async () => {
+    console.log("File upload initiated");
+    try {
+      const pickedFile = await pickAndUploadFile(
+        setUploadProgress,
+        setLocalFileUri,
+        userData.id,
+        setFileName
+      );
+      if (pickedFile) {
+        setDocument(pickedFile);
+      }
+    } catch (error) {
+      console.log("Error picking file: " + error);
     }
   };
 
@@ -253,6 +284,37 @@ const ChatRoom = () => {
   const handleFocusedInput = () => {
     scrollViewRef.current.scrollToEnd({ animated: true });
   };
+
+  const FileViewer = ({ url }) => {
+    return (
+      <SafeAreaView style={{ flex: 1 }}>
+        <WebView source={{ uri: url }} style={{ flex: 1 }} />
+        <Pressable
+          onPress={() => router.back()}
+          style={{
+            position: "absolute",
+            top: 50,
+            left: 10,
+          }}
+        >
+          <Text
+            style={{
+              color: "red",
+              fontSize: 25,
+              fontWeight: "bold",
+            }}
+          >
+            Back
+          </Text>
+        </Pressable>
+      </SafeAreaView>
+    );
+  };
+
+  if (selectedFile) {
+    console.log(selectedFile);
+    return <FileViewer url={selectedFile} />;
+  }
 
   return (
     <SafeAreaView
@@ -384,7 +446,7 @@ const ChatRoom = () => {
                                 fontSize: 15,
                                 color:
                                   message.senderId === currentUserId
-                                    ? "333333"
+                                    ? "#333333"
                                     : theme.textColor,
                               }}
                             >
@@ -438,7 +500,7 @@ const ChatRoom = () => {
                               fontSize: 15,
                               color:
                                 message.senderId === currentUserId
-                                  ? "333333"
+                                  ? "#333333"
                                   : theme.textColor,
                             }}
                           >
@@ -446,6 +508,60 @@ const ChatRoom = () => {
                           </Text>
                         </View>
                       )
+                    ) : message.documentUrl ? (
+                      <View style={{ gap: 5 }}>
+                        <Pressable
+                          onPress={() => setSelectedFile(message.documentUrl)}
+                          onLongPress={() => handleLongPress(message)}
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 5,
+                            backgroundColor: "#EFFCEB",
+                            padding: 6,
+                            borderRadius: 4,
+                            overflow: "hidden",
+                          }}
+                        >
+                          <View
+                            style={{
+                              borderRadius: 50,
+                              backgroundColor: "rgba(0,0,0,0.075)",
+                              padding: 8,
+                            }}
+                          >
+                            <Ionicons
+                              name="document"
+                              size={25}
+                              color={theme.grayText}
+                            />
+                          </View>
+                          <Text
+                            style={{
+                              maxWidth: width * 0.6,
+                              color: theme.grayText,
+                            }}
+                            numberOfLines={2}
+                            ellipsizeMode="tail"
+                          >
+                            {message.documentName}
+                          </Text>
+                        </Pressable>
+                        {message.text !== "" && (
+                          <Text
+                            style={{
+                              letterSpacing: 0.2,
+                              fontSize: 15,
+                              color:
+                                message.senderId === currentUserId
+                                  ? "#333333"
+                                  : theme.textColor,
+                            }}
+                          >
+                            {message.text}
+                          </Text>
+                        )}
+                      </View>
                     ) : (
                       <Text
                         style={{
@@ -453,7 +569,7 @@ const ChatRoom = () => {
                           fontSize: 15,
                           color:
                             message.senderId === currentUserId
-                              ? "333333"
+                              ? "#333333"
                               : theme.textColor,
                         }}
                       >
@@ -464,83 +580,6 @@ const ChatRoom = () => {
                 </TouchableOpacity>
               );
             })}
-            {localMediaUri && (
-              <View
-                style={{
-                  alignSelf: "center",
-                  padding: 8,
-                  paddingTop: 4,
-                  borderRadius: 10,
-                  borderWidth: 2,
-                  borderColor: theme.primaryColor,
-                  marginBottom: 8,
-                  backgroundColor: "rgba(0,0,0,0.6)",
-                }}
-              >
-                <TouchableOpacity
-                  onPress={() => {
-                    setLocalMediaUri(null);
-                    setMedia(null);
-                  }}
-                >
-                  <Entypo
-                    name="cross"
-                    size={20}
-                    color="#fff"
-                    style={{ textAlign: "right" }}
-                  />
-                </TouchableOpacity>
-                <View style={{ position: "relative", overflow: "hidden" }}>
-                  {media && media.type === "image" ? (
-                    <ExpoImage
-                      source={{ uri: localMediaUri }}
-                      style={{
-                        width: width * 0.5,
-                        height: 100,
-                        borderRadius: 8,
-                      }}
-                      placeholder={{ blurhash }}
-                      contentFit="cover"
-                      transition={1000}
-                    />
-                  ) : (
-                    <Video
-                      source={{ uri: localMediaUri }}
-                      style={{
-                        width: width * 0.5,
-                        height: 100,
-                        borderRadius: 8,
-                      }}
-                      useNativeControls
-                      resizeMode="cover"
-                      isLooping
-                    />
-                  )}
-                  {uploadProgress > 0 && uploadProgress < 100 && (
-                    <View
-                      style={{
-                        position: "absolute",
-                        alignSelf: "center",
-                        padding: 10,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "100%",
-                        height: "100%",
-                        backgroundColor: "rgba(0,0,0,0.7)",
-                        borderRadius: 8,
-                      }}
-                    >
-                      <CustomLoader />
-                      <Text style={{ fontSize: 12, color: "#fff" }}>
-                        {uploadProgress.toFixed(2)}%
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-            )}
             {isReceiverBlocked && (
               <View style={{ backgroundColor: theme.grayText, padding: 10 }}>
                 <Text
@@ -556,11 +595,187 @@ const ChatRoom = () => {
               </View>
             )}
           </ScrollView>
+          {localMediaUri && (
+            <View
+              style={{
+                alignSelf: "center",
+                padding: 8,
+                paddingTop: 4,
+                borderRadius: 10,
+                borderWidth: 2,
+                borderColor: theme.primaryColor,
+                marginBottom: 8,
+                backgroundColor: "rgba(0,0,0,0.6)",
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  setLocalMediaUri(null);
+                  setMedia(null);
+                }}
+              >
+                <Entypo
+                  name="cross"
+                  size={20}
+                  color="#fff"
+                  style={{ textAlign: "right" }}
+                />
+              </TouchableOpacity>
+              <View style={{ position: "relative", overflow: "hidden" }}>
+                {media && media.type === "image" ? (
+                  <ExpoImage
+                    source={{ uri: localMediaUri }}
+                    style={{
+                      width: width * 0.5,
+                      height: 100,
+                      borderRadius: 8,
+                    }}
+                    placeholder={{ blurhash }}
+                    contentFit="cover"
+                    transition={1000}
+                  />
+                ) : (
+                  <Video
+                    source={{ uri: localMediaUri }}
+                    style={{
+                      width: width * 0.5,
+                      height: 100,
+                      borderRadius: 8,
+                    }}
+                    useNativeControls
+                    resizeMode="cover"
+                    isLooping
+                  />
+                )}
+                {uploadProgress > 0 && uploadProgress < 100 && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      alignSelf: "center",
+                      padding: 10,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "100%",
+                      height: "100%",
+                      backgroundColor: "rgba(0,0,0,0.7)",
+                      borderRadius: 8,
+                    }}
+                  >
+                    <CustomLoader />
+                    <Text style={{ fontSize: 12, color: "#fff" }}>
+                      {uploadProgress.toFixed(2)}%
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </View>
+          )}
+          {localFileUri && (
+            <View
+              style={{
+                alignSelf: "center",
+                padding: 8,
+                paddingTop: 4,
+                borderRadius: 10,
+                borderWidth: 2,
+                borderColor: theme.primaryColor,
+                marginBottom: 8,
+                backgroundColor: "white",
+                justifyContent: "center",
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  setLocalFileUri(null);
+                  setDocument(null);
+                }}
+              >
+                <Entypo
+                  name="cross"
+                  size={20}
+                  color="gray"
+                  style={{ textAlign: "right" }}
+                />
+              </TouchableOpacity>
+              <View
+                style={{ position: "relative", overflow: "hidden", gap: 5 }}
+              >
+                {document?.type === "text/plain" ? (
+                  <></>
+                ) : (
+                  <ExpoImage
+                    source={{ uri: localFileUri }}
+                    style={{
+                      width: width * 0.5,
+                      height: 100,
+                      borderRadius: 8,
+                    }}
+                    placeholder={{ blurhash }}
+                    contentFit="cover"
+                    transition={1000}
+                  />
+                )}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 8,
+                  }}
+                >
+                  <View
+                    style={{
+                      borderRadius: 50,
+                      backgroundColor: "rgba(0,0,0,0.075)",
+                      padding: 8,
+                    }}
+                  >
+                    <Ionicons
+                      name="document"
+                      size={25}
+                      color={theme.grayText}
+                    />
+                  </View>
+                  <Text
+                    style={{ maxWidth: width * 0.35, color: theme.grayText }}
+                    numberOfLines={2}
+                    ellipsizeMode="tail"
+                  >
+                    {fileName}
+                  </Text>
+                </View>
+                {uploadProgress > 0 && uploadProgress < 100 && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      alignSelf: "center",
+                      padding: 10,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: "100%",
+                      height: "100%",
+                      backgroundColor: "rgba(0,0,0,0.7)",
+                      borderRadius: 8,
+                    }}
+                  >
+                    <CustomLoader />
+                    <Text style={{ fontSize: 12, color: "#fff" }}>
+                      {uploadProgress.toFixed(2)}%
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </View>
+          )}
           <Bottom
             handleSend={handleSend}
             handlePickMedia={handlePickMedia}
             user={user}
             handleFocusedInput={handleFocusedInput}
+            handleFileUpload={handleFileUpload}
           />
           <Modal
             isVisible={isModalVisible}

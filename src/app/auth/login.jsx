@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
   Image,
+  Platform,
 } from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -72,7 +73,9 @@ const LoginScreen = () => {
       );
       setEmail("");
       setPassword("");
-      navigation.goBack();
+      if (Platform.OS === "ios") {
+        navigation.goBack();
+      }
     } catch (error) {
       console.log("Sign In Failed: " + error);
       setLoading(false);
