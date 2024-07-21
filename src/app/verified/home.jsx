@@ -409,7 +409,11 @@ const HomeScreen = () => {
         >
           <View style={styles.cameraContainer}>
             {camera && (
-              <DoubleTap onDoubleTap={handleDoubleTap} source="camera">
+              <DoubleTap
+                onDoubleTap={handleDoubleTap}
+                // singleTap={null}
+                source="camera"
+              >
                 <CameraView
                   mode={photo ? "picture" : "video"}
                   style={styles.cameraView}

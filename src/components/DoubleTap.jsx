@@ -14,7 +14,9 @@ const DoubleTap = ({ onDoubleTap, children, singleTap, source }) => {
     } else {
       lastTap.current = now;
       tapTimeout.current = setTimeout(() => {
-        singleTap();
+        if (singleTap) {
+          singleTap();
+        }
       }, timeout);
     }
   };
