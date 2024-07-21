@@ -3,39 +3,73 @@ import {
   View,
   Text,
   StyleSheet,
-  Switch,
   TouchableOpacity,
-  StatusBar,
   ScrollView,
+  SafeAreaView,
+  ActivityIndicator,
+  Switch,
 } from "react-native";
-import {
-  Ionicons,
-  MaterialIcons,
-  FontAwesome6,
-} from "react-native-vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../../../context/ThemeContext";
+import { useUser } from "../../../../context/UserContext";
+import { format } from "date-fns";
+import { signOut } from "firebase/auth";
+import { FIREBASE_AUTH } from "../../../../Firebase/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
-import { toastConfig } from "../../../../utils/themeConfig";
-import { FIREBASE_AUTH } from "../../../../Firebase/config";
-import { signOut } from "firebase/auth";
-import { router, navigation } from "expo-router";
+import { router } from "expo-router";
 
 const SettingsScreen = () => {
+  const { userData } = useUser();
   const { theme, darkMode, setDarkMode } = useTheme();
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [birthDate, setBirthDate] = useState(null);
 
-  const toggleDarkMode = async () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    await AsyncStorage.setItem("@settings", JSON.stringify(newDarkMode));
-  };
+  useEffect(() => {
+    if (userData?.Birthday) {
+      try {
+        const date = userData.Birthday.toDate();
+        const formattedDate = format(date, "MMMM d, yyyy");
+        setBirthDate(formattedDate);
+      } catch (error) {
+        console.error("Error parsing date:", error);
+      }
+    }
+  }, [userData]);
+
+  const settingsData = [
+    { label: "Name", value: userData?.FirstName + " " + userData?.LastName },
+    { label: "Username", value: userData?.Username },
+    { label: "Birthday", value: birthDate },
+    { label: "Mobile Number", value: "059 530 3985" },
+    { label: "Email", value: userData?.Email, isEmail: true },
+    { label: "InSnip+" },
+    { label: "Bitmoji" },
+    { label: "Cameos" },
+    { label: "AI selfies" },
+    { label: "Password" },
+    { label: "Two-Factor Authentication" },
+    { label: "Notifications" },
+    { label: "Memories" },
+  ];
+  const accountActionData = [
+    { label: "Delete Account", isEmail: true },
+    {
+      label: "Sign Out",
+      method: () => {
+        console.log("OUT!");
+        handleSignOut();
+      },
+      isSignOut: true,
+      isEmail: true,
+    },
+  ];
 
   const showToast = (message) => {
     Toast.show({
       type: "customInfoToast",
       text1: message,
-      visibilityTime: 1000,
+      visibilityTime: 2000,
     });
   };
 
@@ -43,148 +77,205 @@ const SettingsScreen = () => {
     Toast.show({
       type: "customErrorToast",
       text1: message,
-      visibilityTime: 1000,
+      visibilityTime: 2000,
     });
   };
 
-  const toggleNotifications = () => {
-    setNotificationsEnabled((prev) => !prev);
-    if (!notificationsEnabled) {
-      showToast("Notifications enabled");
-    } else {
-      showToast("Notifications disabled");
-    }
+  const toggleDarkMode = async () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    await AsyncStorage.setItem("@settings", JSON.stringify(newDarkMode));
   };
 
   const handleSignOut = async () => {
     try {
+      setLoading(true);
       await signOut(FIREBASE_AUTH);
       await AsyncStorage.removeItem("@userData");
       showToast("Signed out successfully");
     } catch (error) {
       showErrorToast("Oops! something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: theme.backgroundColor }]}
-      contentContainerStyle={styles.contentContainer}
-    >
-      <StatusBar barStyle={darkMode ? "light-content" : "dark-content"} />
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={{ padding: 10, borderRadius: 50 }}
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
+      <ScrollView
+        style={[styles.container, { backgroundColor: theme.backgroundColor }]}
+      >
+        <View
+          style={[
+            styles.headerContainer,
+            { backgroundColor: theme.backgroundColor },
+          ]}
         >
-          <FontAwesome6 name="angle-left" size={25} color={theme.textColor} />
-        </TouchableOpacity>
-        <Text style={[styles.headerText, { color: theme.textColor }]}>
-          Settings
-        </Text>
-      </View>
-      <TouchableOpacity style={styles.option}>
-        <Ionicons
-          name="person"
-          size={24}
-          color="#2980b9"
-          style={styles.optionIcon}
-        />
-        <Text style={[styles.optionText, { color: theme.textColor }]}>
-          Manage Profile
-        </Text>
-      </TouchableOpacity>
-      <View style={styles.option}>
-        <Ionicons
-          name={darkMode ? "moon" : "sunny"}
-          size={24}
-          color="#2ecc71"
-          style={styles.optionIcon}
-        />
-        <Text style={[styles.optionText, { color: theme.textColor }]}>
-          Dark Mode
-        </Text>
-        <Switch
-          value={darkMode}
-          onValueChange={toggleDarkMode}
-          trackColor={{ false: "#bdc3c7", true: "#2ecc71" }}
-          thumbColor={darkMode ? "#ffffff" : "#ffffff"}
-        />
-      </View>
-      <View style={styles.option}>
-        <MaterialIcons
-          name="notifications"
-          size={24}
-          color={notificationsEnabled ? "#2ecc71" : "#bdc3c7"}
-          style={styles.optionIcon}
-        />
-        <Text style={[styles.optionText, { color: theme.textColor }]}>
-          Notifications
-        </Text>
-        <Switch
-          value={notificationsEnabled}
-          onValueChange={toggleNotifications}
-          trackColor={{ false: "#bdc3c7", true: "#2ecc71" }}
-          thumbColor={notificationsEnabled ? "#fff" : "#fff"}
-        />
-      </View>
-      <TouchableOpacity style={styles.option}>
-        <Ionicons
-          name="lock-closed"
-          size={24}
-          color="#e74c3c"
-          style={styles.optionIcon}
-        />
-        <Text style={[styles.optionText, { color: theme.textColor }]}>
-          Privacy Settings
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.option}>
-        <Ionicons
-          name="information-circle"
-          size={24}
-          color="#3498db"
-          style={styles.optionIcon}
-        />
-        <Text style={[styles.optionText, { color: theme.textColor }]}>
-          About
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.option} onPress={handleSignOut}>
-        <Ionicons
-          name="log-out"
-          size={24}
-          color="#c0392b"
-          style={styles.optionIcon}
-        />
-        <Text style={[styles.optionText, { color: theme.textColor }]}>
-          Sign Out
-        </Text>
-      </TouchableOpacity>
-      <Toast config={toastConfig} />
-    </ScrollView>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+          >
+            <Ionicons name="arrow-back" size={24} color={theme.textColor} />
+          </TouchableOpacity>
+          <Text style={[styles.header, { color: theme.textColor }]}>
+            Settings
+          </Text>
+        </View>
+        <View
+          style={[styles.section, { backgroundColor: theme.backgroundColor }]}
+        >
+          <Text style={[styles.sectionTitle, { color: theme.textColor }]}>
+            MY ACCOUNT
+          </Text>
+          {settingsData.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.item, { backgroundColor: theme.backgroundColor }]}
+            >
+              <View>
+                <Text
+                  style={[
+                    styles.label,
+                    { color: theme.textColor },
+                    item.isEmail && styles.email,
+                  ]}
+                >
+                  {item.label}
+                </Text>
+                {item.value && (
+                  <Text style={[styles.value, item.isEmail && styles.email]}>
+                    {item.value}
+                  </Text>
+                )}
+              </View>
+              <Ionicons name="chevron-forward" size={24} color="#ccc" />
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <View
+          style={[styles.section, { backgroundColor: theme.backgroundColor }]}
+        >
+          <Text style={[styles.sectionTitle, { color: theme.textColor }]}>
+            APPEARANCE
+          </Text>
+          <View style={styles.option}>
+            <Ionicons
+              name={darkMode ? "moon" : "sunny"}
+              size={24}
+              color="#2ecc71"
+              style={styles.optionIcon}
+            />
+            <Text style={[styles.optionText, { color: theme.textColor }]}>
+              Dark Mode
+            </Text>
+            <Switch
+              value={darkMode}
+              onValueChange={toggleDarkMode}
+              trackColor={{ false: "#bdc3c7", true: "#2ecc71" }}
+              thumbColor={darkMode ? "#ffffff" : "#ffffff"}
+            />
+          </View>
+        </View>
+
+        <View
+          style={[styles.section, { backgroundColor: theme.backgroundColor }]}
+        >
+          <Text style={[styles.sectionTitle, { color: theme.textColor }]}>
+            ACCOUNT ACTIONS
+          </Text>
+          {accountActionData.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.item, { backgroundColor: theme.backgroundColor }]}
+              onPress={item?.method}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  width: "50%",
+                }}
+              >
+                <Text
+                  style={[
+                    styles.label,
+                    { color: theme.textColor },
+                    item.isEmail && styles.email,
+                  ]}
+                >
+                  {item.label}
+                </Text>
+                {item.value && (
+                  <Text style={[styles.value, item.isEmail && styles.email]}>
+                    {item.value}
+                  </Text>
+                )}
+                {item.isSignOut && loading && (
+                  <ActivityIndicator size="small" />
+                )}
+              </View>
+              <Ionicons name="chevron-forward" size={24} color="#ccc" />
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <View
+          style={{
+            marginVertical: 10,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text style={{ color: theme.grayText, textAlign: "center" }}>
+            InSnip v1.0.0 🤳
+          </Text>
+          <Text style={{ color: theme.grayText, textAlign: "center" }}>
+            Made In Ghana, Kumasi
+          </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
-  contentContainer: {
-    paddingHorizontal: 20,
-    paddingTop: 60,
-  },
-  header: {
+  headerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
-    gap: 15,
-    marginBottom: 20,
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
   },
-  headerText: {
-    fontSize: 24,
+  backButton: {
+    marginRight: 16,
+  },
+  header: {
+    fontSize: 20,
     fontWeight: "bold",
-    color: "#2c3e50",
+  },
+  section: {
+    marginHorizontal: 16,
+    marginTop: 16,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
+  },
+  item: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
   },
   option: {
     flexDirection: "row",
@@ -192,15 +283,27 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#bdc3c7",
-  },
-  optionIcon: {
-    marginRight: 10,
+    borderBottomColor: "#ddd",
   },
   optionText: {
-    fontSize: 18,
+    fontSize: 16,
     color: "#34495e",
     flex: 1,
+    fontWeight: 500,
+    paddingLeft: 10,
+  },
+  label: {
+    fontSize: 16,
+    color: "#333",
+    fontWeight: "500",
+  },
+  value: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 4,
+  },
+  email: {
+    color: "#e74c3c",
   },
 });
 
