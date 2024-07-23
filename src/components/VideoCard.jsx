@@ -1,5 +1,12 @@
 import React, { useRef, useEffect, useState } from "react";
-import { View, Text, Pressable, StyleSheet, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  Dimensions,
+  Platform,
+} from "react-native";
 import { Video } from "expo-av";
 import {
   AntDesign,
@@ -15,7 +22,7 @@ import { shareAsync } from "expo-sharing";
 import Heart from "./Heart";
 import DoubleTap from "./DoubleTap";
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const VideoCard = ({ video, isActive, handleOpenPress, totalComments }) => {
   const videoRef = useRef(null);
@@ -96,7 +103,7 @@ const VideoCard = ({ video, isActive, handleOpenPress, totalComments }) => {
         ref={videoRef}
         source={{ uri: video.url }}
         style={styles.video}
-        resizeMode="cover"
+        resizeMode="contain"
         shouldPlay={play}
         isLooping
       />
@@ -138,13 +145,19 @@ const VideoCard = ({ video, isActive, handleOpenPress, totalComments }) => {
               color={like ? "#E84855" : "white"}
             />
           </Pressable>
-          <Pressable
-            onPress={() => handleOpenPress(video?.url, userId)}
-            style={styles.icon}
-          >
-            <MaterialIcons name="mode-comment" size={30} color="white" />
-            <Text style={styles.text}>{totalComments && totalComments}</Text>
-          </Pressable>
+          <View style={{ alignItems: "center" }}>
+            <Pressable
+              onPress={() => handleOpenPress(video?.url, userId)}
+              style={[styles.icon, totalComments && { marginBottom: 0 }]}
+            >
+              <MaterialIcons name="mode-comment" size={30} color="white" />
+            </Pressable>
+            {totalComments ? (
+              <Text style={styles.text}>{totalComments}</Text>
+            ) : (
+              <></>
+            )}
+          </View>
           <Pressable onPress={handleShare} style={styles.icon}>
             <Fontisto name="share-a" size={28} color="white" />
           </Pressable>
@@ -164,13 +177,13 @@ const VideoCard = ({ video, isActive, handleOpenPress, totalComments }) => {
 
 const styles = StyleSheet.create({
   itemContainer: {
+    flex: 1,
     height: SCREEN_HEIGHT,
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-    backgroundColor: "black",
-    paddingBottom: 140,
-    flex: 1,
+    backgroundColor: "transparent",
+    paddingBottom: Platform.OS === "ios" ? 140 : 100,
   },
   video: {
     width: "100%",
@@ -178,7 +191,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     position: "absolute",
-    bottom: 150,
+    bottom: 0,
     left: 0,
     right: 0,
     flexDirection: "row",
@@ -234,8 +247,10 @@ const styles = StyleSheet.create({
   playIcon: {
     position: "absolute",
     left: "50%",
-    top: "55%",
+    top: "50%",
     transform: [{ translateX: -35 }],
+    backgroundColor: "rgba(0,0,0,0.7)",
+    borderRadius: 50,
   },
 });
 

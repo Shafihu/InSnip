@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, Platform } from "react-native";
 
 const DoubleTap = ({ onDoubleTap, children, singleTap, source }) => {
   const lastTap = useRef(null);
@@ -28,7 +28,7 @@ const DoubleTap = ({ onDoubleTap, children, singleTap, source }) => {
           ? { flex: 1, backgroundColor: "transparent" }
           : {
               position: "absolute",
-              bottom: 150,
+              bottom: Platform.OS === "ios" ? 150 : 100,
               left: 0,
               right: 0,
               flexDirection: "row",

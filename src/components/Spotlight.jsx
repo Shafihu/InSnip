@@ -7,6 +7,7 @@ import {
   RefreshControl,
   Text,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { fetchSpotlights } from "../../utils/fetchSpotlights";
 import VideoCard from "../components/VideoCard";
@@ -211,6 +212,7 @@ const Spotlight = ({ reload }) => {
           flex: 1,
           backgroundColor: "transparent",
           position: "relative",
+          paddingBottom: Platform.OS === "ios" ? 50 : 100,
         }}
       >
         <View
