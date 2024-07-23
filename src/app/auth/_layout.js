@@ -7,13 +7,18 @@ const AuthLayout = () => {
       <Stack.Screen name="splash" options={{ headerShown: false }} />
       <Stack.Screen
         name="login"
-        options={{ headerShown: false, presentation: "modal" }}
+        options={{
+          headerShown: false,
+          presentation: "modal",
+          animation: "flip",
+        }}
       />
       <Stack.Screen
         name="signUp"
         options={{
           headerShown: false,
           presentation: "modal",
+          animation: "flip",
         }}
       />
       <Stack.Screen
@@ -21,6 +26,7 @@ const AuthLayout = () => {
         options={{
           headerShown: false,
           presentation: "modal",
+          animation: "flip",
         }}
       />
     </Stack>

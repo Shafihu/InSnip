@@ -8,7 +8,10 @@ const HomeLayout = () => {
       <Stack>
         <Stack.Screen
           name="home"
-          options={{ headerShown: false, gestureEnabled: false }}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+          }}
         />
         <Stack.Screen name="profile" options={{ headerShown: false }} />
         <Stack.Screen

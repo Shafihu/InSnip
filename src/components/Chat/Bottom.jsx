@@ -143,7 +143,7 @@ const Bottom = ({
             <Ionicons
               name="send"
               size={25}
-              color={message !== "" || go ? "#2ecc71" : "gray"}
+              color={message.trim() !== "" || go ? "#2ecc71" : "gray"}
             />
           </Pressable>
           {from && from === "bot" ? (

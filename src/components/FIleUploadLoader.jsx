@@ -39,10 +39,14 @@ const FileUploadLoader = ({
                   setMedia(null);
                 }}
               >
-                <Entypo name="controller-stop" size={16} color="#fff" />
+                <Entypo
+                  name="controller-stop"
+                  size={16}
+                  color={theme.primaryColor}
+                />
               </Pressable>
             ) : (
-              <Ionicons name="document" size={25} color="gray" />
+              <Ionicons name="document" size={25} color="#fff" />
             )}
             {children}
           </View>

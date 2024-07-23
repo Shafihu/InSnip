@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   },
   userChatItem: {
     alignSelf: "flex-end",
-    backgroundColor: "#DCF8C5",
+    backgroundColor: "#276F6A",
     borderRightWidth: 3,
     borderColor: "#2ecc71",
   },
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   },
   chatText: {
     fontSize: 16,
-    color: "#333",
+    color: "#fff",
   },
   speakerIcon: {
     alignItems: "flex-end",

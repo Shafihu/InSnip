@@ -435,7 +435,7 @@ const ChatRoom = () => {
                         : theme.secondaryColor,
                     marginBottom: 8,
                     backgroundColor: isSender
-                      ? "#DCF8C5"
+                      ? "#075E54"
                       : theme.backgroundColor,
                     maxWidth: "80%",
                   }}
@@ -496,10 +496,7 @@ const ChatRoom = () => {
                               style={{
                                 letterSpacing: 0.2,
                                 fontSize: 15,
-                                color:
-                                  message.senderId === currentUserId
-                                    ? "#333333"
-                                    : theme.textColor,
+                                color: "#fff",
                               }}
                             >
                               {message.text}
@@ -550,10 +547,7 @@ const ChatRoom = () => {
                             style={{
                               letterSpacing: 0.2,
                               fontSize: 15,
-                              color:
-                                message.senderId === currentUserId
-                                  ? "#333333"
-                                  : theme.textColor,
+                              color: "#fff",
                             }}
                           >
                             {message.text}
@@ -569,7 +563,7 @@ const ChatRoom = () => {
                             flexDirection: "row",
                             alignItems: "center",
                             gap: 5,
-                            backgroundColor: "#EFFCEB",
+                            backgroundColor: "#276F6A",
                             padding: 6,
                             borderRadius: 4,
                             overflow: "hidden",
@@ -585,13 +579,13 @@ const ChatRoom = () => {
                             <Ionicons
                               name="document"
                               size={25}
-                              color={theme.grayText}
+                              color={"#fff"}
                             />
                           </View>
                           <Text
                             style={{
                               maxWidth: width * 0.6,
-                              color: theme.grayText,
+                              color: "#fff",
                             }}
                             numberOfLines={2}
                             ellipsizeMode="tail"
@@ -604,10 +598,7 @@ const ChatRoom = () => {
                             style={{
                               letterSpacing: 0.2,
                               fontSize: 15,
-                              color:
-                                message.senderId === currentUserId
-                                  ? "#333333"
-                                  : theme.textColor,
+                              color: "#fff",
                             }}
                           >
                             {message.text}
@@ -619,10 +610,7 @@ const ChatRoom = () => {
                         style={{
                           letterSpacing: 0.2,
                           fontSize: 15,
-                          color:
-                            message.senderId === currentUserId
-                              ? "#333333"
-                              : theme.textColor,
+                          color: "#fff",
                         }}
                       >
                         {message.text}
@@ -835,6 +823,7 @@ const ChatRoom = () => {
             handleFocusedInput={handleFocusedInput}
             handleFileUpload={handleFileUpload}
             go={go}
+            setGo={setGo}
           />
           <Modal
             isVisible={isModalVisible}

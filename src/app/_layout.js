@@ -83,11 +83,19 @@ const RootLayout = () => {
                 <Stack.Screen name="index" options={{ headerShown: false }} />
                 <Stack.Screen
                   name="auth"
-                  options={{ headerShown: false, gestureEnabled: false }}
+                  options={{
+                    headerShown: false,
+                    gestureEnabled: false,
+                    animation: "fade",
+                  }}
                 />
                 <Stack.Screen
                   name="verified"
-                  options={{ headerShown: false, gestureEnabled: false }}
+                  options={{
+                    headerShown: false,
+                    gestureEnabled: false,
+                    animation: "fade",
+                  }}
                 />
               </Stack>
             </ChatProvider>
