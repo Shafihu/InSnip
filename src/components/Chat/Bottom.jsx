@@ -15,6 +15,7 @@ const Bottom = ({
   from,
   handleFocusedInput,
   handleFileUpload,
+  go,
   user,
 }) => {
   const [message, setMessage] = useState("");
@@ -24,7 +25,7 @@ const Bottom = ({
   const { isCurrentUserBlocked, isReceiverBlocked } = useChatStore();
 
   const onSend = () => {
-    if (message.trim() || handlePickMedia) {
+    if (message.trim() || handlePickMedia || handleFileUpload) {
       handleSend(message.trim());
       setMessage("");
     }
@@ -142,7 +143,7 @@ const Bottom = ({
             <Ionicons
               name="send"
               size={25}
-              color={isReceiverBlocked ? "gray" : "#2ecc71"}
+              color={message !== "" || go ? "#2ecc71" : "gray"}
             />
           </Pressable>
           {from && from === "bot" ? (

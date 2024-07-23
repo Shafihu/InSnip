@@ -11,6 +11,7 @@ import {
   ImageBackground,
   Pressable,
   StatusBar,
+  ActivityIndicator,
   Keyboard,
 } from "react-native";
 import { WebView } from "react-native-webview";
@@ -35,11 +36,10 @@ import Header from "../../../components/Chat/Header";
 import Bottom from "../../../components/Chat/Bottom";
 import ImageView from "react-native-image-viewing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import CustomLoader from "../../../components/CustomLoader";
-import { MaterialCommunityIcons } from "react-native-vector-icons";
+import { MaterialCommunityIcons, AntDesign } from "react-native-vector-icons";
 import { pickAndUploadFile } from "../../../../utils/pickFile";
 import { useTheme } from "../../../../context/ThemeContext";
-import { router } from "expo-router";
+import FileUploadLoader from "../../../components/FIleUploadLoader";
 const { width } = Dimensions.get("window");
 
 const ChatRoom = () => {
@@ -69,9 +69,19 @@ const ChatRoom = () => {
   );
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { theme } = useTheme();
+  const [go, setGo] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const blurhash =
     "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+
+  useEffect(() => {
+    if (localMediaUri || localFileUri) {
+      setGo(true);
+    } else {
+      setGo(false);
+    }
+  }, [media, document]);
 
   useEffect(() => {
     if (theme?.backgroundColor === "#ffffff") {
@@ -127,7 +137,7 @@ const ChatRoom = () => {
       if (media) {
         messageData.mediaUrl = media.url;
         messageData.mediaType = media.type;
-      } else {
+      } else if (document) {
         messageData.documentUrl = document.url;
         messageData.documentType = document.type;
         messageData.documentName = fileName;
@@ -246,7 +256,11 @@ const ChatRoom = () => {
       if (chatDoc.exists()) {
         const updatedMessages = chatDoc
           .data()
-          .messages.filter((msg) => msg.text !== selectedMessage.text);
+          .messages.filter(
+            (msg) =>
+              msg.text !== selectedMessage.text ||
+              msg.documentName !== selectedMessage.documentName
+          );
 
         await updateDoc(chatRef, {
           messages: updatedMessages,
@@ -287,32 +301,70 @@ const ChatRoom = () => {
 
   const FileViewer = ({ url }) => {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <WebView source={{ uri: url }} style={{ flex: 1 }} />
-        <Pressable
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: theme.primaryColor,
+          paddingTop: Platform.OS === "android" && StatusBar.currentHeight,
+        }}
+      >
+        <WebView
+          source={{ uri: url }}
+          javaScriptEnabled={true}
+          startInLoadingState={true}
+          renderLoading={() => (
+            <View
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: theme.primaryColor,
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <ActivityIndicator color={"white"} size="small" />
+            </View>
+          )}
+          style={{
+            backgroundColor: "#fff",
+            flex: 1,
+            borderWidth: 2,
+            borderColor: theme.primaryColor,
+          }}
+          onLoadProgress={() => {}}
+          onLoad={() => {
+            setIsLoading(false);
+          }}
+          onMessage="Hello"
+        />
+        <TouchableOpacity
           onPress={() => setSelectedFile(null)}
           style={{
             position: "absolute",
             top: 50,
-            left: 10,
+            paddingRight: 10,
+            alignItems: "flex-end",
+            backgroundColor: "transparent",
+            width: "100%",
           }}
         >
-          <Text
-            style={{
-              color: "red",
-              fontSize: 25,
-              fontWeight: "bold",
-            }}
-          >
-            Back
-          </Text>
-        </Pressable>
+          <View style={{ backgroundColor: "#fff", borderRadius: 50 }}>
+            <AntDesign
+              name="closecircle"
+              color={theme.primaryColor}
+              size={25}
+            />
+          </View>
+        </TouchableOpacity>
       </SafeAreaView>
     );
   };
 
   if (selectedFile) {
-    console.log(selectedFile);
     return <FileViewer url={selectedFile} />;
   }
 
@@ -663,10 +715,18 @@ const ChatRoom = () => {
                       borderRadius: 8,
                     }}
                   >
-                    <CustomLoader />
-                    <Text style={{ fontSize: 12, color: "#fff" }}>
-                      {uploadProgress.toFixed(2)}%
-                    </Text>
+                    <View
+                      style={{
+                        borderRadius: 50,
+                      }}
+                    >
+                      <FileUploadLoader
+                        uploadProgress={uploadProgress}
+                        media={true}
+                        setLocalMediaUri={setLocalMediaUri}
+                        setMedia={setMedia}
+                      />
+                    </View>
                   </View>
                 )}
               </View>
@@ -728,14 +788,9 @@ const ChatRoom = () => {
                     style={{
                       borderRadius: 50,
                       backgroundColor: "rgba(0,0,0,0.075)",
-                      padding: 8,
                     }}
                   >
-                    <Ionicons
-                      name="document"
-                      size={25}
-                      color={theme.grayText}
-                    />
+                    <FileUploadLoader uploadProgress={uploadProgress} />
                   </View>
                   <Text
                     style={{ maxWidth: width * 0.35, color: theme.grayText }}
@@ -751,7 +806,7 @@ const ChatRoom = () => {
                       position: "absolute",
                       alignSelf: "center",
                       padding: 10,
-                      display: "flex",
+                      display: localFileUri ? "none" : "flex",
                       flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "center",
@@ -761,10 +816,13 @@ const ChatRoom = () => {
                       borderRadius: 8,
                     }}
                   >
-                    <CustomLoader />
-                    <Text style={{ fontSize: 12, color: "#fff" }}>
-                      {uploadProgress.toFixed(2)}%
-                    </Text>
+                    <View
+                      style={{
+                        borderRadius: 50,
+                      }}
+                    >
+                      <FileUploadLoader uploadProgress={uploadProgress} />
+                    </View>
                   </View>
                 )}
               </View>
@@ -776,6 +834,7 @@ const ChatRoom = () => {
             user={user}
             handleFocusedInput={handleFocusedInput}
             handleFileUpload={handleFileUpload}
+            go={go}
           />
           <Modal
             isVisible={isModalVisible}
@@ -806,6 +865,14 @@ const ChatRoom = () => {
                     contentFit="cover"
                     transition={100}
                   />
+                )}
+                {selectedMessage?.documentUrl && (
+                  <Ionicons name="document" size={25} color={theme.grayText} />
+                )}
+                {selectedMessage?.documentName && (
+                  <Text style={{ color: theme.grayText }}>
+                    {selectedMessage.documentName}
+                  </Text>
                 )}
                 {selectedMessage?.text && (
                   <Text style={{ color: theme.grayText }}>

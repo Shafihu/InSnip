@@ -44,6 +44,8 @@ const NewChat = () => {
   const [contacts, setContacts] = useState([]);
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [added, setAdded] = useState(false);
+  const [addLoading, setAddLoading] = useState(false);
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -109,6 +111,7 @@ const NewChat = () => {
     const userChatsRef = collection(FIRESTORE_DB, "userchats");
 
     try {
+      setAddLoading(true);
       const newChatRef = doc(chatRef);
 
       await setDoc(newChatRef, {
@@ -137,6 +140,7 @@ const NewChat = () => {
           lastMessage: "",
           receiverId: userData.id,
           updatedAt: currentTime,
+          isFriend: true,
         }),
       });
 
@@ -146,10 +150,16 @@ const NewChat = () => {
           lastMessage: "",
           receiverId: user.id,
           updatedAt: currentTime,
+          isFriend: true,
         }),
       });
+
+      setAdded(true);
     } catch (error) {
       console.log(error);
+    } finally {
+      setAddLoading(false);
+      router.back();
     }
   };
 
@@ -245,15 +255,15 @@ const NewChat = () => {
           </Text>
         </View>
         {loading ? (
-          <ActivityIndicator size="small" color={theme.primaryColor} />
+          <ActivityIndicator size="small" />
         ) : (
           user && (
             <Pressable
               onPress={() => handleUserProfile(user)}
+              disabled={addLoading}
               style={[
                 styles.pressable,
-                styles.shadow,
-                { backgroundColor: "rgba(225, 255, 255, 0.5)" },
+                { backgroundColor: theme.innerTabContainerColor },
               ]}
             >
               <View style={styles.userAvatar}>
@@ -270,18 +280,37 @@ const NewChat = () => {
                   <MaterialIcons
                     name="chat-bubble-outline"
                     size={12}
-                    color="gray"
+                    color={theme.textColor}
                   />
-                  <Text style={styles.userUsername}>{user.Username}</Text>
+                  <Text
+                    style={[styles.userUsername, { color: theme.textColor }]}
+                  >
+                    {user.Username}
+                  </Text>
                 </View>
               </View>
-              <Pressable onPress={handleAdd} style={styles.addButton}>
-                <MaterialCommunityIcons
-                  name="account-plus"
-                  size={18}
-                  color="#3B2F2F"
-                />
-                <Text style={styles.addButtonText}>Add</Text>
+              <Pressable
+                onPress={handleAdd}
+                disabled={addLoading}
+                style={[
+                  styles.addButton,
+                  { backgroundColor: theme.primaryColor },
+                ]}
+              >
+                {addLoading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <>
+                    <MaterialCommunityIcons
+                      name={added ? "checkbox-marked-circle" : "account-plus"}
+                      size={18}
+                      color="#fff"
+                    />
+                    <Text style={styles.addButtonText}>
+                      {added ? "Friends" : "Add"}
+                    </Text>
+                  </>
+                )}
               </Pressable>
             </Pressable>
           )
@@ -291,16 +320,18 @@ const NewChat = () => {
         style={[styles.container, { backgroundColor: theme.backgroundColor }]}
       >
         <Text style={[styles.title, { color: theme.textColor }]}>Contacts</Text>
-        <View style={styles.contactListContainer}>
+        <View
+          style={[
+            styles.contactListContainer,
+            { backgroundColor: theme.innerTabContainerColor },
+          ]}
+        >
           <FlatList
             data={contacts}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <View
-                style={[
-                  styles.contactItem,
-                  { backgroundColor: "rgba(0, 0, 0, 0.1)" },
-                ]}
+                style={[styles.contactItem, { backgroundColor: "transparent" }]}
               >
                 <View style={styles.contactAvatar}>
                   <Image
@@ -309,7 +340,11 @@ const NewChat = () => {
                   />
                 </View>
                 <View style={styles.contactInfo}>
-                  <Text style={styles.contactName}>{item.name}</Text>
+                  <Text
+                    style={[styles.contactName, { color: theme.textColor }]}
+                  >
+                    {item.name}
+                  </Text>
                   {item.phoneNumbers && item.phoneNumbers.length > 0 && (
                     <Text style={styles.contactDetail}>
                       Phone: {item.phoneNumbers[0].number}
@@ -329,18 +364,17 @@ export default NewChat;
 
 const styles = StyleSheet.create({
   pressable: {
-    borderRadius: 15,
-    backgroundColor: "white",
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
-    // marginVertical: 5,
+    marginVertical: 5,
+    borderRadius: 8,
   },
   shadow: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
     elevation: 5,
   },
   container: {
@@ -357,40 +391,40 @@ const styles = StyleSheet.create({
   userAvatar: {
     width: 50,
     height: 50,
-    backgroundColor: "#f0f0f0",
     borderRadius: 25,
     overflow: "hidden",
+    marginRight: 10,
   },
   userInfo: {
     flex: 1,
-    marginLeft: 10,
-    gap: 3,
+    justifyContent: "center",
   },
   userName: {
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "bold",
   },
   userDetails: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
+    marginTop: 5,
   },
   userUsername: {
     fontSize: 12,
-    color: "gray",
+    marginLeft: 5,
   },
   addButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
-    borderRadius: 20,
-    paddingHorizontal: 10,
+    justifyContent: "center",
     paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    backgroundColor: "#2ecc71",
   },
   addButtonText: {
-    fontWeight: "bold",
-    color: "#3B2F2F",
     marginLeft: 5,
+    fontSize: 14,
+    color: "#fff",
   },
   contactListContainer: {
     backgroundColor: "#fff",

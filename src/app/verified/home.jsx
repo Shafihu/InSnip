@@ -33,10 +33,10 @@ import { useUser } from "../../../context/UserContext";
 import { arrayUnion, updateDoc, doc } from "firebase/firestore";
 import { storyPostUpload } from "../../../utils/storyPostUpload";
 import CustomLoader from "../../components/CustomLoader";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { useTheme } from "../../../context/ThemeContext";
 import Toast from "react-native-toast-message";
-import DotsLoader from "../../components/DotsLoader";
+import DotsLoader from "../../components/BreathLoader";
 import * as WebBrowser from "expo-web-browser";
 import QRCodeButton from "../../components/QRCodeButton";
 import { manipulateAsync, FlipType, SaveFormat } from "expo-image-manipulator";
@@ -60,7 +60,7 @@ const HomeScreen = () => {
   const [storyUrl, setStoryUrl] = useState(null);
   const [error, setError] = useState(null);
   const [showHint, setShowHint] = useState(false);
-  const { userData, loading } = useUser();
+  const { userData, loading, isAuthenticated } = useUser();
   const [isBrowsing, setIsBrowsing] = useState(false);
   const [qrCodeDetected, setQrCodeDetected] = useState("");
   const timeoutRef = useRef(null);
@@ -356,7 +356,7 @@ const HomeScreen = () => {
 
   if (isBrowsing) return <></>;
 
-  if (loading || !userData) {
+  if (loading) {
     return (
       <View
         style={{
@@ -365,6 +365,7 @@ const HomeScreen = () => {
           alignItems: "center",
           gap: 0,
           paddingHorizontal: 10,
+          position: "relative",
         }}
       >
         <DotsLoader />
@@ -375,6 +376,8 @@ const HomeScreen = () => {
             fontSize: 18,
             fontWeight: "500",
             color: "#34495e",
+            position: "absolute",
+            alignSelf: "center",
           }}
         >
           Just a sec, making sure everything's picture perfect...
@@ -575,11 +578,9 @@ const HomeScreen = () => {
                                 />
                               </Pressable>
 
-                              {showHint && (
-                                <Text style={{ color: "#2ecc71" }}>
-                                  Tap to capture / Hold to record
-                                </Text>
-                              )}
+                              <Text style={{ color: "#2ecc71" }}>
+                                {showHint && "Tap to capture / Hold to record"}
+                              </Text>
 
                               <Pressable
                                 onPress={() =>

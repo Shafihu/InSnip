@@ -1,4 +1,10 @@
-import { StyleSheet, SafeAreaView, Alert } from "react-native";
+import {
+  StyleSheet,
+  SafeAreaView,
+  Alert,
+  Platform,
+  StatusBar,
+} from "react-native";
 import React, { useState } from "react";
 import Chatbot from "../../../components/Bot/ChatBot";
 import Header from "../../../components/Chat/Header";
@@ -42,7 +48,13 @@ const botChatRoom = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: theme.backgroundColor,
+        paddingTop: Platform.OS === "android" && StatusBar.currentHeight,
+      }}
+    >
       <Header
         title="My AI"
         handleClearChats={confirmClearBotChats}

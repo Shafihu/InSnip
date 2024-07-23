@@ -6,6 +6,8 @@ import {
   StyleSheet,
   SafeAreaView,
   Pressable,
+  Modal,
+  Button,
   ActivityIndicator,
 } from "react-native";
 import { Entypo } from "react-native-vector-icons";
@@ -20,12 +22,28 @@ import { Image } from "expo-image";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BotItem from "./Bot/BotItem";
 import { useTheme } from "../../context/ThemeContext";
+import NetInfo from "@react-native-community/netinfo";
 
 const Chat = () => {
   const [loading, setLoading] = useState(false);
   const [chats, setChats] = useState([]);
+  const [isConnected, setIsConnected] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const { userData } = useUser();
   const { theme } = useTheme();
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsConnected(state.isConnected);
+      if (!state.isConnected) {
+        setShowModal(true);
+      } else {
+        setShowModal(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const fetchChatsFromStorage = async () => {
@@ -84,90 +102,126 @@ const Chat = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Header header="Chat" />
-      <View
-        style={[
-          styles.content,
-          { backgroundColor: theme.chatListBackgroundColor },
-        ]}
-      >
-        <Pressable
-          onPress={handleNewMessagePress}
-          style={styles.newMessageButton}
-        >
-          <Entypo name="new-message" size={25} color="white" />
-        </Pressable>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
+      {!isConnected ? (
+        <>
+          <View style={styles.netInfoContainer}>
+            <Modal
+              visible={showModal}
+              transparent={true}
+              animationType="slide"
+              onRequestClose={() => setShowModal(false)}
+            >
+              <View style={styles.modalContainer}>
+                <View
+                  style={[
+                    styles.modalContent,
+                    { backgroundColor: theme.backgroundColor },
+                  ]}
+                >
+                  <ActivityIndicator size="small" color={theme.textColor} />
+                  <Text style={[styles.modalText, { color: theme.textColor }]}>
+                    No internet connection! Retrying...{" "}
+                  </Text>
+                </View>
+              </View>
+            </Modal>
+          </View>
+        </>
+      ) : (
+        <>
           <View
             style={[
-              styles.archiveContainer,
-              { backgroundColor: theme.archiveBackgroundColor },
+              styles.content,
+              { backgroundColor: theme.chatListBackgroundColor },
             ]}
           >
-            <View style={styles.archiveIcon}>
-              <Entypo name="archive" size={30} color={theme.archiveTextColor} />
-            </View>
-            <View style={styles.archiveTextContainer}>
-              <Text
-                style={[styles.archiveText, { color: theme.archiveTextColor }]}
+            <Pressable
+              onPress={handleNewMessagePress}
+              style={styles.newMessageButton}
+            >
+              <Entypo name="new-message" size={25} color="white" />
+            </Pressable>
+            <ScrollView
+              style={styles.scrollView}
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+            >
+              <View
+                style={[
+                  styles.archiveContainer,
+                  { backgroundColor: theme.archiveBackgroundColor },
+                ]}
               >
-                Archived
-              </Text>
-            </View>
-            <View style={styles.newIndicator}>
-              <Text style={styles.newText}>New</Text>
-              <Entypo name="new" size={25} color="#FFD700" />
+                <View style={styles.archiveIcon}>
+                  <Entypo
+                    name="archive"
+                    size={30}
+                    color={theme.archiveTextColor}
+                  />
+                </View>
+                <View style={styles.archiveTextContainer}>
+                  <Text
+                    style={[
+                      styles.archiveText,
+                      { color: theme.archiveTextColor },
+                    ]}
+                  >
+                    Archived
+                  </Text>
+                </View>
+                <View style={styles.newIndicator}>
+                  <Text style={styles.newText}>New</Text>
+                  <Entypo name="new" size={25} color="#FFD700" />
+                </View>
+              </View>
+
+              {loading ? (
+                <View style={styles.loaderContainer}>
+                  <CustomLoader />
+                </View>
+              ) : (
+                <View style={{}}>
+                  <BotItem />
+                  {chats.map((chat) => (
+                    <MemoizedChatItem
+                      key={chat.chatId}
+                      id={chat.id}
+                      isSeen={chat.isSeen}
+                      chat={chat}
+                      avatar={chat.user?.avatar}
+                      firstName={chat.user?.FirstName}
+                      lastName={chat.user?.LastName}
+                      lastMessage={chat.lastMessage}
+                    />
+                  ))}
+                </View>
+              )}
+            </ScrollView>
+            <View style={{ flex: 1, flexGrow: 10 }}>
+              {!loading && chats.length < 1 && (
+                <View
+                  style={{
+                    flexGrow: 1,
+                    paddingBottom: 130,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  <Image
+                    source={require("../../assets/chatlistImage.png")}
+                    style={{ width: "80%", height: "40%" }}
+                    contentFit="cover"
+                  />
+                  <Text style={{ color: theme.grayText, fontWeight: "500" }}>
+                    Add friends to start conversations
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
-
-          {loading ? (
-            <View style={styles.loaderContainer}>
-              <CustomLoader />
-            </View>
-          ) : (
-            <View style={{}}>
-              <BotItem />
-              {chats.map((chat) => (
-                <MemoizedChatItem
-                  key={chat.chatId}
-                  id={chat.id}
-                  isSeen={chat.isSeen}
-                  chat={chat}
-                  avatar={chat.user?.avatar}
-                  firstName={chat.user?.FirstName}
-                  lastName={chat.user?.LastName}
-                  lastMessage={chat.lastMessage}
-                />
-              ))}
-            </View>
-          )}
-        </ScrollView>
-        <View style={{ flex: 1, flexGrow: 10 }}>
-          {!loading && chats.length < 1 && (
-            <View
-              style={{
-                flexGrow: 1,
-                paddingBottom: 130,
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 10,
-              }}
-            >
-              <Image
-                source={require("../../assets/chatlistImage.png")}
-                style={{ width: "80%", height: "40%" }}
-                contentFit="cover"
-              />
-              <Text style={{ color: theme.grayText, fontWeight: "500" }}>
-                Add friends to start conversations
-              </Text>
-            </View>
-          )}
-        </View>
-      </View>
+        </>
+      )}
     </SafeAreaView>
   );
 };
@@ -205,7 +259,7 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   scrollContent: {
-    paddingBottom: 28,
+    paddingBottom: 80,
   },
   archiveContainer: {
     flexDirection: "row",
@@ -251,6 +305,38 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  netInfoContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "transparent",
+  },
+  connectedText: {
+    color: "#2ecc71",
+    fontSize: 18,
+  },
+  disconnectedText: {
+    color: "#e74c3c",
+    fontSize: 18,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    fontSize: 18,
+    textAlign: "center",
   },
 });
 

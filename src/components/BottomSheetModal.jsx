@@ -206,8 +206,8 @@ const BottomSheetModals = ({
       </BottomSheetScrollView>
       <View
         style={{
-          backgroundColor: theme.innerTabContainerColor,
-          paddingBottom: 15,
+          backgroundColor: "transparent",
+          paddingBottom: 20,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
@@ -221,7 +221,10 @@ const BottomSheetModals = ({
           />
         </View>
         <BottomSheetTextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            { backgroundColor: theme.innerTabContainerColor },
+          ]}
           onBlur={handleInputBlur}
           selectionColor="#2ecc71"
           placeholder="Add comment..."
@@ -272,11 +275,11 @@ const styles = StyleSheet.create({
   },
   input: {
     margin: 8,
+    marginRight: 0,
     marginBottom: 10,
     borderRadius: 10,
     fontSize: 16,
     lineHeight: 20,
-    padding: 8,
     paddingHorizontal: 12,
     height: 40,
     borderRadius: 20,
