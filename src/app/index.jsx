@@ -22,9 +22,19 @@ const index = () => {
   useEffect(() => {
     if (!loading) {
       if (user) {
-        router.push("/verified");
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "verified" }],
+          })
+        );
       } else {
-        router.navigate("/auth/splash");
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "auth" }],
+          })
+        );
       }
     }
   }, [user, loading, router]);

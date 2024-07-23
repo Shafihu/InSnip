@@ -18,7 +18,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../Firebase/config";
 import { doc, setDoc } from "firebase/firestore";
-import { useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 
 const SignUpScreen = () => {
   const [step, setStep] = useState(0);
@@ -488,7 +488,6 @@ const SignUpScreen = () => {
         password
       );
       if (user) {
-        navigation.goBack();
         const userData = {
           id: user.uid,
           Email: email,
@@ -502,6 +501,7 @@ const SignUpScreen = () => {
         };
         await setDoc(doc(FIRESTORE_DB, "users", user.uid), userData);
         setLoading(false);
+        router.replace("/");
       }
     } catch (error) {
       setLoading(false);

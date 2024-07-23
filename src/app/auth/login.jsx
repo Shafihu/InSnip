@@ -74,7 +74,9 @@ const LoginScreen = () => {
       setEmail("");
       setPassword("");
       if (Platform.OS === "ios") {
-        navigation.goBack();
+        router.replace("/");
+      } else {
+        router.replace("/verified");
       }
     } catch (error) {
       console.log("Sign In Failed: " + error);

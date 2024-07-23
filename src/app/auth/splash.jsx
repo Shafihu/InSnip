@@ -7,76 +7,12 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ImageBackground,
-  FlatList,
-  Pressable,
+  StatusBar,
 } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
-import { router, useRouter } from "expo-router";
-import { pickAndUploadFile } from "../../../utils/pickFile";
-import { listFiles } from "../../../utils/fetchFiles";
-import { WebView } from "react-native-webview";
-
-const FileViewer = ({ uri }) => {
-  return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <WebView source={{ uri }} style={{ flex: 1 }} />
-      <Pressable
-        onPress={() => router.replace("/auth/splash")}
-        style={{
-          position: "absolute",
-          top: 50,
-        }}
-      >
-        <Text
-          style={{
-            color: "red",
-            fontSize: 25,
-            fontWeight: "bold",
-          }}
-        >
-          Hello
-        </Text>
-      </Pressable>
-    </SafeAreaView>
-  );
-};
+import { router } from "expo-router";
 
 export default function SplashScreen() {
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [files, setFiles] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const router = useRouter();
-
-  const handleFileUpload = async () => {
-    console.log("File upload initiated");
-    await pickAndUploadFile(setUploadProgress);
-  };
-
-  useEffect(() => {
-    const fetchFiles = async () => {
-      try {
-        const urls = await listFiles("docs");
-        setFiles(urls);
-      } catch (error) {
-        console.error("Failed to fetch files:", error);
-      }
-    };
-    fetchFiles();
-  }, []);
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.fileItem}
-      onPress={() => setSelectedFile(item)}
-    >
-      <Text style={styles.fileText}>{item}</Text>
-    </TouchableOpacity>
-  );
-
-  if (selectedFile) {
-    return <FileViewer uri={selectedFile} />;
-  }
-
   return (
     <ImageBackground
       blurRadius={0}
@@ -84,6 +20,7 @@ export default function SplashScreen() {
       style={{ flex: 1 }}
     >
       <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="light-content" hidden />
         <View style={styles.logoContainer}>
           <Image
             source={require("../../../assets/logoMain.png")}
@@ -94,12 +31,6 @@ export default function SplashScreen() {
             <Text style={{ color: "#2ecc71" }}>instantly</Text>
           </Text>
         </View>
-        <FlatList
-          data={files}
-          keyExtractor={(item) => item}
-          renderItem={renderItem}
-          contentContainerStyle={styles.list}
-        />
         <View style={styles.bottomContainer}>
           <TouchableOpacity
             onPress={() => router.push("/auth/login")}
@@ -108,17 +39,12 @@ export default function SplashScreen() {
             <Ionicons name="mail" size={22} color="white" />
             <Text style={styles.signUpText}>Continue with email</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleFileUpload}>
+          <TouchableOpacity onPress={() => router.push("/auth/signUp")}>
             <Text style={styles.loginText}>
               Don't have an account yet?
               <Text style={styles.loginLink}> Sign Up</Text>
             </Text>
           </TouchableOpacity>
-          {uploadProgress > 0 && (
-            <Text style={styles.uploadProgress}>
-              Upload Progress: {uploadProgress.toFixed(2)}%
-            </Text>
-          )}
         </View>
       </SafeAreaView>
     </ImageBackground>

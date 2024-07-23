@@ -8,6 +8,8 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Switch,
+  StatusBar,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../../../context/ThemeContext";
@@ -18,12 +20,14 @@ import { FIREBASE_AUTH } from "../../../../Firebase/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import { router } from "expo-router";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 
 const SettingsScreen = () => {
   const { userData } = useUser();
   const { theme, darkMode, setDarkMode } = useTheme();
   const [loading, setLoading] = useState(false);
   const [birthDate, setBirthDate] = useState(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (userData?.Birthday) {
@@ -57,7 +61,6 @@ const SettingsScreen = () => {
     {
       label: "Sign Out",
       method: () => {
-        console.log("OUT!");
         handleSignOut();
       },
       isSignOut: true,
@@ -92,6 +95,12 @@ const SettingsScreen = () => {
       setLoading(true);
       await signOut(FIREBASE_AUTH);
       await AsyncStorage.removeItem("@userData");
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "index" }],
+        })
+      );
       showToast("Signed out successfully");
     } catch (error) {
       showErrorToast("Oops! something went wrong");
@@ -101,7 +110,13 @@ const SettingsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: theme.backgroundColor,
+        paddingTop: Platform.OS === "android" && StatusBar.currentHeight,
+      }}
+    >
       <ScrollView
         style={[styles.container, { backgroundColor: theme.backgroundColor }]}
       >
