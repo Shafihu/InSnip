@@ -22,7 +22,7 @@ import { shareAsync } from "expo-sharing";
 import Heart from "./Heart";
 import DoubleTap from "./DoubleTap";
 
-const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const VideoCard = ({ video, isActive, handleOpenPress, totalComments }) => {
   const videoRef = useRef(null);
