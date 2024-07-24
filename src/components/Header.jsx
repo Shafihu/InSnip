@@ -14,6 +14,7 @@ import {
 import processUserImage from "../../utils/processUserImage";
 import { useUser } from "../../context/UserContext";
 import { useTheme } from "../../context/ThemeContext";
+import { ZoomSlider } from "./Slider";
 
 const Header = ({
   header,
@@ -22,6 +23,7 @@ const Header = ({
   addSpotlight,
   handlePostStoryByGallery,
   toggleHint,
+  setZoom,
 }) => {
   const [isFlash, setIsFlash] = useState(false);
   const { userData } = useUser();
@@ -239,17 +241,8 @@ const Header = ({
                     >
                       <Ionicons name="musical-notes" size={30} color="white" />
                     </Pressable>
-                    <Pressable
-                      style={{
-                        width: 40,
-                        height: 40,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        overflow: "hidden",
-                      }}
-                    >
-                      <FontAwesome name="camera" size={20} color="white" />
-                    </Pressable>
+
+                    <ZoomSlider setZoom={setZoom} />
                     <Pressable
                       onPress={toggleHint}
                       style={{

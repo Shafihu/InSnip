@@ -63,6 +63,7 @@ const HomeScreen = () => {
   const { userData, loading, isAuthenticated } = useUser();
   const [isBrowsing, setIsBrowsing] = useState(false);
   const [qrCodeDetected, setQrCodeDetected] = useState("");
+  const [zoom, setZoom] = useState(0);
   const timeoutRef = useRef(null);
   const currentUserId = userData?.id;
   const { theme, darkMode } = useTheme();
@@ -419,7 +420,7 @@ const HomeScreen = () => {
                   facing={facing}
                   flash={flash}
                   autofocus="on"
-                  zoom={0}
+                  zoom={zoom}
                   ref={cameraRef}
                   barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
                   onBarcodeScanned={handleBarcodeScanned}
@@ -549,6 +550,7 @@ const HomeScreen = () => {
                             toggleCameraFlash={toggleCameraFlash}
                             handlePostStoryByGallery={handlePostStoryByGallery}
                             toggleHint={toggleHint}
+                            setZoom={setZoom}
                           />
 
                           <Image
