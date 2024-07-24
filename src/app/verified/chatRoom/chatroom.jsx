@@ -26,7 +26,7 @@ import { FIRESTORE_DB } from "../../../../Firebase/config";
 import { useLocalSearchParams } from "expo-router";
 import { useUser } from "../../../../context/UserContext";
 import { pickAndUploadMedia } from "../../../../utils/pickAndUploadMedia";
-import { Entypo } from "react-native-vector-icons";
+import { Entypo, Octicons } from "react-native-vector-icons";
 import Modal from "react-native-modal";
 import { Image as ExpoImage } from "expo-image";
 import { useChatStore } from "../../../../context/ChatContext";
@@ -40,6 +40,8 @@ import { MaterialCommunityIcons, AntDesign } from "react-native-vector-icons";
 import { pickAndUploadFile } from "../../../../utils/pickFile";
 import { useTheme } from "../../../../context/ThemeContext";
 import FileUploadLoader from "../../../components/FIleUploadLoader";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 const { width } = Dimensions.get("window");
 
 const ChatRoom = () => {
@@ -56,6 +58,7 @@ const ChatRoom = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFileName, setSelectedFileName] = useState(null);
   const [play, setPlay] = useState(false);
   const videoRef = useRef(null);
   const currentUserId = userData.id;
@@ -139,6 +142,7 @@ const ChatRoom = () => {
         messageData.mediaType = media.type;
       } else if (document) {
         messageData.documentUrl = document.url;
+        messageData.documentUri = document.uri;
         messageData.documentType = document.type;
         messageData.documentName = fileName;
       }
@@ -299,73 +303,109 @@ const ChatRoom = () => {
     scrollViewRef.current.scrollToEnd({ animated: true });
   };
 
-  const FileViewer = ({ url }) => {
+  const handleShareFile = async (url) => {
+    try {
+      // Extract the file name from the URL
+      const fileName = url.split("?")[0].split("/").pop();
+      const decodedFileName = decodeURIComponent(fileName); // Decode the file name from the URL
+      const sanitizedFileName = decodedFileName
+        .split("/")
+        .pop()
+        .replace(/[^a-zA-Z0-9.\-]/g, "_"); // Remove any directories and sanitize
+      const fileUri = `${FileSystem.documentDirectory}${sanitizedFileName}`;
+
+      // Download the file
+      const { uri } = await FileSystem.downloadAsync(url, fileUri);
+
+      // Share the downloaded file
+      await Sharing.shareAsync(uri, {
+        dialogTitle: "Share this document",
+      });
+    } catch (error) {
+      console.error("Failed to share document:", error);
+    }
+  };
+
+  const FileViewer = ({ url, title }) => {
     return (
       <SafeAreaView
         style={{
           flex: 1,
           backgroundColor: theme.primaryColor,
-          paddingTop: Platform.OS === "android" && StatusBar.currentHeight,
+          paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
         }}
       >
-        <WebView
-          source={{ uri: url }}
-          javaScriptEnabled={true}
-          startInLoadingState={true}
-          renderLoading={() => (
-            <View
+        <View style={{ flex: 1, position: "relative" }}>
+          {url && (
+            <WebView
+              source={{ uri: url }}
+              javaScriptEnabled={true}
+              startInLoadingState={true}
+              renderLoading={() => (
+                <View
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: theme.primaryColor,
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <ActivityIndicator color={"white"} size="small" />
+                </View>
+              )}
               style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: theme.primaryColor,
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
+                backgroundColor: "#fff",
+                flex: 1,
               }}
-            >
-              <ActivityIndicator color={"white"} size="small" />
-            </View>
-          )}
-          style={{
-            backgroundColor: "#fff",
-            flex: 1,
-            borderWidth: 2,
-            borderColor: theme.primaryColor,
-          }}
-          onLoadProgress={() => {}}
-          onLoad={() => {
-            setIsLoading(false);
-          }}
-          onMessage="Hello"
-        />
-        <TouchableOpacity
-          onPress={() => setSelectedFile(null)}
-          style={{
-            position: "absolute",
-            top: 50,
-            paddingRight: 10,
-            alignItems: "flex-end",
-            backgroundColor: "transparent",
-            width: "100%",
-          }}
-        >
-          <View style={{ backgroundColor: "#fff", borderRadius: 50 }}>
-            <AntDesign
-              name="closecircle"
-              color={theme.primaryColor}
-              size={25}
             />
+          )}
+          <View
+            style={{
+              width: "100%",
+              position: "absolute",
+              top: 0,
+              paddingHorizontal: 10,
+              paddingBottom: 8,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 10,
+              backgroundColor: theme.primaryColor,
+            }}
+          >
+            <TouchableOpacity onPress={() => setSelectedFile(null)} style={{}}>
+              <Entypo name="chevron-left" color="#fff" size={30} />
+            </TouchableOpacity>
+            <View style={{ flex: 1 }}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{
+                  color: "#fff",
+                  fontSize: 16,
+                  fontWeight: "500",
+                  textAlign: "center",
+                }}
+              >
+                {title}
+              </Text>
+            </View>
+            <TouchableOpacity onPress={() => handleShareFile(url)} style={{}}>
+              <Octicons name="share" color="#fff" size={23} />
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
+        </View>
       </SafeAreaView>
     );
   };
 
   if (selectedFile) {
-    return <FileViewer url={selectedFile} />;
+    return <FileViewer url={selectedFile} title={selectedFileName} />;
   }
 
   return (
@@ -557,7 +597,10 @@ const ChatRoom = () => {
                     ) : message.documentUrl ? (
                       <View style={{ gap: 5 }}>
                         <Pressable
-                          onPress={() => setSelectedFile(message.documentUrl)}
+                          onPress={() => {
+                            setSelectedFile(message.documentUrl);
+                            setSelectedFileName(message.documentName);
+                          }}
                           onLongPress={() => handleLongPress(message)}
                           style={{
                             flexDirection: "row",
@@ -730,7 +773,7 @@ const ChatRoom = () => {
                 borderWidth: 2,
                 borderColor: theme.primaryColor,
                 marginBottom: 8,
-                backgroundColor: "white",
+                backgroundColor: theme.backgroundColor,
                 justifyContent: "center",
               }}
             >
