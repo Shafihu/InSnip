@@ -51,6 +51,7 @@
     "nativewind": "^4.0.1",
     "react": "18.2.0",
     "react-native": "^0.74.3",
+    "react-native-awesome-slider": "^2.5.3",
     "react-native-calendars": "^1.1305.0",
     "react-native-circular-progress": "^1.4.0",
     "react-native-double-tap": "^1.0.1",
