@@ -31,9 +31,6 @@ export const pickAndUploadFile = async (
 
     setLocalFileUri(fileUri);
 
-    console.log("File URI:", fileUri);
-    console.log("File Name:", fileName);
-
     const response = await fetch(fileUri);
     const blob = await response.blob();
 
