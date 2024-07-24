@@ -552,8 +552,8 @@ const HomeScreen = () => {
                             toggleHint={toggleHint}
                             setZoom={setZoom}
                           />
-
-                          <Image
+                          {/* //TODO:Active filter pic indicator stuff later */}
+                          {/* <Image
                             source={require("../../../assets/avatars/avatar_1.png")}
                             style={{
                               width: 60,
@@ -563,8 +563,7 @@ const HomeScreen = () => {
                               alignSelf: "center",
                               top: 10,
                             }}
-                          />
-
+                          /> */}
                           {/* BOTTOM CAMERA ICONS */}
                           <View style={{ position: "absolute", bottom: 100 }}>
                             <View style={styles.iconRow}>

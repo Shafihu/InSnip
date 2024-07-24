@@ -42,6 +42,7 @@ import { useTheme } from "../../../../context/ThemeContext";
 import FileUploadLoader from "../../../components/FIleUploadLoader";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import DocShareLoader from "../../../components/DocShareLoader";
 const { width } = Dimensions.get("window");
 
 const ChatRoom = () => {
@@ -71,6 +72,7 @@ const ChatRoom = () => {
     require("../../../../assets/chat_background.jpg")
   );
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [docShareLoading, setDocShareLoading] = useState(false);
   const { theme } = useTheme();
   const [go, setGo] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -305,6 +307,7 @@ const ChatRoom = () => {
 
   const handleShareFile = async (url) => {
     try {
+      setDocShareLoading(true);
       // Extract the file name from the URL
       const fileName = url.split("?")[0].split("/").pop();
       const decodedFileName = decodeURIComponent(fileName); // Decode the file name from the URL
@@ -317,12 +320,16 @@ const ChatRoom = () => {
       // Download the file
       const { uri } = await FileSystem.downloadAsync(url, fileUri);
 
+      setDocShareLoading(false);
+
       // Share the downloaded file
       await Sharing.shareAsync(uri, {
         dialogTitle: "Share this document",
       });
     } catch (error) {
       console.error("Failed to share document:", error);
+    } finally {
+      setDocShareLoading(false);
     }
   };
 
@@ -399,6 +406,23 @@ const ChatRoom = () => {
               <Octicons name="share" color="#fff" size={23} />
             </TouchableOpacity>
           </View>
+          {docShareLoading && (
+            <View
+              style={{
+                backgroundColor: "rgba(0,0,0,0.5)",
+                width: 80,
+                height: 80,
+                position: "absolute",
+                alignSelf: "center",
+                top: "45%",
+                borderRadius: 10,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <DocShareLoader />
+            </View>
+          )}
         </View>
       </SafeAreaView>
     );
