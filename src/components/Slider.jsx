@@ -20,7 +20,7 @@ export const ZoomSlider = ({ setZoom }) => {
         minimumValue={min}
         maximumValue={max}
         theme={{
-          maximumTrackTintColor: "rgba(0,0,0,0.2)",
+          maximumTrackTintColor: "rgba(255,255,255,0.5)",
           minimumTrackTintColor: "#fff",
           bubbleBackgroundColor: "rgba(0,0,0,0.3)",
           heartbeatColor: "#999",

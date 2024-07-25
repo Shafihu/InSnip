@@ -41,6 +41,8 @@ import * as WebBrowser from "expo-web-browser";
 import QRCodeButton from "../../components/QRCodeButton";
 import { manipulateAsync, FlipType, SaveFormat } from "expo-image-manipulator";
 import DoubleTap from "../../components/DoubleTap";
+import { Audio } from "expo-av";
+import WaveScreen from "../../components/Wave";
 
 const HomeScreen = () => {
   const [facing, setFacing] = useState("front");
@@ -60,9 +62,10 @@ const HomeScreen = () => {
   const [storyUrl, setStoryUrl] = useState(null);
   const [error, setError] = useState(null);
   const [showHint, setShowHint] = useState(false);
-  const { userData, loading, isAuthenticated } = useUser();
+  const { userData, loading, music, setMusic } = useUser();
   const [isBrowsing, setIsBrowsing] = useState(false);
   const [qrCodeDetected, setQrCodeDetected] = useState("");
+  const [sound, setSound] = useState(null);
   const [zoom, setZoom] = useState(0);
   const timeoutRef = useRef(null);
   const currentUserId = userData?.id;
@@ -355,6 +358,38 @@ const HomeScreen = () => {
     }
   };
 
+  async function playSound(music) {
+    if (sound) {
+      await sound.unloadAsync();
+    }
+    const { sound } = await Audio.Sound.createAsync(
+      {
+        uri: music,
+      },
+      {
+        shouldPlay: true,
+        isLooping: true,
+      }
+    );
+
+    setSound(sound);
+
+    await sound.playAsync();
+  }
+
+  const handleClearMusic = async () => {
+    if (sound) {
+      try {
+        await sound.pauseAsync();
+        await sound.unloadAsync();
+        setSound(null);
+        setMusic(null);
+      } catch (error) {
+        console.error("Error pausing or unloading sound:", error);
+      }
+    }
+  };
+
   if (isBrowsing) return <></>;
 
   if (loading) {
@@ -564,8 +599,73 @@ const HomeScreen = () => {
                               top: 10,
                             }}
                           /> */}
-                          {/* BOTTOM CAMERA ICONS */}
                           <View style={{ position: "absolute", bottom: 100 }}>
+                            {qrCodeDetected ? (
+                              <QRCodeButton
+                                handleOpenQRCode={handleOpenQRCode}
+                              />
+                            ) : null}
+
+                            {music && (
+                              <View
+                                style={{
+                                  width: "80%",
+                                  flexDirection: "row",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  margin: "auto",
+                                }}
+                              >
+                                <TouchableOpacity onPress={handleClearMusic}>
+                                  <Ionicons
+                                    name="close-circle"
+                                    color="#fff"
+                                    size={35}
+                                  />
+                                </TouchableOpacity>
+
+                                <View
+                                  style={{
+                                    backgroundColor: "rgba(0,0,0,0.5)",
+                                    borderRadius: 50,
+                                    width: 200,
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  {/* <Image
+                                    source={require("../../../assets/music_wave.png")}
+                                    style={{
+                                      // width: 200,
+                                      height: 35,
+                                      resizeMode: "stretch",
+                                    }}
+                                  /> */}
+                                  <WaveScreen />
+                                </View>
+                                <TouchableOpacity
+                                  onPress={() => playSound(music)}
+                                >
+                                  <Ionicons
+                                    name="play-circle"
+                                    color="#fff"
+                                    size={35}
+                                  />
+                                </TouchableOpacity>
+                              </View>
+                            )}
+
+                            {/* FILTERS */}
+                            <FilterScrollView
+                              handleCapture={handleCapture}
+                              handleRecord={handleRecord}
+                              handleStopRecord={handleStopRecord}
+                              isRecording={isRecording}
+                            />
+
+                            {/* BOTTOM CAMERA ICONS */}
+
                             <View style={styles.iconRow}>
                               <Pressable
                                 onPress={handlePostStoryByGallery}
@@ -597,20 +697,6 @@ const HomeScreen = () => {
                                 />
                               </Pressable>
                             </View>
-
-                            {qrCodeDetected ? (
-                              <QRCodeButton
-                                handleOpenQRCode={handleOpenQRCode}
-                              />
-                            ) : null}
-
-                            {/* FILTERS */}
-                            <FilterScrollView
-                              handleCapture={handleCapture}
-                              handleRecord={handleRecord}
-                              handleStopRecord={handleStopRecord}
-                              isRecording={isRecording}
-                            />
                           </View>
                         </>
                       </View>

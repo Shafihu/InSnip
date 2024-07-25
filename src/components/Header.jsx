@@ -231,6 +231,7 @@ const Header = ({
                       />
                     </Pressable>
                     <Pressable
+                      onPress={() => router.push("/verified/sounds")}
                       style={{
                         width: 40,
                         height: 40,

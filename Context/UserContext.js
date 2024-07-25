@@ -8,8 +8,8 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
-
   const [loading, setLoading] = useState(true);
+  const [music, setMusic] = useState(null);
 
   useEffect(() => {
     const retrieveUserDataLocally = async () => {
@@ -101,7 +101,9 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ userData, loading, updateProfilePicture }}>
+    <UserContext.Provider
+      value={{ userData, loading, updateProfilePicture, music, setMusic }}
+    >
       {children}
     </UserContext.Provider>
   );

@@ -107,3 +107,54 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 });
+
+// import { useEffect, useState } from "react";
+// import { View, StyleSheet, Button } from "react-native";
+// import { Audio } from "expo-av";
+
+// export default function App() {
+//   const [sound, setSound] = useState();
+
+//   async function playSound() {
+//     console.log("Loading Sound");
+//     const { sound } = await Audio.Sound.createAsync(
+//       require("../../../assets/sounds/mixkit-intro-news-sound-1151.wav")
+//     );
+//     setSound(sound);
+
+//     console.log("Playing Sound");
+//     await sound.playAsync();
+//   }
+
+//   async function pauseSound() {
+//     if (sound) {
+//       console.log("Pausing Sound");
+//       await sound.pauseAsync();
+//     }
+//   }
+
+//   useEffect(() => {
+//     return sound
+//       ? () => {
+//           console.log("Unloading Sound");
+//           sound.unloadAsync();
+//         }
+//       : undefined;
+//   }, [sound]);
+
+//   return (
+//     <View style={styles.container}>
+//       <Button title="Play Sound" onPress={playSound} />
+//       <Button title="Pause Sound" onPress={pauseSound} />
+//     </View>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     justifyContent: "center",
+//     backgroundColor: "#ecf0f1",
+//     padding: 10,
+//   },
+// });

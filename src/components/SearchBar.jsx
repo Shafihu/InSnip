@@ -6,14 +6,15 @@ import {
   Pressable,
   StyleSheet,
   Dimensions,
+  Platform,
 } from "react-native";
-import { Foundation } from "react-native-vector-icons";
+import { Foundation, Ionicons, FontAwesome6 } from "react-native-vector-icons";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../context/ThemeContext";
 
 const { width } = Dimensions.get("window");
 
-const SearchBar = ({ onChangeText, onActualChange }) => {
+const SearchBar = ({ onChangeText, onActualChange, placeholder }) => {
   const [searchText, setSearchText] = useState("");
   const { theme } = useTheme();
   const router = useRouter();
@@ -31,6 +32,14 @@ const SearchBar = ({ onChangeText, onActualChange }) => {
     <View
       style={[styles.container, { backgroundColor: theme.backgroundColor }]}
     >
+      {placeholder && (
+        <Pressable
+          onPress={() => router.navigate("/verified/home")}
+          style={styles.cancelButton}
+        >
+          <FontAwesome6 name="angle-down" color={theme.textColor} size={25} />
+        </Pressable>
+      )}
       <View
         style={[
           styles.searchContainer,
@@ -44,7 +53,7 @@ const SearchBar = ({ onChangeText, onActualChange }) => {
           style={styles.icon}
         />
         <TextInput
-          placeholder="Search"
+          placeholder={placeholder || "Search"}
           placeholderTextColor={theme.textColor}
           value={searchText}
           onChangeText={handleChangeText}
@@ -55,11 +64,13 @@ const SearchBar = ({ onChangeText, onActualChange }) => {
           }
         />
       </View>
-      <Pressable onPress={() => router.back()} style={styles.cancelButton}>
-        <Text style={[styles.cancelText, { color: theme.grayText }]}>
-          Cancel
-        </Text>
-      </Pressable>
+      {placeholder === undefined && (
+        <Pressable onPress={() => router.back()} style={styles.cancelButton}>
+          <Text style={[styles.cancelText, { color: theme.grayText }]}>
+            Cancel
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 };
@@ -72,10 +83,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    gap: 10,
   },
   searchContainer: {
     position: "relative",
-    width: width * 0.75,
+    flex: 1,
+    backgroundColor: "blue",
     borderRadius: 50,
     overflow: "hidden",
     flexDirection: "row",
@@ -87,7 +100,7 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
   textInput: {
-    flex: 1,
+    width: "100%",
     paddingVertical: 10,
     paddingLeft: 40,
     paddingRight: 15,
@@ -95,9 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "500",
   },
-  cancelButton: {
-    width: width * 0.2,
-  },
+  cancelButton: {},
   cancelText: {
     textAlign: "center",
     fontWeight: "bold",

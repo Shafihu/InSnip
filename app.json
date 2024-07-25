@@ -63,15 +63,21 @@
         }
       ],
       [
+        "expo-av",
+        {
+          "microphonePermission": "Allow InSnip to access your microphone."
+        }
+      ],
+      [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+          "locationAlwaysAndWhenInUsePermission": "Allow InSnip to use your location."
         }
       ],
       [
         "expo-contacts",
         {
-          "contactsPermission": "Allow $(PRODUCT_NAME) to access your contacts."
+          "contactsPermission": "Allow InSnip to access your contacts."
         }
       ],
       [
