@@ -107,7 +107,7 @@ const SoundScreen = () => {
       <SearchBar
         onActualChange={onActualChange}
         placeholder="Search artists and sounds"
-        color="white"
+        isPlaying={isPlaying}
       />
       <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
         <Text

@@ -14,7 +14,12 @@ import { useTheme } from "../../context/ThemeContext";
 
 const { width } = Dimensions.get("window");
 
-const SearchBar = ({ onChangeText, onActualChange, placeholder }) => {
+const SearchBar = ({
+  onChangeText,
+  onActualChange,
+  placeholder,
+  isPlaying,
+}) => {
   const [searchText, setSearchText] = useState("");
   const { theme } = useTheme();
   const router = useRouter();
@@ -34,6 +39,7 @@ const SearchBar = ({ onChangeText, onActualChange, placeholder }) => {
     >
       {placeholder && (
         <Pressable
+          disabled={isPlaying}
           onPress={() => router.navigate("/verified/home")}
           style={styles.cancelButton}
         >
