@@ -66,6 +66,7 @@ const HomeScreen = () => {
   const [isBrowsing, setIsBrowsing] = useState(false);
   const [qrCodeDetected, setQrCodeDetected] = useState("");
   const [sound, setSound] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [zoom, setZoom] = useState(0);
   const timeoutRef = useRef(null);
   const currentUserId = userData?.id;
@@ -375,7 +376,23 @@ const HomeScreen = () => {
     setSound(sound);
 
     await sound.playAsync();
+    setIsPlaying(true);
   }
+
+  async function pauseSound() {
+    if (sound) {
+      await sound.pauseAsync();
+      setIsPlaying(false);
+    }
+  }
+
+  const togglePlay = async () => {
+    if (isPlaying) {
+      await pauseSound();
+    } else {
+      await playSound(music);
+    }
+  };
 
   const handleClearMusic = async () => {
     if (sound) {
@@ -389,6 +406,10 @@ const HomeScreen = () => {
       }
     }
   };
+
+  if (photo || video) {
+    pauseSound();
+  }
 
   if (isBrowsing) return <></>;
 
@@ -644,11 +665,11 @@ const HomeScreen = () => {
                                   /> */}
                                   <WaveScreen />
                                 </View>
-                                <TouchableOpacity
-                                  onPress={() => playSound(music)}
-                                >
+                                <TouchableOpacity onPress={togglePlay}>
                                   <Ionicons
-                                    name="play-circle"
+                                    name={
+                                      isPlaying ? "stop-circle" : "play-circle"
+                                    }
                                     color="#fff"
                                     size={35}
                                   />

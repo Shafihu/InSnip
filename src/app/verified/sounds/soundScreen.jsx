@@ -1,20 +1,17 @@
 import {
   View,
   Text,
-  Pressable,
   SafeAreaView,
   StyleSheet,
   FlatList,
   Platform,
   StatusBar,
-  Button,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import SearchBar from "../../../components/SearchBar";
 import { useRouter } from "expo-router";
-import { FIRESTORE_DB } from "../../../../Firebase/config";
-import { collection, getDocs } from "firebase/firestore";
 import { useUser } from "../../../../context/UserContext";
 import { useTheme } from "../../../../context/ThemeContext";
 import { Audio } from "expo-av";
@@ -27,6 +24,7 @@ const SoundScreen = () => {
   const [tracks, setTracks] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(null);
+  const [playlists, setPlaylists] = useState();
   const { userData, setMusic } = useUser();
   const currentUserId = userData.id;
   const { theme } = useTheme();
@@ -38,7 +36,20 @@ const SoundScreen = () => {
 
   useEffect(() => {
     searchSongs();
+    fetchPlaylists();
   }, [searchText]);
+
+  async function fetchPlaylists() {
+    try {
+      const response = await fetch(
+        "https://api.deezer.com/chart/playlist/albums"
+      );
+      const data = await response.json();
+      setPlaylists(data.data);
+    } catch (error) {
+      console.error("Error fetching playlist:", error);
+    }
+  }
 
   async function fetchPopularSongs() {
     try {
@@ -100,6 +111,16 @@ const SoundScreen = () => {
     router.back();
   };
 
+  const handlePlaylistPressed = (url, title) => {
+    router.push({
+      pathname: "/verified/sounds/[playlistScreen]",
+      params: {
+        url: url,
+        title: title,
+      },
+    });
+  };
+
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: theme.backgroundColor }]}
@@ -109,87 +130,164 @@ const SoundScreen = () => {
         placeholder="Search artists and sounds"
         isPlaying={isPlaying}
       />
-      <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
-        <Text
-          style={{
-            fontSize: 16,
-            fontWeight: "600",
-            color: theme.textColor,
-          }}
+
+      <ScrollView style={{ flex: 1 }}>
+        <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "600",
+              color: theme.textColor,
+            }}
+          >
+            Playlists
+          </Text>
+        </View>
+        <View
+          style={[
+            styles.container,
+            { backgroundColor: theme.backgroundColor, flex: 0.25 },
+          ]}
         >
-          {searchText ? "Search Results" : "Popular"}
-        </Text>
-      </View>
-      <View
-        style={[styles.container, { backgroundColor: theme.backgroundColor }]}
-      >
-        <FlatList
-          data={tracks}
-          keyExtractor={(item) => item?.id.toString()}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginBottom: 10,
-              }}
-            >
-              <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+          <FlatList
+            data={playlists}
+            keyExtractor={(item) => item?.id}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={false}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() =>
+                  handlePlaylistPressed(item.tracklist, item.title)
+                }
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 15,
+                  width: "50%",
+                }}
               >
-                <Text
+                <View
                   style={{
-                    color: theme.textColor,
-                    fontSize: 15,
-                    textAlign: "left",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 10,
                   }}
                 >
-                  #{item.position}
-                </Text>
-                <Image
-                  source={{ uri: item.album.cover }}
-                  style={{ width: 50, height: 50, borderRadius: 8 }}
-                />
-                <View style={{ gap: 4, flex: 0.9 }}>
-                  <Text
-                    style={{
-                      color:
-                        isPlaying && currentTrack === item.preview
-                          ? theme.primaryColor
-                          : theme.textColor,
-                      fontSize: 15,
-                      letterSpacing: 0.3,
-                      fontWeight: "500",
-                    }}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {item.title}
-                  </Text>
-                  <Text
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    style={{ color: theme.grayText, fontSize: 12 }}
-                  >
-                    {item.artist.name}
-                  </Text>
+                  <Image
+                    source={{ uri: item.cover }}
+                    style={{ width: 40, height: 40, borderRadius: 8 }}
+                  />
+                  <View style={{ gap: 4, flex: 0.9 }}>
+                    <Text
+                      style={{
+                        color: theme.textColor,
+                        fontSize: 15,
+                        letterSpacing: 0.3,
+                        fontWeight: "700",
+                      }}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {item.title}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-              <TouchableOpacity onPress={() => togglePlay(item.preview)}>
-                <Ionicons
-                  name={
-                    isPlaying && currentTrack === item.preview ? "stop" : "play"
-                  }
-                  size={20}
-                  color={theme.primaryColor}
-                />
               </TouchableOpacity>
-            </View>
-          )}
-        />
-      </View>
+            )}
+            numColumns={2}
+          />
+        </View>
+        <View style={{ marginHorizontal: 15, marginVertical: 15 }}>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "600",
+              color: theme.textColor,
+            }}
+          >
+            {searchText ? "Search Results" : "Popular"}
+          </Text>
+        </View>
+        <View
+          style={[styles.container, { backgroundColor: theme.backgroundColor }]}
+        >
+          <FlatList
+            data={tracks}
+            keyExtractor={(item) => item?.id}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={false}
+            renderItem={({ item }) => (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: 15,
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  {/* <Text
+                    style={{
+                      color: theme.textColor,
+                      fontSize: 15,
+                      textAlign: "left",
+                    }}
+                  >
+                    #{item.position}
+                  </Text> */}
+                  <Image
+                    source={{ uri: item.album.cover }}
+                    style={{ width: 50, height: 50, borderRadius: 8 }}
+                  />
+                  <View style={{ gap: 4, flex: 0.9 }}>
+                    <Text
+                      style={{
+                        color:
+                          isPlaying && currentTrack === item.preview
+                            ? theme.primaryColor
+                            : theme.textColor,
+                        fontSize: 15,
+                        letterSpacing: 0.3,
+                        fontWeight: "500",
+                      }}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {item.title}
+                    </Text>
+                    <Text
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      style={{ color: theme.grayText, fontSize: 12 }}
+                    >
+                      {item.artist.name}
+                    </Text>
+                  </View>
+                </View>
+                <TouchableOpacity onPress={() => togglePlay(item.preview)}>
+                  <Ionicons
+                    name={
+                      isPlaying && currentTrack === item.preview
+                        ? "stop"
+                        : "play"
+                    }
+                    size={20}
+                    color={theme.primaryColor}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+        </View>
+      </ScrollView>
+
       {currentTrack && isPlaying && (
         <TouchableOpacity
           onPress={chooseMusic}

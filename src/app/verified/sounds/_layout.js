@@ -7,8 +7,14 @@ const SearchLayout = () => {
       <Stack.Screen
         name="soundScreen"
         options={{
-          presentation: "modal",
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="[playlistScreen]"
+        options={{
+          headerShown: true,
+          headerBackTitleVisible: false,
         }}
       />
     </Stack>
