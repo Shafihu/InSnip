@@ -1,15 +1,16 @@
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import * as ImagePicker from 'expo-image-picker';
-import { FIREBASE_STORAGE } from '../Firebase/config';
+import * as ImagePicker from "expo-image-picker";
+import { FIREBASE_STORAGE } from "../Firebase/config";
 
 const uploadFileToFirebase = (fileRef, blob, metadata, setUploadProgress) => {
   return new Promise((resolve, reject) => {
     const uploadTask = uploadBytesResumable(fileRef, blob, metadata);
 
     uploadTask.on(
-      'state_changed',
+      "state_changed",
       (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setUploadProgress(progress);
       },
       (error) => {
@@ -29,11 +30,18 @@ const uploadFileToFirebase = (fileRef, blob, metadata, setUploadProgress) => {
   });
 };
 
-export const storyPostUpload = async (fileUri, userId, setUploadProgress, sRef, userData) => {
+export const storyPostUpload = async (
+  fileUri,
+  userId,
+  music,
+  setUploadProgress,
+  sRef,
+  userData
+) => {
   try {
     let uri, type, blob;
 
-    if ((sRef === 'spotlight' || sRef === 'stories') && fileUri === null) {
+    if ((sRef === "spotlight" || sRef === "stories") && fileUri === null) {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
@@ -42,7 +50,7 @@ export const storyPostUpload = async (fileUri, userId, setUploadProgress, sRef, 
       });
 
       if (result.canceled) {
-        console.log('Image picker was canceled');
+        console.log("Image picker was canceled");
         return null;
       }
 
@@ -61,6 +69,7 @@ export const storyPostUpload = async (fileUri, userId, setUploadProgress, sRef, 
       customMetadata: {
         userId: userId,
         type: type,
+        music: music,
         ...(userData && {
           username: userData.Username,
           avatar: userData.avatar,
@@ -68,9 +77,13 @@ export const storyPostUpload = async (fileUri, userId, setUploadProgress, sRef, 
       },
     };
 
-    const downloadUrl = await uploadFileToFirebase(fileRef, blob, metadata, setUploadProgress);
+    const downloadUrl = await uploadFileToFirebase(
+      fileRef,
+      blob,
+      metadata,
+      setUploadProgress
+    );
     return downloadUrl;
-
   } catch (error) {
     console.error("Error uploading file:", error);
     return null;

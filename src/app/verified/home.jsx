@@ -276,6 +276,7 @@ const HomeScreen = () => {
         downloadUrl = await storyPostUpload(
           photo.uri,
           currentUserId,
+          music,
           setUploadProgress,
           "stories",
           userData
@@ -284,6 +285,7 @@ const HomeScreen = () => {
         downloadUrl = await storyPostUpload(
           video.uri,
           currentUserId,
+          music,
           setUploadProgress,
           "stories",
           userData
@@ -291,6 +293,7 @@ const HomeScreen = () => {
       }
 
       showSuccessToast("Story sent");
+      setMusic(null);
 
       if (downloadUrl) {
         updateUserPosts(downloadUrl);
@@ -310,10 +313,12 @@ const HomeScreen = () => {
       const downloadUrl = await storyPostUpload(
         null,
         currentUserId,
+        music,
         setUploadProgress,
         "stories",
         userData
       );
+      setMusic(null);
       if (downloadUrl) {
         updateUserPosts(downloadUrl);
         setStoryUrl(downloadUrl);

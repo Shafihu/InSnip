@@ -29,21 +29,25 @@ import {
   MaterialCommunityIcons,
   Feather,
   Ionicons,
+  Fontisto,
 } from "react-native-vector-icons";
 import { useTheme } from "../../context/ThemeContext";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
+import { Audio } from "expo-av";
 
 const { width } = Dimensions.get("window");
 
 const Stories = () => {
   const { users, loading } = useUsers();
   const [stories, setStories] = useState([]);
-  const [storiesLoading, setStoriesLoading] = useState(true);
+  const [storiesLoading, setStoriesLoading] = useState(false);
   const [selectedStory, setSelectedStory] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
   const [optionsModal, setOptionsModal] = useState(false);
+  const [sound, setSound] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const { theme } = useTheme();
 
   const showInfoToast = (message) => {
@@ -59,6 +63,7 @@ const Stories = () => {
   }, []);
 
   const loadStories = async () => {
+    setRefreshing(true);
     try {
       const cachedStories = await AsyncStorage.getItem("stories");
       if (cachedStories) {
@@ -76,6 +81,7 @@ const Stories = () => {
       );
 
       setStories(storiesWithUserDetails);
+      console.log(storiesWithUserDetails);
       await AsyncStorage.setItem(
         "stories",
         JSON.stringify(storiesWithUserDetails)
@@ -84,7 +90,8 @@ const Stories = () => {
       console.error("Error loading stories:", error);
       showInfoToast("Error loading stories. Try again");
     } finally {
-      setStoriesLoading(false);
+      // setStoriesLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -98,6 +105,7 @@ const Stories = () => {
     );
 
     setStories(storiesWithUserDetails);
+    console.log(storiesWithUserDetails);
     await AsyncStorage.setItem(
       "stories",
       JSON.stringify(storiesWithUserDetails)
@@ -118,10 +126,14 @@ const Stories = () => {
 
   const handlePressStory = (story) => {
     setSelectedStory(story);
+    if (story?.music) {
+      playSound(story.music);
+    }
   };
 
   const handleClosePreview = () => {
     setSelectedStory(null);
+    pauseSound();
   };
 
   const onRefresh = async () => {
@@ -144,6 +156,7 @@ const Stories = () => {
       },
     });
     setSelectedStory(null);
+    pauseSound();
   };
 
   const handleUserProfile = (user) => {
@@ -158,11 +171,40 @@ const Stories = () => {
         user: user,
       },
     });
+    pauseSound();
   };
 
   const toggleOptionsModal = () => {
     setOptionsModal((prev) => !prev);
   };
+
+  async function playSound(music) {
+    if (sound) {
+      await sound.unloadAsync();
+    }
+    const { sound } = await Audio.Sound.createAsync(
+      {
+        uri: music,
+      },
+      {
+        shouldPlay: true,
+        isLooping: true,
+      }
+    );
+
+    setSound(sound);
+
+    await sound.playAsync();
+    setIsPlaying(true);
+  }
+
+  async function pauseSound() {
+    if (sound) {
+      await sound.pauseAsync();
+      setIsPlaying(false);
+      setSound(null);
+    }
+  }
 
   return (
     <SafeAreaView
@@ -170,7 +212,7 @@ const Stories = () => {
     >
       <Header header="Stories" />
       <View>
-        {showLoader && (
+        {(showLoader || refreshing) && (
           <View style={styles.loaderContainer}>
             <CustomLoader />
           </View>
@@ -274,6 +316,9 @@ const Stories = () => {
                         top: 5,
                         right: 5,
                         zIndex: 50,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 5,
                       }}
                     >
                       <MaterialIcons
@@ -282,6 +327,11 @@ const Stories = () => {
                             ? "photo"
                             : "video-collection"
                         }
+                        size={20}
+                        color="#fff"
+                      />
+                      <Fontisto
+                        name={story.music && "applemusic"}
                         size={15}
                         color="#fff"
                       />
@@ -386,14 +436,14 @@ const Stories = () => {
                 <MaterialCommunityIcons
                   name="camera-wireless"
                   size={25}
-                  color="white"
+                  color={"#fff"}
                 />
               </Pressable>
               <Pressable
                 onPress={() => handleProfile(selectedStory)}
                 style={[styles.pressable, styles.profileButton]}
               >
-                <Text style={styles.buttonText}>View Profile</Text>
+                <Text style={[styles.buttonText]}>View Profile</Text>
               </Pressable>
               <Pressable
                 onPress={toggleOptionsModal}
@@ -405,7 +455,7 @@ const Stories = () => {
                 />
               </Pressable>
               <Pressable style={[styles.pressable, styles.miniButtons]}>
-                <Feather name="more-horizontal" size={30} color="white" />
+                <Feather name="more-horizontal" size={30} color={"#fff"} />
               </Pressable>
             </View>
             <Modal
