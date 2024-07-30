@@ -1,6 +1,6 @@
 //TODO: Check whether users are firends or not and display add button off the outcome
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   ScrollView,
@@ -35,6 +35,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
 import { Audio } from "expo-av";
+import MusicRain from "./MusicRain";
 
 const { width } = Dimensions.get("window");
 
@@ -48,6 +49,9 @@ const Stories = () => {
   const [optionsModal, setOptionsModal] = useState(false);
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isVideoLoading, setIsVideoLoading] = useState(false);
+  const [isSoundLoading, setIsSoundLoading] = useState(false);
+  const videoRef = useRef(null);
   const { theme } = useTheme();
 
   const showInfoToast = (message) => {
@@ -174,15 +178,16 @@ const Stories = () => {
     pauseSound();
   };
 
-  const toggleOptionsModal = () => {
+  const toggleOptionsModal = useCallback(() => {
     setOptionsModal((prev) => !prev);
-  };
+  }, []);
 
-  async function playSound(music) {
+  const playSound = async (music) => {
+    setIsSoundLoading(true);
     if (sound) {
       await sound.unloadAsync();
     }
-    const { sound } = await Audio.Sound.createAsync(
+    const { sound: newSound } = await Audio.Sound.createAsync(
       {
         uri: music,
       },
@@ -192,19 +197,23 @@ const Stories = () => {
       }
     );
 
-    setSound(sound);
-
-    await sound.playAsync();
+    setSound(newSound);
+    try {
+      await newSound.playAsync();
+    } catch (error) {
+      showInfoToast("Unstable internet connection");
+    }
     setIsPlaying(true);
-  }
+    setIsSoundLoading(false);
+  };
 
-  async function pauseSound() {
+  const pauseSound = async () => {
     if (sound) {
       await sound.pauseAsync();
       setIsPlaying(false);
       setSound(null);
     }
-  }
+  };
 
   return (
     <SafeAreaView
@@ -318,16 +327,16 @@ const Stories = () => {
                         zIndex: 50,
                         alignItems: "center",
                         justifyContent: "center",
-                        gap: 5,
+                        gap: 2,
                       }}
                     >
                       <MaterialIcons
                         name={
                           story.type.startsWith("image")
                             ? "photo"
-                            : "video-collection"
+                            : "smart-display"
                         }
-                        size={20}
+                        size={18}
                         color="#fff"
                       />
                       <Fontisto
@@ -408,6 +417,22 @@ const Stories = () => {
                   </Text>
                 </View>
               </Pressable>
+              {selectedStory?.music && isPlaying && (
+                <View
+                  style={{
+                    height: 50,
+                    width: 50,
+                    position: "absolute",
+                    left: 30,
+                    bottom: 30,
+                    zIndex: 9999999999,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <MusicRain />
+                </View>
+              )}
               {selectedStory &&
               selectedStory.type &&
               selectedStory.type.startsWith("image") ? (
@@ -424,11 +449,25 @@ const Stories = () => {
                   resizeMode="cover"
                   shouldPlay
                   isLooping
+                  isMuted={selectedStory.music}
+                  onLoadStart={() => setIsVideoLoading(true)}
+                  onLoad={() => setIsVideoLoading(false)}
                 />
               ) : (
                 <Text style={styles.errorText}>
                   Oops! Something went wrong.
                 </Text>
+              )}
+              {isVideoLoading && (
+                <View
+                  style={{
+                    color: "#fff",
+                    position: "absolute",
+                    alignSelf: "center",
+                  }}
+                >
+                  <CustomLoader />
+                </View>
               )}
             </View>
             <View style={styles.bottom}>

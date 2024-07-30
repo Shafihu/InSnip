@@ -15,7 +15,7 @@ const RootLayout = () => {
       <View
         style={{
           height: 40,
-          backgroundColor: "rgba(0,0,0,0.75)",
+          backgroundColor: "rgb(128, 128, 128)",
           borderRadius: 20,
           padding: 10,
           paddingHorizontal: 15,
@@ -34,7 +34,7 @@ const RootLayout = () => {
       <View
         style={{
           height: 40,
-          backgroundColor: "rgba(0,0,0,0.75)",
+          backgroundColor: "rgb(128, 128, 128)",
           borderRadius: 20,
           padding: 10,
           paddingHorizontal: 15,
@@ -55,7 +55,7 @@ const RootLayout = () => {
       <View
         style={{
           height: 40,
-          backgroundColor: "rgba(0,0,0,0.75)",
+          backgroundColor: "rgb(128, 128, 128)",
           borderRadius: 20,
           padding: 10,
           paddingHorizontal: 15,

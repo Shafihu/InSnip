@@ -43,6 +43,7 @@ import { manipulateAsync, FlipType, SaveFormat } from "expo-image-manipulator";
 import DoubleTap from "../../components/DoubleTap";
 import { Audio } from "expo-av";
 import WaveScreen from "../../components/Wave";
+import MusicWave from "../../components/MusicWave";
 
 const HomeScreen = () => {
   const [facing, setFacing] = useState("front");
@@ -75,7 +76,7 @@ const HomeScreen = () => {
   const showSuccessToast = (text) => {
     Toast.show({
       type: "customSuccessToast",
-      text1: text,
+      text1: "Hello",
       topOffset: 50,
     });
   };
@@ -406,6 +407,7 @@ const HomeScreen = () => {
         await sound.unloadAsync();
         setSound(null);
         setMusic(null);
+        setIsPlaying(false);
       } catch (error) {
         console.error("Error pausing or unloading sound:", error);
       }
@@ -414,6 +416,10 @@ const HomeScreen = () => {
 
   if (photo || video) {
     pauseSound();
+  }
+
+  if (maps || chat || stories || spotlight) {
+    handleClearMusic();
   }
 
   if (isBrowsing) return <></>;
@@ -668,7 +674,8 @@ const HomeScreen = () => {
                                       resizeMode: "stretch",
                                     }}
                                   /> */}
-                                  <WaveScreen />
+                                  {/* <WaveScreen /> */}
+                                  <MusicWave isPlaying={isPlaying} />
                                 </View>
                                 <TouchableOpacity onPress={togglePlay}>
                                   <Ionicons

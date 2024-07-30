@@ -18,7 +18,7 @@ import { pickAndUploadBanner } from "../../../../utils/pickAndUploadBanner";
 import processUserImage from "../../../../utils/processUserImage";
 import { router } from "expo-router";
 import {
-  FontAwesome,
+  Fontisto,
   FontAwesome6,
   MaterialCommunityIcons,
   Feather,
@@ -34,7 +34,8 @@ import { Video, ResizeMode } from "expo-av";
 import CustomLoader from "../../../components/CustomLoader";
 import { Image } from "expo-image";
 import { useTheme } from "../../../../context/ThemeContext";
-import { CommonActions } from "@react-navigation/native";
+import MusicRain from "../../../components/MusicRain";
+import { Audio } from "expo-av";
 
 const HEADER_MAX_HEIGHT = 280;
 const HEADER_MIN_HEIGHT = 0;
@@ -51,6 +52,8 @@ const UserProfile = () => {
   const [tab, setTab] = useState("stories");
   const [tabLoading, setTabLoading] = useState(false);
   const [spotlightLoading, setSpotlightsLoading] = useState(false);
+  const [sound, setSound] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   const scrollY = new Animated.Value(0);
   const [optionsModal, setOptionsModal] = useState(false);
   const { theme } = useTheme();
@@ -184,11 +187,43 @@ const UserProfile = () => {
 
   const handlePressStory = (story) => {
     setSelected(story);
+    if (story?.music) {
+      playSound(story.music);
+    }
   };
 
   const handleClosePreview = () => {
     setSelected(null);
+    pauseSound();
   };
+
+  async function playSound(music) {
+    if (sound) {
+      await sound.unloadAsync();
+    }
+    const { sound } = await Audio.Sound.createAsync(
+      {
+        uri: music,
+      },
+      {
+        shouldPlay: true,
+        isLooping: true,
+      }
+    );
+
+    setSound(sound);
+
+    await sound.playAsync();
+    setIsPlaying(true);
+  }
+
+  async function pauseSound() {
+    if (sound) {
+      await sound.pauseAsync();
+      setIsPlaying(false);
+      setSound(null);
+    }
+  }
 
   const renderItem = ({ item }) => (
     <Pressable
@@ -211,12 +246,23 @@ const UserProfile = () => {
           isMuted
         />
       )}
-      <View style={{ position: "absolute", top: 5, right: 5, zIndex: 50 }}>
+      <View
+        style={{
+          position: "absolute",
+          top: 5,
+          right: 5,
+          zIndex: 50,
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 5,
+        }}
+      >
         <MaterialIcons
           name={item.type.startsWith("image") ? "photo" : "video-collection"}
-          size={15}
+          size={20}
           color="#fff"
         />
+        <Fontisto name={item.music && "applemusic"} size={15} color="#fff" />
       </View>
     </Pressable>
   );
@@ -434,6 +480,22 @@ const UserProfile = () => {
                   <Ionicons name="close" size={25} color="#fff" />
                 </Pressable>
               </View>
+              {selected?.music && isPlaying && (
+                <View
+                  style={{
+                    height: 50,
+                    width: 50,
+                    position: "absolute",
+                    left: 30,
+                    bottom: 30,
+                    zIndex: 9999999999,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <MusicRain />
+                </View>
+              )}
               {selected &&
               selected.type &&
               selected.type.startsWith("image") ? (

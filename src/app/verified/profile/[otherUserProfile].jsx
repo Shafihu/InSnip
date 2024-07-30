@@ -225,12 +225,23 @@ const UserProfile = () => {
           isMuted
         />
       )}
-      <View style={{ position: "absolute", top: 5, right: 5, zIndex: 50 }}>
+      <View
+        style={{
+          position: "absolute",
+          top: 5,
+          right: 5,
+          zIndex: 50,
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 5,
+        }}
+      >
         <MaterialIcons
           name={item.type.startsWith("image") ? "photo" : "video-collection"}
-          size={15}
+          size={20}
           color="#fff"
         />
+        <Fontisto name={item.music && "applemusic"} size={15} color="#fff" />
       </View>
     </Pressable>
   );
